@@ -47,17 +47,81 @@ document.addEventListener('DOMContentLoaded', () => {
         particlesContainer.appendChild(particle);
     }
     
-    setTimeout(() => {
+    // РЕАЛЬНЫЕ ДАННЫЕ ПОДПИСЧИКОВ - НАЧАЛО
+    function updateRealStats() {
+        const REAL_SUBSCRIBERS = 51;  // ТЕКУЩИЕ ПОДПИСЧИКИ
+        const REAL_POSTS = 484;       // ТЕКУЩИЕ ПОСТЫ
+        
         const subscribersProgress = document.getElementById('subscribers-progress');
         const postsProgress = document.getElementById('posts-progress');
         const subscribersText = document.getElementById('subscribers-text');
         const postsText = document.getElementById('posts-text');
+        const helpText = document.querySelector('.stat-item .help-text');
         
-        subscribersProgress.style.width = `50%`;
-        subscribersText.textContent = `50/100`;
-        postsProgress.style.width = `48.4%`;
-        postsText.textContent = `484/1000`;
-    }, 1000);
+        // Обновляем подписчиков
+        subscribersProgress.style.width = `${REAL_SUBSCRIBERS}%`;
+        subscribersText.textContent = `${REAL_SUBSCRIBERS}/100`;
+        
+        // Обновляем посты
+        const postsPercentage = (REAL_POSTS / 1000) * 100;
+        postsProgress.style.width = `${postsPercentage}%`;
+        postsText.textContent = `${REAL_POSTS}/1000`;
+        
+        // Динамические сообщения в зависимости от прогресса
+        if (REAL_SUBSCRIBERS >= 100) {
+            helpText.textContent = '🎉 Цель достигнута! Спасибо!';
+            helpText.style.color = '#ff3366';
+            helpText.style.fontWeight = 'bold';
+        } else if (REAL_SUBSCRIBERS >= 75) {
+            helpText.textContent = 'Почти у цели! Осталось немного! 🔥';
+            helpText.style.color = '#00ff88';
+        } else if (REAL_SUBSCRIBERS >= 50) {
+            helpText.textContent = 'Отлично! Уже половина пути! 💪';
+            helpText.style.color = '#00b4ff';
+        } else if (REAL_SUBSCRIBERS >= 25) {
+            helpText.textContent = 'Хороший старт! Продолжаем в том же духе! 🚀';
+            helpText.style.color = '#ffcc00';
+        } else {
+            helpText.textContent = 'Помогите достичь цели! Расскажите друзьям! 📢';
+            helpText.style.color = '#ff3366';
+        }
+        
+        // Сохраняем в localStorage
+        localStorage.setItem('lastSubscribers', REAL_SUBSCRIBERS);
+        localStorage.setItem('lastPosts', REAL_POSTS);
+        
+        console.log(`📊 Статистика обновлена: ${REAL_SUBSCRIBERS} подписчиков, ${REAL_POSTS} постов`);
+    }
+
+    // Функция для красивого появления прогресс-баров
+    function animateProgressBars() {
+        setTimeout(() => {
+            const subscribersProgress = document.getElementById('subscribers-progress');
+            const postsProgress = document.getElementById('posts-progress');
+            
+            subscribersProgress.style.transition = 'width 2s ease-in-out';
+            postsProgress.style.transition = 'width 2s ease-in-out';
+            
+            // Запускаем обновление статистики
+            updateRealStats();
+        }, 1000);
+    }
+
+    // Автоматическое обновление каждые 10 минут
+    function startAutoUpdate() {
+        // Первый запуск
+        animateProgressBars();
+        
+        // Дополнительно: обновляем каждые 10 минут
+        setInterval(() => {
+            console.log('🔄 Автообновление статистики...');
+            updateRealStats();
+        }, 10 * 60 * 1000);
+    }
+
+    // Запускаем обновление статистики с реальными цифрами
+    startAutoUpdate();
+    // РЕАЛЬНЫЕ ДАННЫЕ ПОДПИСЧИКОВ - КОНЕЦ
     
     document.addEventListener('mousemove', (e) => {
         const particles = document.querySelectorAll('.particle');
