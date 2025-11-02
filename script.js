@@ -1,31 +1,16 @@
-console.log('🚀 LYSMANOV Site - Starting...');
+// Добавь в начало script.js
+function isMobileDevice() {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
 
-// Простые переменные для навигации
-let currentPage = 0;
-const totalPages = 4;
-let canScroll = true;
+document.addEventListener('DOMContentLoaded', () => {
+    // Оптимизация для мобильных
+    if (isMobileDevice()) {
+        document.body.style.overflowY = 'auto';
+        document.body.style.padding = '10px 5px';
+    }
 
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('✅ DOM loaded');
-    
-    // Инициализация навигации
-    initNavigation();
-    
-    // Анимация текста
-    animateText();
-    
-    // Запуск функций
-    setTimeout(function() {
-        updateStats();
-        startCountdown();
-    }, 1000);
-});
-
-// Анимация текста LYSMANOV
-function animateText() {
     const text = document.getElementById('text');
-    if (!text) return;
-    
     const textContent = text.textContent;
     text.innerHTML = '';
     
@@ -35,189 +20,218 @@ function animateText() {
         letter.textContent = textContent[i];
         const delay = i * 0.2;
         letter.style.animationDelay = `${delay}s, ${delay + 2}s`;
+        const moveDuration = 6 + Math.random() * 3;
+        letter.style.animationDuration = `2s, ${moveDuration}s`;
         text.appendChild(letter);
     }
-}
-
-// Обновление статистики
-function updateStats() {
-    const subscribers = 51;
-    const posts = 484;
     
-    const subsProgress = document.getElementById('subscribers-progress');
-    const postsProgress = document.getElementById('posts-progress');
-    const subsText = document.getElementById('subscribers-text');
-    const postsText = document.getElementById('posts-text');
+    const signature = document.getElementById('signature');
+    const signatureContent = signature.textContent;
+    signature.innerHTML = '';
     
-    if (subsProgress) subsProgress.style.width = subscribers + '%';
-    if (postsProgress) postsProgress.style.width = (posts/10) + '%';
-    if (subsText) subsText.textContent = subscribers + '/100';
-    if (postsText) postsText.textContent = posts + '/1000';
-}
-
-// Обратный отсчет
-function startCountdown() {
-    const targetDate = new Date('2026-01-01T00:00:00').getTime();
-    const daysElement = document.getElementById('days');
-    const hoursElement = document.getElementById('hours');
-    const minutesElement = document.getElementById('minutes');
-    const secondsElement = document.getElementById('seconds');
-    const messageElement = document.getElementById('countdownMessage');
+    for (let i = 0; i < signatureContent.length; i++) {
+        const letter = document.createElement('span');
+        letter.className = 'signature-letter';
+        letter.textContent = signatureContent[i];
+        letter.style.animationDelay = `${i * 0.05}s`;
+        signature.appendChild(letter);
+    }
     
-    const messages = [
-        "🎉 Скоро Новый 2026 Год!",
-        "⏰ Время летит незаметно...",
-        "🚀 Готовься к празднику!",
-        "🎁 Сколько планов на следующий год?"
-    ];
-
-    function update() {
-        const now = new Date().getTime();
-        const distance = targetDate - now;
+    // Меньше частиц на мобильных для производительности
+    const particlesContainer = document.getElementById('particles');
+    const particleCount = isMobileDevice() ? 15 : 30;
+    
+    for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        const left = Math.random() * 100;
+        const delay = Math.random() * 8;
+        const duration = 6 + Math.random() * 6;
+        const size = isMobileDevice() ? 1 : 1 + Math.random() * 2;
+        particle.style.left = `${left}%`;
+        particle.style.animationDelay = `${delay}s`;
+        particle.style.animationDuration = `${duration}s`;
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        const colors = ['#ff3366', '#00b4ff', '#8b0000', '#0066ff'];
+        const randomColor = colors[Math.floor(Math.random() * colors.length)];
+        particle.style.background = randomColor;
+        particlesContainer.appendChild(particle);
+    }
+    
+    // РЕАЛЬНЫЕ ДАННЫЕ ПОДПИСЧИКОВ
+    function updateRealStats() {
+        const REAL_SUBSCRIBERS = 51;
+        const REAL_POSTS = 484;
         
-        if (distance < 0) {
-            if (daysElement) daysElement.textContent = '00';
-            if (hoursElement) hoursElement.textContent = '00';
-            if (minutesElement) minutesElement.textContent = '00';
-            if (secondsElement) secondsElement.textContent = '00';
-            if (messageElement) {
+        const subscribersProgress = document.getElementById('subscribers-progress');
+        const postsProgress = document.getElementById('posts-progress');
+        const subscribersText = document.getElementById('subscribers-text');
+        const postsText = document.getElementById('posts-text');
+        const helpText = document.querySelector('.stat-item .help-text');
+        
+        subscribersProgress.style.width = `${REAL_SUBSCRIBERS}%`;
+        subscribersText.textContent = `${REAL_SUBSCRIBERS}/100`;
+        
+        const postsPercentage = (REAL_POSTS / 1000) * 100;
+        postsProgress.style.width = `${postsPercentage}%`;
+        postsText.textContent = `${REAL_POSTS}/1000`;
+        
+        if (REAL_SUBSCRIBERS >= 100) {
+            helpText.textContent = '🎉 Цель достигнута! Спасибо!';
+            helpText.style.color = '#ff3366';
+            helpText.style.fontWeight = 'bold';
+        } else if (REAL_SUBSCRIBERS >= 75) {
+            helpText.textContent = 'Почти у цели! Осталось немного! 🔥';
+            helpText.style.color = '#00ff88';
+        } else if (REAL_SUBSCRIBERS >= 50) {
+            helpText.textContent = 'Отлично! Уже половина пути! 💪';
+            helpText.style.color = '#00b4ff';
+        } else if (REAL_SUBSCRIBERS >= 25) {
+            helpText.textContent = 'Хороший старт! Продолжаем в том же духе! 🚀';
+            helpText.style.color = '#ffcc00';
+        } else {
+            helpText.textContent = 'Помогите достичь цели! Расскажите друзьям! 📢';
+            helpText.style.color = '#ff3366';
+        }
+        
+        console.log(`📊 Статистика: ${REAL_SUBSCRIBERS} подписчиков, ${REAL_POSTS} постов`);
+    }
+
+    function animateProgressBars() {
+        setTimeout(() => {
+            const subscribersProgress = document.getElementById('subscribers-progress');
+            const postsProgress = document.getElementById('posts-progress');
+            
+            subscribersProgress.style.transition = 'width 2s ease-in-out';
+            postsProgress.style.transition = 'width 2s ease-in-out';
+            
+            updateRealStats();
+        }, 1000);
+    }
+
+    // ОБРАТНЫЙ ОТСЧЕТ ДО НОВОГО 2026 ГОДА
+    function startCountdown() {
+        const targetDate = new Date('2026-01-01T00:00:00').getTime();
+        const daysElement = document.getElementById('days');
+        const hoursElement = document.getElementById('hours');
+        const minutesElement = document.getElementById('minutes');
+        const secondsElement = document.getElementById('seconds');
+        const messageElement = document.getElementById('countdownMessage');
+
+        const messages = [
+            "🎉 Скоро Новый 2026 Год!",
+            "⏰ Время летит незаметно...",
+            "🚀 Готовься к празднику!",
+            "🎁 Сколько планов на следующий год?",
+            "✨ Пусть мечты сбываются!",
+            "🔥 Готов к новым свершениям?",
+            "🌟 Новый год - новые возможности!",
+            "💫 2026 год будет твоим годом!",
+            "🚀 Двигаемся к новым целям!",
+            "🎯 Готовь список желаний на 2026!"
+        ];
+
+        let currentMessageIndex = 0;
+
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+
+            if (distance < 0) {
+                daysElement.textContent = '00';
+                hoursElement.textContent = '00';
+                minutesElement.textContent = '00';
+                secondsElement.textContent = '00';
                 messageElement.textContent = '🎉 С НОВЫМ 2026 ГОДОМ! 🎉';
                 messageElement.style.color = '#ff3366';
+                messageElement.style.fontSize = isMobileDevice() ? '1rem' : '1.2rem';
+                messageElement.style.fontWeight = 'bold';
+                return;
             }
-            return;
-        }
-        
-        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-        
-        if (daysElement) daysElement.textContent = days.toString().padStart(2, '0');
-        if (hoursElement) hoursElement.textContent = hours.toString().padStart(2, '0');
-        if (minutesElement) minutesElement.textContent = minutes.toString().padStart(2, '0');
-        if (secondsElement) secondsElement.textContent = seconds.toString().padStart(2, '0');
-        
-        if (messageElement && seconds % 10 === 0) {
-            const randomIndex = Math.floor(Math.random() * messages.length);
-            messageElement.textContent = messages[randomIndex];
-        }
-    }
-    
-    update();
-    setInterval(update, 1000);
-    
-    if (messageElement) {
-        messageElement.textContent = messages[0];
-    }
-}
 
-// Инициализация навигации
-function initNavigation() {
-    // Показываем первую страницу
-    showPage(0);
-    
-    // Обработчик колеса мыши
-    document.addEventListener('wheel', function(e) {
-        if (!canScroll) return;
-        
-        canScroll = false;
-        
-        if (e.deltaY > 0) {
-            nextPage();
-        } else {
-            prevPage();
-        }
-        
-        setTimeout(() => { canScroll = true; }, 800);
-    });
-    
-    // Обработчик касаний для мобильных
-    let startY = 0;
-    
-    document.addEventListener('touchstart', function(e) {
-        startY = e.touches[0].clientY;
-    });
-    
-    document.addEventListener('touchend', function(e) {
-        if (!canScroll) return;
-        
-        const endY = e.changedTouches[0].clientY;
-        const diff = startY - endY;
-        
-        if (Math.abs(diff) > 50) {
-            canScroll = false;
-            
-            if (diff > 0) {
-                nextPage();
-            } else {
-                prevPage();
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            daysElement.textContent = days.toString().padStart(2, '0');
+            hoursElement.textContent = hours.toString().padStart(2, '0');
+            minutesElement.textContent = minutes.toString().padStart(2, '0');
+            secondsElement.textContent = seconds.toString().padStart(2, '0');
+
+            if (seconds % 10 === 0) {
+                messageElement.textContent = messages[currentMessageIndex];
+                currentMessageIndex = (currentMessageIndex + 1) % messages.length;
+            }
+
+            // Специальные эффекты при приближении
+            if (days < 30) {
+                messageElement.style.animation = 'messagePulse 1s infinite';
             }
             
-            setTimeout(() => { canScroll = true; }, 800);
+            if (days < 7) {
+                document.querySelector('.countdown-section').style.animation = 'countdownGlow 0.5s infinite alternate';
+            }
+
+            if (days === 0 && hours < 24) {
+                document.body.style.background = 'linear-gradient(45deg, #ff0000, #ff3366)';
+                messageElement.textContent = '🎇 СЧЕТЧИК ЗАПУЩЕН! СКОРО 2026! 🎇';
+            }
+            
+            // Эффект для последнего часа
+            if (days === 0 && hours < 1) {
+                messageElement.textContent = '⚡ ПОСЛЕДНИЙ ЧАС 2025 ГОДА! ⚡';
+                messageElement.style.color = '#00ff88';
+            }
         }
-    });
+
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+        messageElement.textContent = messages[Math.floor(Math.random() * messages.length)];
+    }
+
+    // ЗАПУСК ВСЕХ ФУНКЦИЙ
+    animateProgressBars();
+    startCountdown();
     
-    // Клики по точкам-индикаторам
-    const dots = document.querySelectorAll('.page-dot');
-    dots.forEach(dot => {
-        dot.addEventListener('click', function() {
-            const pageIndex = parseInt(this.getAttribute('data-page'));
-            showPage(pageIndex);
+    // Упрощенный эффект частиц для мобильных
+    if (!isMobileDevice()) {
+        document.addEventListener('mousemove', (e) => {
+            const particles = document.querySelectorAll('.particle');
+            particles.forEach(particle => {
+                const rect = particle.getBoundingClientRect();
+                const particleX = rect.left + rect.width / 2;
+                const particleY = rect.top + rect.height / 2;
+                const distance = Math.sqrt(
+                    Math.pow(e.clientX - particleX, 2) + 
+                    Math.pow(e.clientY - particleY, 2)
+                );
+                if (distance < 100) {
+                    particle.style.transform = `translate(${(e.clientX - particleX) * 0.1}px, ${(e.clientY - particleY) * 0.1}px)`;
+                }
+            });
         });
-    });
-}
-
-// Показать страницу
-function showPage(index) {
-    if (index < 0 || index >= totalPages) return;
-    
-    currentPage = index;
-    
-    // Скрываем все страницы
-    const pages = document.querySelectorAll('.page');
-    pages.forEach(page => {
-        page.classList.remove('active');
-    });
-    
-    // Показываем текущую страницу
-    pages[index].classList.add('active');
-    
-    // Обновляем индикаторы
-    const dots = document.querySelectorAll('.page-dot');
-    dots.forEach(dot => {
-        dot.classList.remove('active');
-    });
-    dots[index].classList.add('active');
-}
-
-// Следующая страница
-function nextPage() {
-    if (currentPage < totalPages - 1) {
-        showPage(currentPage + 1);
     }
-}
+});
 
-// Предыдущая страница
-function prevPage() {
-    if (currentPage > 0) {
-        showPage(currentPage - 1);
-    }
-}
-
-// Функции для кнопок
 function shareTelegram() {
     const url = 'https://t.me/Lysmanov';
-    const text = 'Подпишись на крутой канал LYSMANOV ✞!';
-    window.open('https://t.me/share/url?url=' + encodeURIComponent(url) + '&text=' + encodeURIComponent(text), '_blank');
+    const text = 'Подпишись на крутой канал LYSMANOV ✞ - важные новости, интересный контент, повседневность и многое другое!';
+    window.open(`https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`, '_blank');
 }
 
 function copyLink() {
     const url = 'https://t.me/Lysmanov';
-    navigator.clipboard.writeText(url).then(function() {
+    navigator.clipboard.writeText(url).then(() => {
         alert('Ссылка скопирована в буфер обмена!');
-    }).catch(function() {
+    }).catch(() => {
+        const textArea = document.createElement('textarea');
+        textArea.value = url;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
         alert('Ссылка скопирована!');
     });
 }
-
-console.log('🚀 LYSMANOV Site - Script loaded');
