@@ -23,28 +23,19 @@ document.addEventListener('DOMContentLoaded', function() {
 // Мобильная версия
 function initMobileVersion() {
     console.log('📱 Mobile version initialized');
-    
-    // Запускаем обратный отсчет для мобильных
     startMobileCountdown();
-    
-    // Инициализируем навигацию
     initMobileNavigation();
 }
 
 // ПК версия  
 function initDesktopVersion() {
     console.log('💻 Desktop version initialized');
-    
-    // Анимация текста
     animateDesktopText();
-    
-    // Запускаем обратный отсчет для ПК
     startDesktopCountdown();
 }
 
 // Общие функции
 function initCommonFeatures() {
-    // Инициализация частиц
     initParticles();
 }
 
@@ -52,10 +43,7 @@ function initCommonFeatures() {
 function updateAllStats() {
     const subscribers = 51;
     const posts = 484;
-    
-    // Прогресс для подписчиков (51%)
     const subsProgress = 51;
-    // Прогресс для постов (48.4%)
     const postsProgress = 48.4;
     
     // Мобильные элементы
@@ -163,7 +151,7 @@ function startMobileCountdown() {
     }
 }
 
-// Обратный отсчет для ПК - ИСПРАВЛЕННЫЙ
+// Обратный отсчет для ПК
 function startDesktopCountdown() {
     const targetDate = new Date('2026-01-01T00:00:00').getTime();
     const messageElement = document.getElementById('countdownMessage');
@@ -220,11 +208,9 @@ function startDesktopCountdown() {
         }
     }
     
-    // Запускаем сразу и потом каждую секунду
     update();
     setInterval(update, 1000);
     
-    // Первое сообщение
     if (messageElement) {
         messageElement.textContent = messages[0];
     }
@@ -256,10 +242,8 @@ function initMobileNavigation() {
     const dots = document.querySelectorAll('.dot');
     let currentSection = 0;
     
-    // Показываем первую секцию
     showMobileSection(0);
     
-    // Обработчик скролла
     let isScrolling = false;
     
     window.addEventListener('wheel', function(e) {
@@ -276,7 +260,6 @@ function initMobileNavigation() {
         setTimeout(() => { isScrolling = false; }, 800);
     });
     
-    // Обработчик касаний
     let startY = 0;
     
     window.addEventListener('touchstart', function(e) {
@@ -302,7 +285,6 @@ function initMobileNavigation() {
         }
     });
     
-    // Клики по точкам
     dots.forEach(dot => {
         dot.addEventListener('click', function() {
             const sectionIndex = parseInt(this.getAttribute('data-page'));
@@ -311,15 +293,12 @@ function initMobileNavigation() {
     });
     
     function showMobileSection(index) {
-        // Скрываем все секции
         sections.forEach(section => {
             section.classList.remove('active');
         });
         
-        // Показываем выбранную секцию
         sections[index].classList.add('active');
         
-        // Обновляем точки
         dots.forEach(dot => {
             dot.classList.remove('active');
         });
@@ -327,7 +306,6 @@ function initMobileNavigation() {
         
         currentSection = index;
         
-        // Плавная прокрутка
         sections[index].scrollIntoView({
             behavior: 'smooth',
             block: 'start'
@@ -371,7 +349,7 @@ function shareTelegram() {
 function copyLink() {
     const url = 'https://t.me/Lysmanov';
     navigator.clipboard.writeText(url).then(function() {
-        alert('Ссылка скопирована!');
+        alert('✅ Ссылка скопирована!');
     }).catch(function() {
         const textArea = document.createElement('textarea');
         textArea.value = url;
@@ -379,6 +357,12 @@ function copyLink() {
         textArea.select();
         document.execCommand('copy');
         document.body.removeChild(textArea);
-        alert('Ссылка скопирована!');
+        alert('✅ Ссылка скопирована!');
     });
+}
+
+// Новая функция: обновление статистики (можно добавить позже)
+function updateStatsFromServer() {
+    // Здесь можно добавить загрузку реальной статистики
+    console.log('📡 Можно добавить загрузку статистики с сервера');
 }
