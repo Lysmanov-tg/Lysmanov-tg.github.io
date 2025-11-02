@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=0.8, maximum-scale=1.0, user-scalable=no">
     <title>LYSMANOV ✞ | Официальный Telegram-канал</title>
     <link rel="icon" type="image/x-icon" href="https://ltdfoto.ru/images/2025/11/01/5193047870037687295.jpg">
     <link rel="stylesheet" href="style.css">
@@ -12,88 +12,122 @@
     <div class="overlay"></div>
     <div class="particles" id="particles"></div>
     
-    <div class="container">
-        <div class="watermark">
-            <div class="text-container">
-                <span class="main-text" id="text">LYSMANOV</span>
-                <span class="cross">✞</span>
-            </div>
+    <!-- Мобильный индикатор -->
+    <div class="mobile-indicator">
+        <div class="indicator-dots">
+            <span class="dot active" data-page="0"></span>
+            <span class="dot" data-page="1"></span>
+            <span class="dot" data-page="2"></span>
         </div>
-        
-        <div class="signature" id="signature">https://t.me/Lysmanov</div>
+    </div>
+    
+    <!-- Основной контент с вертикальным скроллом -->
+    <div class="mobile-content">
+        <!-- Секция 1: Заголовок -->
+        <section class="mobile-section active" id="section-0">
+            <div class="mobile-container">
+                <div class="mobile-header">
+                    <div class="mobile-title">
+                        <span class="title-text">LYSMANOV</span>
+                        <span class="title-cross">✞</span>
+                    </div>
+                    <div class="mobile-subtitle">https://t.me/Lysmanov</div>
+                </div>
+                
+                <div class="mobile-main">
+                    <a href="https://t.me/Lysmanov" class="mobile-button" target="_blank">
+                        📢 ПОДПИСАТЬСЯ НА КАНАЛ
+                    </a>
+                    
+                    <div class="mobile-hint">
+                        ⬇️ Листайте вниз
+                    </div>
+                </div>
+            </div>
+        </section>
 
-        <div class="telegram-elements">
-            <a href="https://t.me/Lysmanov" class="tg-button" target="_blank">
-                📢 ПОДПИСАТЬСЯ НА КАНАЛ
-            </a>
-            
-            <div class="channel-stats">
-                <div class="stat-item">
-                    <div class="goal-container">
-                        <div class="goal-text">ЦЕЛЬ: 100 ПОДПИСЧИКОВ</div>
-                        <div class="progress-container">
-                            <div class="progress-bar">
-                                <div class="progress-fill" id="subscribers-progress"></div>
+        <!-- Секция 2: Статистика -->
+        <section class="mobile-section" id="section-1">
+            <div class="mobile-container">
+                <div class="mobile-stats">
+                    <div class="stat-card">
+                        <div class="stat-title">🎯 ЦЕЛИ КАНАЛА</div>
+                        <div class="stat-item">
+                            <div class="stat-label">Подписчики:</div>
+                            <div class="stat-progress">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 51%"></div>
+                                </div>
+                                <div class="stat-numbers">51/100</div>
                             </div>
-                            <div class="progress-text" id="subscribers-text">51/100</div>
                         </div>
-                        <div class="help-text">Помогите достичь цели!</div>
-                    </div>
-                </div>
-                <div class="stat-item">
-                    <div class="goal-container">
-                        <div class="goal-text">ЦЕЛЬ: 1000 ПОСТОВ</div>
-                        <div class="progress-container">
-                            <div class="progress-bar">
-                                <div class="progress-fill" id="posts-progress"></div>
+                        <div class="stat-item">
+                            <div class="stat-label">Посты:</div>
+                            <div class="stat-progress">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 48.4%"></div>
+                                </div>
+                                <div class="stat-numbers">484/1000</div>
                             </div>
-                            <div class="progress-text" id="posts-text">484/1000</div>
                         </div>
-                        <div class="help-text">Следите за новым контентом!</div>
+                    </div>
+                    
+                    <div class="mobile-hint">
+                        ⬇️ Листайте дальше
                     </div>
                 </div>
             </div>
-            
-            <div class="countdown-section">
-                <div class="countdown-title">🎄 До Нового 2026 года:</div>
-                <div class="countdown-timer" id="countdown">
-                    <div class="time-unit">
-                        <span class="time-number" id="days">00</span>
-                        <span class="time-label">дней</span>
-                    </div>
-                    <div class="time-unit">
-                        <span class="time-number" id="hours">00</span>
-                        <span class="time-label">часов</span>
-                    </div>
-                    <div class="time-unit">
-                        <span class="time-number" id="minutes">00</span>
-                        <span class="time-label">минут</span>
-                    </div>
-                    <div class="time-unit">
-                        <span class="time-number" id="seconds">00</span>
-                        <span class="time-label">секунд</span>
+        </section>
+
+        <!-- Секция 3: Обратный отсчет и преимущества -->
+        <section class="mobile-section" id="section-2">
+            <div class="mobile-container">
+                <!-- Обратный отсчет -->
+                <div class="countdown-card">
+                    <div class="countdown-title">⏰ До 2026 года:</div>
+                    <div class="countdown-timer">
+                        <div class="time-block">
+                            <div class="time-number" id="mobile-days">00</div>
+                            <div class="time-label">дней</div>
+                        </div>
+                        <div class="time-block">
+                            <div class="time-number" id="mobile-hours">00</div>
+                            <div class="time-label">часов</div>
+                        </div>
+                        <div class="time-block">
+                            <div class="time-number" id="mobile-minutes">00</div>
+                            <div class="time-label">минут</div>
+                        </div>
+                        <div class="time-block">
+                            <div class="time-number" id="mobile-seconds">00</div>
+                            <div class="time-label">секунд</div>
+                        </div>
                     </div>
                 </div>
-                <div class="countdown-message" id="countdownMessage"></div>
-            </div>
-            
-            <div class="benefits">
-                <div class="benefits-title">💎 ЧТО ВЫ ПОЛУЧИТЕ:</div>
-                <p class="benefits-list">
-                    Важные новости • Интересный контент • Повседневность<br>
-                    Эксклюзивные материалы • Личный опыт • Полезные советы<br>
-                    Ежедневные обновления • Многое другое!
-                </p>
-            </div>
-            
-            <div class="share-section">
-                <div class="share-text">Поделитесь с друзьями:</div>
-                <div class="share-buttons">
-                    <button class="share-button" onclick="shareTelegram()">Telegram</button>
-                    <button class="share-button" onclick="copyLink()">Скопировать ссылку</button>
+                
+                <!-- Преимущества -->
+                <div class="benefits-card">
+                    <div class="benefits-title">💎 ЧТО ВЫ ПОЛУЧИТЕ:</div>
+                    <div class="benefits-list">
+                        <div class="benefit-item">📰 Важные новости</div>
+                        <div class="benefit-item">🎯 Интересный контент</div>
+                        <div class="benefit-item">📅 Повседневность</div>
+                        <div class="benefit-item">💎 Эксклюзивные материалы</div>
+                        <div class="benefit-item">👤 Личный опыт</div>
+                        <div class="benefit-item">💡 Полезные советы</div>
+                    </div>
+                </div>
+                
+                <!-- Кнопки поделиться -->
+                <div class="share-card">
+                    <div class="share-title">Поделитесь с друзьями:</div>
+                    <div class="share-buttons">
+                        <button class="share-btn" onclick="shareTelegram()">📱 Telegram</button>
+                        <button class="share-btn" onclick="copyLink()">📋 Копировать ссылку</button>
+                    </div>
                 </div>
             </div>
-        </div>
+        </section>
     </div>
 
     <script src="script.js"></script>
