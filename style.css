@@ -20,12 +20,14 @@ html, body {
     width: 100%;
     height: 100%;
     overflow: hidden;
+    background: var(--bg-color);
 }
 
 body {
     background: var(--bg-color);
     font-family: 'Special Elite', cursive;
     color: var(--text-color);
+    overflow: hidden;
 }
 
 /* Фоновые элементы */
@@ -79,6 +81,7 @@ body {
     width: 100%;
     height: 100vh;
     overflow: hidden;
+    background: transparent;
 }
 
 /* Мобильный контент */
@@ -89,6 +92,7 @@ body {
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     scroll-snap-type: y mandatory;
+    background: transparent;
 }
 
 .mobile-section {
@@ -100,17 +104,20 @@ body {
     scroll-snap-align: start;
     transform: scale(0.95);
     transform-origin: top center;
+    background: transparent;
 }
 
 .mobile-container {
     width: 100%;
     max-width: 400px;
     text-align: center;
+    background: transparent;
 }
 
 /* Мобильный заголовок */
 .mobile-header {
     margin-bottom: 30px;
+    background: transparent;
 }
 
 .mobile-title {
@@ -120,6 +127,7 @@ body {
     gap: 10px;
     margin-bottom: 15px;
     flex-wrap: wrap;
+    background: transparent;
 }
 
 .title-text {
@@ -131,6 +139,7 @@ body {
         2px 2px 0 var(--accent-color),
         4px 4px 0 rgba(139, 0, 0, 0.5);
     line-height: 1;
+    background: transparent;
 }
 
 .title-cross {
@@ -139,6 +148,7 @@ body {
     text-shadow: 
         2px 2px 0 var(--accent-color),
         4px 4px 0 rgba(139, 0, 0, 0.5);
+    background: transparent;
 }
 
 .mobile-subtitle {
@@ -146,6 +156,7 @@ body {
     color: var(--secondary-color);
     text-shadow: 0 0 10px rgba(0, 180, 255, 0.5);
     font-style: italic;
+    background: transparent;
 }
 
 /* Мобильная кнопка */
@@ -171,9 +182,10 @@ body {
     transform: scale(0.95);
 }
 
-/* Мобильная статистика */
+/* Мобильная статистика - ИСПРАВЛЕННЫЕ ПРОГРЕСС-БАРЫ */
 .mobile-stats {
     width: 100%;
+    background: transparent;
 }
 
 .stat-card {
@@ -212,17 +224,40 @@ body {
 
 .progress-bar {
     flex: 1;
-    height: 8px;
+    height: 12px;
     background: rgba(255, 255, 255, 0.1);
-    border-radius: 4px;
+    border-radius: 6px;
     overflow: hidden;
+    position: relative;
 }
 
 .progress-fill {
     height: 100%;
     background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
-    border-radius: 4px;
-    transition: width 1s ease;
+    border-radius: 6px;
+    width: 0%;
+    transition: width 2s ease-in-out;
+    position: relative;
+    overflow: hidden;
+}
+
+.progress-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, 
+        transparent 0%, 
+        rgba(255,255,255,0.3) 50%, 
+        transparent 100%);
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
 }
 
 .stat-numbers {
@@ -230,6 +265,7 @@ body {
     font-size: 0.9rem;
     min-width: 50px;
     text-align: right;
+    font-weight: bold;
 }
 
 /* Мобильный обратный отсчет */
@@ -276,6 +312,15 @@ body {
     font-size: 0.7rem;
     color: var(--text-color);
     opacity: 0.8;
+}
+
+.countdown-message {
+    color: var(--primary-color);
+    font-size: 0.9rem;
+    font-style: italic;
+    margin-top: 10px;
+    min-height: 20px;
+    animation: messagePulse 2s infinite;
 }
 
 /* Мобильные преимущества */
@@ -404,6 +449,7 @@ body {
     height: 100vh;
     align-items: center;
     justify-content: center;
+    background: transparent;
 }
 
 .container {
@@ -417,6 +463,7 @@ body {
     justify-content: center;
     padding: 2rem;
     gap: 2rem;
+    background: transparent;
 }
 
 .watermark {
@@ -428,6 +475,7 @@ body {
     transform-style: preserve-3d;
     margin-bottom: 1rem;
     z-index: 3;
+    background: transparent;
 }
 
 .text-container {
@@ -437,6 +485,7 @@ body {
     filter: drop-shadow(0 0 15px rgba(255, 51, 102, 0.7));
     flex-wrap: wrap;
     justify-content: center;
+    background: transparent;
 }
 
 .main-text {
@@ -454,6 +503,7 @@ body {
         4px 4px 0 rgba(139, 0, 0, 0.5),
         6px 6px 0 rgba(139, 0, 0, 0.3);
     white-space: nowrap;
+    background: transparent;
 }
 
 .letter {
@@ -465,6 +515,7 @@ body {
         snakeMove3D 6s infinite ease-in-out 2s;
     transform: rotateX(90deg) translateY(100px) scale(0.5);
     font-style: italic;
+    background: transparent;
 }
 
 .cross {
@@ -485,6 +536,7 @@ body {
         2px 2px 0 var(--accent-color),
         4px 4px 0 rgba(139, 0, 0, 0.5);
     font-style: italic;
+    background: transparent;
 }
 
 .signature {
@@ -503,6 +555,7 @@ body {
     z-index: 3;
     position: relative;
     text-align: center;
+    background: transparent;
 }
 
 .telegram-elements {
@@ -514,6 +567,7 @@ body {
     gap: 1.5rem;
     width: 100%;
     max-width: 500px;
+    background: transparent;
 }
 
 .tg-button {
@@ -539,6 +593,7 @@ body {
     box-shadow: 0 10px 20px rgba(0, 180, 255, 0.4);
 }
 
+/* ПК СТАТИСТИКА - ИСПРАВЛЕННЫЕ ПРОГРЕСС-БАРЫ */
 .channel-stats {
     display: flex;
     gap: 20px;
@@ -547,6 +602,7 @@ body {
     z-index: 3;
     flex-wrap: wrap;
     justify-content: center;
+    background: transparent;
 }
 
 .stat-item {
@@ -555,6 +611,7 @@ body {
     align-items: center;
     animation: statPulse 3s infinite;
     min-width: 100px;
+    background: transparent;
 }
 
 .goal-container {
@@ -562,6 +619,7 @@ body {
     max-width: 300px;
     margin-top: 10px;
     text-align: center;
+    background: transparent;
 }
 
 .goal-text {
@@ -571,6 +629,7 @@ body {
     text-align: center;
     font-style: italic;
     font-weight: bold;
+    background: transparent;
 }
 
 .help-text {
@@ -579,29 +638,48 @@ body {
     margin-top: 10px;
     text-align: center;
     animation: helpPulse 2s infinite;
+    background: transparent;
 }
 
 .progress-container {
     width: 100%;
     max-width: 300px;
     margin-top: 10px;
+    background: transparent;
 }
 
 .progress-bar {
     width: 100%;
-    height: 8px;
+    height: 12px;
     background: rgba(255, 255, 255, 0.1);
-    border-radius: 4px;
+    border-radius: 6px;
     overflow: hidden;
     margin-top: 5px;
+    position: relative;
 }
 
 .progress-fill {
     height: 100%;
     background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
-    border-radius: 4px;
+    border-radius: 6px;
     width: 0%;
     transition: width 2s ease-in-out;
+    position: relative;
+    overflow: hidden;
+}
+
+.progress-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, 
+        transparent 0%, 
+        rgba(255,255,255,0.3) 50%, 
+        transparent 100%);
+    animation: shimmer 2s infinite;
 }
 
 .progress-text {
@@ -609,6 +687,8 @@ body {
     color: var(--secondary-color);
     margin-top: 3px;
     text-align: center;
+    background: transparent;
+    font-weight: bold;
 }
 
 .benefits {
@@ -643,17 +723,20 @@ body {
     align-items: center;
     gap: 10px;
     margin-top: 10px;
+    background: transparent;
 }
 
 .share-text {
     font-size: 0.8rem;
     color: var(--secondary-color);
     text-align: center;
+    background: transparent;
 }
 
 .share-buttons {
     display: flex;
     gap: 10px;
+    background: transparent;
 }
 
 .share-button {
