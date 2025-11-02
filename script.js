@@ -1,4 +1,4 @@
-// script.js - ИСПРАВЛЕННЫЙ ДЛЯ ПРАВИЛЬНЫХ ПРОГРЕСС-БАРОВ
+// script.js - ПОЛНЫЙ КОД С АНИМИРОВАННЫМИ СОВЕТАМИ
 class LysmanovSite {
     constructor() {
         this.stats = {
@@ -24,6 +24,7 @@ class LysmanovSite {
         await this.loadStats();
         this.initCountdown();
         this.initParticles();
+        this.initAnimatedTips(); // Инициализируем советы
         
         if (this.isMobile) {
             this.initMobileNavigation();
@@ -48,7 +49,6 @@ class LysmanovSite {
     }
 
     async getChannelStats() {
-        // Всегда используем реальные базовые цифры
         return {
             subscribers: 51,
             posts: 485,
@@ -72,25 +72,10 @@ class LysmanovSite {
         this.createNotification('📊 Статистика обновлена!', `Подписчики: ${newSubscribers}, Посты: ${newPosts}`);
     }
 
-    // ИСПРАВЛЕННАЯ ФУНКЦИЯ ДЛЯ ПРОГРЕСС-БАРОВ
     updateStatsUI() {
-        // ПРАВИЛЬНЫЙ РАСЧЕТ ПРОЦЕНТОВ
         const subsProgress = (this.stats.subscribers / 100) * 100;
         const postsProgress = (this.stats.posts / 1000) * 100;
 
-        console.log('🎯 Progress calculation:', {
-            subscribers: this.stats.subscribers,
-            subsProgress: subsProgress + '%',
-            posts: this.stats.posts,
-            postsProgress: postsProgress + '%'
-        });
-
-        this.updateProgressBars(subsProgress, postsProgress);
-        this.updateStatsText();
-    }
-
-    updateProgressBars(subsProgress, postsProgress) {
-        // ОГРАНИЧИВАЕМ МАКСИМУМ 100%
         const safeSubsProgress = Math.min(subsProgress, 100);
         const safePostsProgress = Math.min(postsProgress, 100);
 
@@ -104,20 +89,16 @@ class LysmanovSite {
         bars.forEach(({ id, width }) => {
             const element = document.getElementById(id);
             if (element) {
-                // Сбрасываем анимацию
                 element.style.transition = 'none';
                 element.style.width = '0%';
                 
-                // Запускаем плавное заполнение
                 setTimeout(() => {
                     element.style.transition = 'width 1.5s ease-in-out';
                     element.style.width = width + '%';
                 }, 50);
             }
         });
-    }
 
-    updateStatsText() {
         const texts = [
             { id: 'mobile-subs-text', value: `${this.stats.subscribers}/100` },
             { id: 'mobile-posts-text', value: `${this.stats.posts}/1000` },
@@ -131,14 +112,376 @@ class LysmanovSite {
                 element.textContent = value;
             }
         });
-
-        // Показываем текущие значения в консоли для отладки
-        console.log('📈 Current stats:', {
-            subscribers: this.stats.subscribers,
-            posts: this.stats.posts
-        });
     }
 
+    // СИСТЕМА АНИМИРОВАННЫХ СОВЕТОВ
+    initAnimatedTips() {
+        this.tips = [
+            "💡 Знаете ли вы? Можно поделиться сайтом с друзьями!",
+            "🎯 Цель: 100 подписчиков до конца месяца!",
+            "⭐ Не забудьте подписаться на канал!",
+            "🚀 Новые посты выходят каждый день!",
+            "💎 Эксклюзивный контент только для подписчиков!",
+            "📱 Листайте вниз чтобы увидеть больше информации!",
+            "🎁 Следите за специальными предложениями!",
+            "👥 Пригласите друзей - получите бонусы!",
+            "🔥 Самый интересный контент еще впереди!",
+            "💫 Вы среди первых подписчиков канала!",
+            "🎊 Скоро Новый Год - готовьтесь к сюрпризам!",
+            "📈 Мы растем вместе с вами!",
+            "💌 Есть идеи? Напишите в комментариях!",
+            "🌟 Оцените наш контент - поставьте реакцию!",
+            "🔄 Не пропустите обновления - включите уведомления!"
+        ];
+        
+        this.currentTipIndex = 0;
+        this.isTipsEnabled = true;
+        this.tipInterval = null;
+        this.createTipContainer();
+        this.startTipsRotation();
+        
+        // Показываем приветственный совет через 3 секунды
+        setTimeout(() => {
+            this.showWelcomeTip();
+        }, 3000);
+    }
+
+    createTipContainer() {
+        this.tipContainer = document.createElement('div');
+        this.tipContainer.className = 'animated-tips-container';
+        this.tipContainer.innerHTML = `
+            <div class="tip-header">
+                <span class="tip-icon">💡</span>
+                <span class="tip-title">Совет дня</span>
+                <button class="tip-close" onclick="window.lysmanovSite.hideTips()">×</button>
+            </div>
+            <div class="tip-content">
+                <div class="tip-text">${this.tips[0]}</div>
+                <div class="tip-progress"><div class="tip-progress-bar"></div></div>
+            </div>
+            <div class="tip-controls">
+                <button class="tip-prev" onclick="window.lysmanovSite.prevTip()">‹</button>
+                <button class="tip-pause" onclick="window.lysmanovSite.toggleTips()">⏸️</button>
+                <button class="tip-next" onclick="window.lysmanovSite.nextTip()">›</button>
+            </div>
+        `;
+
+        document.body.appendChild(this.tipContainer);
+        this.applyTipStyles();
+    }
+
+    applyTipStyles() {
+        const styles = `
+            .animated-tips-container {
+                position: fixed;
+                bottom: 20px;
+                left: 20px;
+                width: 320px;
+                background: linear-gradient(135deg, rgba(255,51,102,0.95), rgba(0,180,255,0.95));
+                border-radius: 15px;
+                padding: 0;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255,255,255,0.2);
+                z-index: 10000;
+                font-family: 'Special Elite', cursive;
+                overflow: hidden;
+                animation: tipSlideIn 0.5s ease-out;
+            }
+
+            @keyframes tipSlideIn {
+                from {
+                    transform: translateX(-100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+
+            @keyframes tipSlideOut {
+                from {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateX(-100%);
+                    opacity: 0;
+                }
+            }
+
+            .tip-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 12px 15px;
+                background: rgba(0,0,0,0.2);
+                border-bottom: 1px solid rgba(255,255,255,0.1);
+            }
+
+            .tip-icon {
+                font-size: 1.2rem;
+                animation: iconPulse 2s infinite;
+            }
+
+            @keyframes iconPulse {
+                0%, 100% { transform: scale(1); }
+                50% { transform: scale(1.1); }
+            }
+
+            .tip-title {
+                color: white;
+                font-weight: bold;
+                font-size: 0.9rem;
+            }
+
+            .tip-close {
+                background: none;
+                border: none;
+                color: white;
+                font-size: 1.5rem;
+                cursor: pointer;
+                padding: 0;
+                width: 25px;
+                height: 25px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.3s ease;
+            }
+
+            .tip-close:hover {
+                background: rgba(255,255,255,0.2);
+                transform: scale(1.1);
+            }
+
+            .tip-content {
+                padding: 15px;
+            }
+
+            .tip-text {
+                color: white;
+                font-size: 0.9rem;
+                line-height: 1.4;
+                min-height: 40px;
+                display: flex;
+                align-items: center;
+                animation: textFade 0.5s ease-in-out;
+            }
+
+            @keyframes textFade {
+                from {
+                    opacity: 0;
+                    transform: translateY(10px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .tip-progress {
+                height: 3px;
+                background: rgba(255,255,255,0.3);
+                border-radius: 2px;
+                margin-top: 10px;
+                overflow: hidden;
+            }
+
+            .tip-progress-bar {
+                height: 100%;
+                background: white;
+                border-radius: 2px;
+                width: 100%;
+                animation: progressShrink 8s linear;
+            }
+
+            @keyframes progressShrink {
+                from { width: 100%; }
+                to { width: 0%; }
+            }
+
+            .tip-controls {
+                display: flex;
+                justify-content: space-between;
+                padding: 10px 15px;
+                background: rgba(0,0,0,0.1);
+                border-top: 1px solid rgba(255,255,255,0.1);
+            }
+
+            .tip-prev, .tip-next, .tip-pause {
+                background: rgba(255,255,255,0.2);
+                border: none;
+                color: white;
+                width: 30px;
+                height: 30px;
+                border-radius: 50%;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.3s ease;
+                font-size: 1rem;
+            }
+
+            .tip-prev:hover, .tip-next:hover, .tip-pause:hover {
+                background: rgba(255,255,255,0.3);
+                transform: scale(1.1);
+            }
+
+            .tip-pause {
+                font-size: 0.8rem;
+            }
+
+            @media (max-width: 768px) {
+                .animated-tips-container {
+                    left: 10px;
+                    right: 10px;
+                    width: auto;
+                    bottom: 10px;
+                }
+            }
+
+            .tip-premium {
+                background: linear-gradient(135deg, rgba(255,215,0,0.95), rgba(255,140,0,0.95)) !important;
+            }
+
+            .tip-urgent {
+                animation: urgentPulse 2s infinite !important;
+            }
+
+            @keyframes urgentPulse {
+                0%, 100% { box-shadow: 0 0 0 rgba(255,51,102,0.5); }
+                50% { box-shadow: 0 0 20px rgba(255,51,102,0.8); }
+            }
+
+            .tip-success {
+                background: linear-gradient(135deg, rgba(76,175,80,0.95), rgba(56,142,60,0.95)) !important;
+            }
+        `;
+
+        const styleSheet = document.createElement('style');
+        styleSheet.textContent = styles;
+        document.head.appendChild(styleSheet);
+    }
+
+    startTipsRotation() {
+        this.tipInterval = setInterval(() => {
+            if (this.isTipsEnabled) {
+                this.nextTip();
+            }
+        }, 8000);
+    }
+
+    showCurrentTip() {
+        if (!this.tipContainer) return;
+
+        const tipText = this.tipContainer.querySelector('.tip-text');
+        const progressBar = this.tipContainer.querySelector('.tip-progress');
+        
+        if (tipText) {
+            tipText.textContent = this.tips[this.currentTipIndex];
+            tipText.style.animation = 'none';
+            setTimeout(() => {
+                tipText.style.animation = 'textFade 0.5s ease-in-out';
+            }, 10);
+        }
+
+        if (progressBar) {
+            progressBar.innerHTML = '<div class="tip-progress-bar"></div>';
+        }
+
+        this.applySpecialTipStyles();
+    }
+
+    applySpecialTipStyles() {
+        const tip = this.tips[this.currentTipIndex];
+        this.tipContainer.classList.remove('tip-premium', 'tip-urgent', 'tip-success');
+
+        if (tip.includes('💎') || tip.includes('🎁')) {
+            this.tipContainer.classList.add('tip-premium');
+        } else if (tip.includes('🔥') || tip.includes('🚀')) {
+            this.tipContainer.classList.add('tip-urgent');
+        } else if (tip.includes('⭐') || tip.includes('🎯')) {
+            this.tipContainer.classList.add('tip-success');
+        }
+    }
+
+    nextTip() {
+        this.currentTipIndex = (this.currentTipIndex + 1) % this.tips.length;
+        this.showCurrentTip();
+        this.createTipTransitionEffect();
+    }
+
+    prevTip() {
+        this.currentTipIndex = (this.currentTipIndex - 1 + this.tips.length) % this.tips.length;
+        this.showCurrentTip();
+        this.createTipTransitionEffect();
+    }
+
+    createTipTransitionEffect() {
+        this.tipContainer.style.transform = 'translateX(-10px)';
+        setTimeout(() => {
+            this.tipContainer.style.transform = 'translateX(0)';
+            this.tipContainer.style.transition = 'transform 0.3s ease';
+        }, 100);
+    }
+
+    toggleTips() {
+        this.isTipsEnabled = !this.isTipsEnabled;
+        const pauseBtn = this.tipContainer.querySelector('.tip-pause');
+        
+        if (pauseBtn) {
+            pauseBtn.textContent = this.isTipsEnabled ? '⏸️' : '▶️';
+        }
+
+        if (this.isTipsEnabled) {
+            this.startTipsRotation();
+        } else {
+            clearInterval(this.tipInterval);
+        }
+    }
+
+    hideTips() {
+        if (this.tipContainer) {
+            this.tipContainer.style.animation = 'tipSlideOut 0.5s ease-in forwards';
+            setTimeout(() => {
+                if (this.tipContainer && this.tipContainer.parentNode) {
+                    this.tipContainer.parentNode.removeChild(this.tipContainer);
+                }
+            }, 500);
+        }
+        clearInterval(this.tipInterval);
+    }
+
+    showTips() {
+        if (!this.tipContainer || !this.tipContainer.parentNode) {
+            this.createTipContainer();
+            this.startTipsRotation();
+        }
+    }
+
+    addCustomTip(tip, type = 'normal') {
+        this.tips.push(tip);
+        this.currentTipIndex = this.tips.length - 1;
+        this.showCurrentTip();
+    }
+
+    showWelcomeTip() {
+        this.addCustomTip("🎉 Добро пожаловать на сайт LYSMANOV! Исследуйте все возможности!", 'premium');
+    }
+
+    showSubscriptionTip() {
+        this.addCustomTip("🔔 Подпишитесь на канал чтобы не пропустить важные обновления!", 'urgent');
+    }
+
+    showShareTip() {
+        this.addCustomTip("📢 Понравился сайт? Поделитесь с друзьями!", 'success');
+    }
+
+    // Остальные методы сайта...
     createNotification(title, message) {
         const notification = document.createElement('div');
         notification.className = 'stats-notification';
@@ -374,11 +717,18 @@ class LysmanovSite {
     }
 }
 
-// Функции для кнопок
+// Глобальные функции для кнопок
 function shareTelegram() {
     const url = 'https://t.me/Lysmanov';
     const text = 'Подпишись на крутой канал LYSMANOV ✞ - важные новости и интересный контент!';
     window.open(`https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`, '_blank');
+    
+    // Показываем совет о шаринге
+    if (window.lysmanovSite) {
+        setTimeout(() => {
+            window.lysmanovSite.showShareTip();
+        }, 1000);
+    }
 }
 
 function copyLink() {
@@ -433,9 +783,97 @@ function showCopyNotification() {
     setTimeout(() => notification.remove(), 2000);
 }
 
+// Глобальные функции для управления советами
+function showTip() {
+    if (window.lysmanovSite) {
+        window.lysmanovSite.showTips();
+    }
+}
+
+function hideTip() {
+    if (window.lysmanovSite) {
+        window.lysmanovSite.hideTips();
+    }
+}
+
+function nextTip() {
+    if (window.lysmanovSite) {
+        window.lysmanovSite.nextTip();
+    }
+}
+
+function addCustomTip(text) {
+    if (window.lysmanovSite) {
+        window.lysmanovSite.addCustomTip(text);
+    }
+}
+
 // Запуск сайта
 document.addEventListener('DOMContentLoaded', () => {
     window.lysmanovSite = new LysmanovSite();
+    
+    // Авто-обновление статистики каждые 4 часа
+    setInterval(() => {
+        if (window.lysmanovSite) {
+            window.lysmanovSite.loadStats();
+        }
+    }, 4 * 60 * 60 * 1000);
+    
+    // Добавляем кнопку для ручного обновления
+    if (location.hostname === 'lysmanov-tg.github.io') {
+        console.log('🔧 Manual stats update available: updateChannelStats()');
+        
+        const updateBtn = document.createElement('button');
+        updateBtn.innerHTML = '✏️';
+        updateBtn.style.cssText = `
+            position: fixed;
+            bottom: 60px;
+            left: 10px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #ff3366;
+            color: white;
+            border: none;
+            cursor: pointer;
+            z-index: 10000;
+            font-size: 18px;
+            opacity: 0.3;
+            transition: opacity 0.3s;
+        `;
+        updateBtn.title = 'Обновить статистику';
+        updateBtn.addEventListener('mouseenter', () => updateBtn.style.opacity = '1');
+        updateBtn.addEventListener('mouseleave', () => updateBtn.style.opacity = '0.3');
+        updateBtn.addEventListener('click', updateChannelStats);
+        
+        document.body.appendChild(updateBtn);
+    }
+    
+    // Советы при скролле
+    let scrollTipsShown = false;
+    window.addEventListener('scroll', () => {
+        if (!scrollTipsShown && window.scrollY > 500) {
+            if (window.lysmanovSite) {
+                window.lysmanovSite.addCustomTip("📖 Листайте дальше! Еще много интересного ниже!", 'normal');
+            }
+            scrollTipsShown = true;
+        }
+    });
+    
+    // Советы при бездействии
+    let inactivityTimer;
+    function resetInactivityTimer() {
+        clearTimeout(inactivityTimer);
+        inactivityTimer = setTimeout(() => {
+            if (window.lysmanovSite) {
+                window.lysmanovSite.addCustomTip("💭 Все еще здесь? Загляните в наш Telegram-канал!", 'premium');
+            }
+        }, 30000);
+    }
+
+    document.addEventListener('mousemove', resetInactivityTimer);
+    document.addEventListener('keypress', resetInactivityTimer);
+    resetInactivityTimer();
 });
 
 // Добавляем стили для уведомлений
@@ -479,4 +917,4 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
-console.log('📄 LYSMANOV script loaded');
+console.log('📄 LYSMANOV site with animated tips loaded!');
