@@ -1,4 +1,15 @@
+// Добавь в начало script.js
+function isMobileDevice() {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+    // Оптимизация для мобильных
+    if (isMobileDevice()) {
+        document.body.style.overflowY = 'auto';
+        document.body.style.padding = '10px 5px';
+    }
+
     const text = document.getElementById('text');
     const textContent = text.textContent;
     text.innerHTML = '';
@@ -26,8 +37,9 @@ document.addEventListener('DOMContentLoaded', () => {
         signature.appendChild(letter);
     }
     
+    // Меньше частиц на мобильных для производительности
     const particlesContainer = document.getElementById('particles');
-    const particleCount = 30;
+    const particleCount = isMobileDevice() ? 15 : 30;
     
     for (let i = 0; i < particleCount; i++) {
         const particle = document.createElement('div');
@@ -35,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const left = Math.random() * 100;
         const delay = Math.random() * 8;
         const duration = 6 + Math.random() * 6;
-        const size = 1 + Math.random() * 2;
+        const size = isMobileDevice() ? 1 : 1 + Math.random() * 2;
         particle.style.left = `${left}%`;
         particle.style.animationDelay = `${delay}s`;
         particle.style.animationDuration = `${duration}s`;
@@ -133,7 +145,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 secondsElement.textContent = '00';
                 messageElement.textContent = '🎉 С НОВЫМ 2026 ГОДОМ! 🎉';
                 messageElement.style.color = '#ff3366';
-                messageElement.style.fontSize = '1.2rem';
+                messageElement.style.fontSize = isMobileDevice() ? '1rem' : '1.2rem';
                 messageElement.style.fontWeight = 'bold';
                 return;
             }
@@ -183,21 +195,24 @@ document.addEventListener('DOMContentLoaded', () => {
     animateProgressBars();
     startCountdown();
     
-    document.addEventListener('mousemove', (e) => {
-        const particles = document.querySelectorAll('.particle');
-        particles.forEach(particle => {
-            const rect = particle.getBoundingClientRect();
-            const particleX = rect.left + rect.width / 2;
-            const particleY = rect.top + rect.height / 2;
-            const distance = Math.sqrt(
-                Math.pow(e.clientX - particleX, 2) + 
-                Math.pow(e.clientY - particleY, 2)
-            );
-            if (distance < 100) {
-                particle.style.transform = `translate(${(e.clientX - particleX) * 0.1}px, ${(e.clientY - particleY) * 0.1}px)`;
-            }
+    // Упрощенный эффект частиц для мобильных
+    if (!isMobileDevice()) {
+        document.addEventListener('mousemove', (e) => {
+            const particles = document.querySelectorAll('.particle');
+            particles.forEach(particle => {
+                const rect = particle.getBoundingClientRect();
+                const particleX = rect.left + rect.width / 2;
+                const particleY = rect.top + rect.height / 2;
+                const distance = Math.sqrt(
+                    Math.pow(e.clientX - particleX, 2) + 
+                    Math.pow(e.clientY - particleY, 2)
+                );
+                if (distance < 100) {
+                    particle.style.transform = `translate(${(e.clientX - particleX) * 0.1}px, ${(e.clientY - particleY) * 0.1}px)`;
+                }
+            });
         });
-    });
+    }
 });
 
 function shareTelegram() {
