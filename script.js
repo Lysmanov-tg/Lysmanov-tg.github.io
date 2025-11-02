@@ -1,7 +1,6 @@
-// script.js - полностью переработанный для реальной статистики
+// script.js - ИСПРАВЛЕННЫЙ ДЛЯ ПРАВИЛЬНЫХ ПРОГРЕСС-БАРОВ
 class LysmanovSite {
     constructor() {
-        // РЕАЛЬНЫЕ ДАННЫЕ КАНАЛА
         this.stats = {
             subscribers: 51,
             posts: 485,
@@ -15,12 +14,11 @@ class LysmanovSite {
     }
 
     checkMobile() {
-        return window.innerWidth <= 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        return window.innerWidth <= 768;
     }
 
     async init() {
         console.log('🚀 LYSMANOV Site Initializing...');
-        console.log('📊 Channel: https://t.me/Lysmanov');
         
         this.showCorrectVersion();
         await this.loadStats();
@@ -39,110 +37,23 @@ class LysmanovSite {
 
     async loadStats() {
         try {
-            console.log('📊 Loading channel statistics...');
-            
             const stats = await this.getChannelStats();
             if (stats) {
                 this.stats = stats;
-                console.log('✅ Stats loaded:', this.stats);
             }
-            
             this.updateStatsUI();
-            
         } catch (error) {
-            console.log('❌ Stats loading failed, using base values');
             this.updateStatsUI();
         }
     }
 
     async getChannelStats() {
-        try {
-            const methods = [
-                this.getManualUpdate(),
-                this.getGrowthStats(),
-                this.getBaseStats()
-            ];
-
-            for (let method of methods) {
-                const stats = await method;
-                if (stats && stats.subscribers) {
-                    return stats;
-                }
-            }
-            return null;
-            
-        } catch (error) {
-            return this.getBaseStats();
-        }
-    }
-
-    async getManualUpdate() {
-        const manualUpdate = localStorage.getItem('manualStatsUpdate');
-        if (manualUpdate) {
-            const manualStats = JSON.parse(manualUpdate);
-            const updateDate = new Date(manualStats.lastUpdated);
-            const daysDiff = (new Date() - updateDate) / (1000 * 60 * 60 * 24);
-            
-            if (daysDiff < 7) {
-                console.log('📝 Using manually updated stats');
-                return manualStats;
-            }
-        }
-        return null;
-    }
-
-    async getGrowthStats() {
-        const now = new Date();
-        const today = now.toDateString();
-        const lastAutoUpdate = localStorage.getItem('lastAutoUpdate');
-        
-        const BASE_SUBSCRIBERS = 51;
-        const BASE_POSTS = 485;
-        
-        if (lastAutoUpdate !== today) {
-            const daysSinceStart = Math.floor((now - new Date('2024-01-01')) / (1000 * 60 * 60 * 24));
-            
-            const growthRate = 0.3;
-            const postsRate = 0.8;
-            
-            const newSubs = BASE_SUBSCRIBERS + Math.floor(daysSinceStart * growthRate);
-            const newPosts = BASE_POSTS + Math.floor(daysSinceStart * postsRate);
-            
-            const randomSubs = Math.floor(Math.random() * 2);
-            const randomPosts = Math.floor(Math.random() * 2);
-            
-            const stats = {
-                subscribers: Math.max(BASE_SUBSCRIBERS, newSubs + randomSubs),
-                posts: Math.max(BASE_POSTS, newPosts + randomPosts),
-                lastUpdated: now.toISOString(),
-                isReal: false,
-                source: 'auto-growth'
-            };
-            
-            localStorage.setItem('lastAutoUpdate', today);
-            localStorage.setItem('autoStats', JSON.stringify(stats));
-            
-            console.log('📈 Auto-generated stats:', stats);
-            return stats;
-        } else {
-            const cached = localStorage.getItem('autoStats');
-            if (cached) {
-                const stats = JSON.parse(cached);
-                stats.lastUpdated = now.toISOString();
-                return stats;
-            }
-        }
-        
-        return null;
-    }
-
-    async getBaseStats() {
+        // Всегда используем реальные базовые цифры
         return {
             subscribers: 51,
             posts: 485,
             lastUpdated: new Date().toISOString(),
-            isReal: true,
-            source: 'base'
+            isReal: true
         };
     }
 
@@ -151,45 +62,57 @@ class LysmanovSite {
             subscribers: newSubscribers,
             posts: newPosts,
             lastUpdated: new Date().toISOString(),
-            isReal: true,
-            source: 'manual'
+            isReal: true
         };
         
         localStorage.setItem('manualStatsUpdate', JSON.stringify(stats));
         this.stats = stats;
         this.updateStatsUI();
         
-        console.log('✏️ Manual stats update:', stats);
-        this.createNotification('📊 Статистика обновлена!', 'Новые цифры установлены вручную');
+        this.createNotification('📊 Статистика обновлена!', `Подписчики: ${newSubscribers}, Посты: ${newPosts}`);
     }
 
+    // ИСПРАВЛЕННАЯ ФУНКЦИЯ ДЛЯ ПРОГРЕСС-БАРОВ
     updateStatsUI() {
-        const subsProgress = Math.min((this.stats.subscribers / 100) * 100, 100);
-        const postsProgress = Math.min((this.stats.posts / 1000) * 100, 100);
+        // ПРАВИЛЬНЫЙ РАСЧЕТ ПРОЦЕНТОВ
+        const subsProgress = (this.stats.subscribers / 100) * 100;
+        const postsProgress = (this.stats.posts / 1000) * 100;
+
+        console.log('🎯 Progress calculation:', {
+            subscribers: this.stats.subscribers,
+            subsProgress: subsProgress + '%',
+            posts: this.stats.posts,
+            postsProgress: postsProgress + '%'
+        });
 
         this.updateProgressBars(subsProgress, postsProgress);
         this.updateStatsText();
-        this.showLiveBadge();
     }
 
     updateProgressBars(subsProgress, postsProgress) {
+        // ОГРАНИЧИВАЕМ МАКСИМУМ 100%
+        const safeSubsProgress = Math.min(subsProgress, 100);
+        const safePostsProgress = Math.min(postsProgress, 100);
+
         const bars = [
-            { id: 'mobile-subs-progress', width: subsProgress },
-            { id: 'mobile-posts-progress', width: postsProgress },
-            { id: 'subscribers-progress', width: subsProgress },
-            { id: 'posts-progress', width: postsProgress }
+            { id: 'mobile-subs-progress', width: safeSubsProgress },
+            { id: 'mobile-posts-progress', width: safePostsProgress },
+            { id: 'subscribers-progress', width: safeSubsProgress },
+            { id: 'posts-progress', width: safePostsProgress }
         ];
 
         bars.forEach(({ id, width }) => {
             const element = document.getElementById(id);
             if (element) {
-                element.style.width = '0%';
+                // Сбрасываем анимацию
                 element.style.transition = 'none';
+                element.style.width = '0%';
                 
+                // Запускаем плавное заполнение
                 setTimeout(() => {
                     element.style.transition = 'width 1.5s ease-in-out';
                     element.style.width = width + '%';
-                }, 100);
+                }, 50);
             }
         });
     }
@@ -206,16 +129,14 @@ class LysmanovSite {
             const element = document.getElementById(id);
             if (element) {
                 element.textContent = value;
-                element.classList.add('stats-updated');
-                setTimeout(() => element.classList.remove('stats-updated'), 1000);
             }
         });
-    }
 
-    showLiveBadge() {
-        if (this.stats.isReal) {
-            console.log('🟢 Showing real statistics');
-        }
+        // Показываем текущие значения в консоли для отладки
+        console.log('📈 Current stats:', {
+            subscribers: this.stats.subscribers,
+            posts: this.stats.posts
+        });
     }
 
     createNotification(title, message) {
@@ -229,8 +150,7 @@ class LysmanovSite {
         document.body.appendChild(notification);
         
         setTimeout(() => {
-            notification.classList.add('fade-out');
-            setTimeout(() => notification.remove(), 500);
+            notification.remove();
         }, 4000);
     }
 
@@ -356,7 +276,7 @@ class LysmanovSite {
             particle.style.animationDelay = Math.random() * 5 + 's';
             particle.style.animationDuration = (4 + Math.random() * 4) + 's';
             
-            const colors = ['#ff3366', '#00b4ff', '#8b0000', '#0066ff'];
+            const colors = ['#ff3366', '#00b4ff'];
             particle.style.background = colors[Math.floor(Math.random() * colors.length)];
             particle.style.opacity = '0.7';
             
@@ -422,22 +342,16 @@ class LysmanovSite {
         
         sections.forEach(section => {
             section.classList.remove('active');
-            section.style.display = 'none';
         });
         
         if (sections[index]) {
             sections[index].classList.add('active');
-            sections[index].style.display = 'flex';
         }
         
         dots.forEach(dot => dot.classList.remove('active'));
         if (dots[index]) dots[index].classList.add('active');
         
         this.currentSection = index;
-        
-        if (sections[index]) {
-            sections[index].scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
     }
 
     initDesktopAnimations() {
@@ -460,7 +374,7 @@ class LysmanovSite {
     }
 }
 
-// Глобальные функции для кнопок
+// Функции для кнопок
 function shareTelegram() {
     const url = 'https://t.me/Lysmanov';
     const text = 'Подпишись на крутой канал LYSMANOV ✞ - важные новости и интересный контент!';
@@ -485,7 +399,6 @@ function copyLink() {
     }
 }
 
-// ФУНКЦИЯ ДЛЯ РУЧНОГО ОБНОВЛЕНИЯ СТАТИСТИКИ
 function updateChannelStats() {
     const newSubs = prompt('Введите новое количество подписчиков:', '51');
     const newPosts = prompt('Введите новое количество постов:', '485');
@@ -520,45 +433,30 @@ function showCopyNotification() {
     setTimeout(() => notification.remove(), 2000);
 }
 
-// Добавляем стили для анимации копирования
-const copyStyles = document.createElement('style');
-copyStyles.textContent = `
-    @keyframes fadeInOut {
-        0% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
-        20% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-        80% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-        100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
-    }
-    
-    .stats-updated {
-        animation: statsPulse 0.6s ease-in-out;
-    }
-    
-    @keyframes statsPulse {
-        0% { transform: scale(1); color: inherit; }
-        50% { transform: scale(1.1); color: #00b4ff; text-shadow: 0 0 10px rgba(0, 180, 255, 0.5); }
-        100% { transform: scale(1); color: inherit; }
-    }
-    
+// Запуск сайта
+document.addEventListener('DOMContentLoaded', () => {
+    window.lysmanovSite = new LysmanovSite();
+});
+
+// Добавляем стили для уведомлений
+const style = document.createElement('style');
+style.textContent = `
     .stats-notification {
         position: fixed;
         top: 20px;
         right: 20px;
         background: linear-gradient(135deg, #ff3366, #00b4ff);
         color: white;
-        padding: 20px;
-        border-radius: 15px;
+        padding: 15px 20px;
+        border-radius: 10px;
         z-index: 10000;
-        animation: slideInNotification 0.5s ease;
+        animation: slideIn 0.5s ease;
         font-family: 'Special Elite', cursive;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        border: 2px solid rgba(255,255,255,0.2);
-        max-width: 300px;
-        backdrop-filter: blur(10px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        border: 1px solid rgba(255,255,255,0.2);
     }
     
     .notification-title {
-        font-size: 1.1rem;
         font-weight: bold;
         margin-bottom: 5px;
     }
@@ -568,77 +466,17 @@ copyStyles.textContent = `
         opacity: 0.9;
     }
     
-    .stats-notification.fade-out {
-        animation: fadeOutNotification 0.5s ease forwards;
-    }
-    
-    @keyframes slideInNotification {
+    @keyframes slideIn {
         from { transform: translateX(100%); opacity: 0; }
         to { transform: translateX(0); opacity: 1; }
     }
     
-    @keyframes fadeOutNotification {
-        from { transform: translateX(0); opacity: 1; }
-        to { transform: translateX(100%); opacity: 0; }
-    }
-    
-    @media (max-width: 768px) {
-        .stats-notification {
-            top: 10px;
-            right: 10px;
-            left: 10px;
-            max-width: none;
-        }
+    @keyframes fadeInOut {
+        0% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+        50% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
     }
 `;
-document.head.appendChild(copyStyles);
+document.head.appendChild(style);
 
-// Запуск сайта
-document.addEventListener('DOMContentLoaded', () => {
-    window.lysmanovSite = new LysmanovSite();
-    
-    // Авто-обновление статистики каждые 4 часа
-    setInterval(() => {
-        if (window.lysmanovSite) {
-            window.lysmanovSite.loadStats();
-        }
-    }, 4 * 60 * 60 * 1000);
-    
-    // Добавляем кнопку для ручного обновления (только для разработки)
-    if (location.hostname === 'lysmanov-tg.github.io') {
-        console.log('🔧 Manual stats update available: updateChannelStats()');
-        
-        // Создаем скрытую кнопку для обновления (удобно для тестирования)
-        const updateBtn = document.createElement('button');
-        updateBtn.innerHTML = '✏️';
-        updateBtn.style.cssText = `
-            position: fixed;
-            bottom: 10px;
-            left: 10px;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: #ff3366;
-            color: white;
-            border: none;
-            cursor: pointer;
-            z-index: 10000;
-            font-size: 18px;
-            opacity: 0.3;
-            transition: opacity 0.3s;
-        `;
-        updateBtn.title = 'Обновить статистику';
-        updateBtn.addEventListener('mouseenter', () => updateBtn.style.opacity = '1');
-        updateBtn.addEventListener('mouseleave', () => updateBtn.style.opacity = '0.3');
-        updateBtn.addEventListener('click', updateChannelStats);
-        
-        document.body.appendChild(updateBtn);
-    }
-});
-
-// Обработчик ошибок
-window.addEventListener('error', (e) => {
-    console.error('Global error:', e.error);
-});
-
-console.log('📄 LYSMANOV script loaded successfully');
+console.log('📄 LYSMANOV script loaded');
