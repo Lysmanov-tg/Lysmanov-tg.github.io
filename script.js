@@ -1,350 +1,1003 @@
-// Определяем устройство
-function isMobile() {
-    return window.innerWidth <= 768;
+@import url('https://fonts.googleapis.com/css2?family=Special+Elite&display=swap');
+
+:root {
+    --primary-color: #ff3366;
+    --secondary-color: #00b4ff;
+    --accent-color: #8b0000;
+    --text-color: #ffffff;
+    --bg-color: #000000;
 }
 
-// Инициализация при загрузке
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚀 LYSMANOV Site Started');
-    
-    if (isMobile()) {
-        initMobileVersion();
-    } else {
-        initDesktopVersion();
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: var(--bg-color);
+}
+
+body {
+    background: var(--bg-color);
+    font-family: 'Special Elite', cursive;
+    color: var(--text-color);
+    overflow: hidden;
+}
+
+/* Фоновые элементы */
+.channel-avatar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    opacity: 0.3;
+    background: 
+        url('https://ltdfoto.ru/images/2025/11/01/5193047870037687295.jpg') center/cover no-repeat;
+    filter: blur(1px) grayscale(0.1) contrast(1.1) brightness(0.85);
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 1;
+}
+
+.particles {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.particle {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    animation: floatParticle 8s infinite linear;
+}
+
+/* ===== МОБИЛЬНАЯ ВЕРСИЯ ===== */
+.mobile-version {
+    display: none;
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    background: transparent;
+}
+
+/* Мобильный контент */
+.mobile-content {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: y mandatory;
+    background: transparent;
+}
+
+.mobile-section {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 15px;
+    scroll-snap-align: start;
+    transform: scale(0.95);
+    transform-origin: top center;
+    background: transparent;
+}
+
+.mobile-container {
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    background: transparent;
+}
+
+/* Мобильный заголовок */
+.mobile-header {
+    margin-bottom: 30px;
+    background: transparent;
+}
+
+.mobile-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+    background: transparent;
+}
+
+.title-text {
+    font-size: 2.8rem;
+    font-weight: bold;
+    font-style: italic;
+    color: var(--primary-color);
+    text-shadow: 
+        2px 2px 0 var(--accent-color),
+        4px 4px 0 rgba(139, 0, 0, 0.5);
+    line-height: 1;
+    background: transparent;
+}
+
+.title-cross {
+    font-size: 2.8rem;
+    color: var(--primary-color);
+    text-shadow: 
+        2px 2px 0 var(--accent-color),
+        4px 4px 0 rgba(139, 0, 0, 0.5);
+    background: transparent;
+}
+
+.mobile-subtitle {
+    font-size: 1.1rem;
+    color: var(--secondary-color);
+    text-shadow: 0 0 10px rgba(0, 180, 255, 0.5);
+    font-style: italic;
+    background: transparent;
+}
+
+/* Мобильная кнопка */
+.mobile-button {
+    display: block;
+    background: linear-gradient(45deg, #0088cc, #00b4ff);
+    color: white;
+    text-decoration: none;
+    padding: 16px 30px;
+    border-radius: 25px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin: 20px auto;
+    max-width: 300px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0, 180, 255, 0.4);
+    animation: pulseBlue 2s infinite;
+}
+
+.mobile-button:active {
+    transform: scale(0.95);
+}
+
+/* Мобильная статистика */
+.mobile-stats {
+    width: 100%;
+    background: transparent;
+}
+
+.stat-card {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 20px;
+    border: 1px solid rgba(255, 51, 102, 0.3);
+    backdrop-filter: blur(10px);
+    margin-bottom: 20px;
+}
+
+.stat-title {
+    color: var(--primary-color);
+    font-size: 1.3rem;
+    font-weight: bold;
+    margin-bottom: 15px;
+    text-shadow: 0 0 10px rgba(255, 51, 102, 0.5);
+}
+
+.stat-item {
+    margin-bottom: 15px;
+}
+
+.stat-label {
+    color: var(--text-color);
+    font-size: 1rem;
+    margin-bottom: 5px;
+    text-align: left;
+}
+
+.stat-progress {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.progress-bar {
+    flex: 1;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    border-radius: 4px;
+    transition: width 1s ease;
+}
+
+.stat-numbers {
+    color: var(--secondary-color);
+    font-size: 0.9rem;
+    min-width: 50px;
+    text-align: right;
+}
+
+/* Мобильный обратный отсчет */
+.countdown-card {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 20px;
+    border: 1px solid rgba(255, 51, 102, 0.3);
+    backdrop-filter: blur(10px);
+    margin-bottom: 20px;
+}
+
+.countdown-title {
+    color: var(--primary-color);
+    font-size: 1.3rem;
+    font-weight: bold;
+    margin-bottom: 15px;
+    text-shadow: 0 0 10px rgba(255, 51, 102, 0.5);
+}
+
+.countdown-timer {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.time-block {
+    flex: 1;
+}
+
+.time-number {
+    font-size: 1.6rem;
+    font-weight: bold;
+    color: var(--secondary-color);
+    background: rgba(0, 0, 0, 0.3);
+    padding: 10px 5px;
+    border-radius: 10px;
+    margin-bottom: 5px;
+    text-shadow: 0 0 10px rgba(0, 180, 255, 0.7);
+    animation: numberPulse 1s infinite;
+}
+
+.time-label {
+    font-size: 0.7rem;
+    color: var(--text-color);
+    opacity: 0.8;
+}
+
+/* Мобильные преимущества */
+.benefits-card {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 20px;
+    border: 1px solid rgba(255, 51, 102, 0.3);
+    backdrop-filter: blur(10px);
+    margin-bottom: 20px;
+}
+
+.benefits-title {
+    color: var(--primary-color);
+    font-size: 1.3rem;
+    font-weight: bold;
+    margin-bottom: 15px;
+    text-shadow: 0 0 10px rgba(255, 51, 102, 0.5);
+}
+
+.benefits-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.benefit-item {
+    color: var(--text-color);
+    font-size: 0.9rem;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    text-align: center;
+}
+
+/* Мобильные кнопки поделиться */
+.share-card {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 20px;
+    border: 1px solid rgba(255, 51, 102, 0.3);
+    backdrop-filter: blur(10px);
+}
+
+.share-title {
+    color: var(--secondary-color);
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+}
+
+.share-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.share-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--secondary-color);
+    color: var(--secondary-color);
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    flex: 1;
+    max-width: 140px;
+}
+
+.share-btn:active {
+    background: var(--secondary-color);
+    color: white;
+    transform: scale(0.95);
+}
+
+/* Мобильный индикатор */
+.mobile-indicator {
+    position: fixed;
+    bottom: 20px;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+}
+
+.indicator-dots {
+    display: flex;
+    gap: 10px;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 10px 20px;
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.dot.active {
+    background: var(--primary-color);
+    transform: scale(1.2);
+}
+
+/* Мобильная подсказка */
+.mobile-hint {
+    text-align: center;
+    color: var(--secondary-color);
+    font-size: 0.9rem;
+    margin-top: 20px;
+    opacity: 0.7;
+    animation: hintPulse 2s infinite;
+}
+
+/* ===== ПК ВЕРСИЯ ===== */
+.desktop-version {
+    display: flex;
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    height: 100vh;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+}
+
+.container {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 1200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    gap: 2rem;
+    background: transparent;
+}
+
+.watermark {
+    text-align: center;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transform-style: preserve-3d;
+    margin-bottom: 1rem;
+    z-index: 3;
+    background: transparent;
+}
+
+.text-container {
+    display: flex;
+    align-items: center;
+    transform-style: preserve-3d;
+    filter: drop-shadow(0 0 15px rgba(255, 51, 102, 0.7));
+    flex-wrap: wrap;
+    justify-content: center;
+    background: transparent;
+}
+
+.main-text {
+    font-size: clamp(2.5rem, 8vw, 4rem);
+    font-weight: bold;
+    font-style: italic;
+    color: var(--primary-color);
+    letter-spacing: 2px;
+    position: relative;
+    z-index: 3;
+    line-height: 1;
+    transform-style: preserve-3d;
+    text-shadow: 
+        2px 2px 0 var(--accent-color),
+        4px 4px 0 rgba(139, 0, 0, 0.5),
+        6px 6px 0 rgba(139, 0, 0, 0.3);
+    white-space: nowrap;
+    background: transparent;
+}
+
+.letter {
+    display: inline-block;
+    opacity: 0;
+    transform-origin: 50% 100%;
+    animation: 
+        snakeAppear3D 2s ease-out forwards,
+        snakeMove3D 6s infinite ease-in-out 2s;
+    transform: rotateX(90deg) translateY(100px) scale(0.5);
+    font-style: italic;
+    background: transparent;
+}
+
+.cross {
+    font-size: clamp(2.5rem, 8vw, 4rem);
+    color: var(--primary-color);
+    margin-left: 15px;
+    animation: 
+        crossAppear3D 1.5s ease-out forwards 1.5s,
+        crossFloat3D 5s infinite ease-in-out 3s;
+    opacity: 0;
+    transform: rotateY(90deg) scale(0);
+    transform-origin: center;
+    position: relative;
+    z-index: 3;
+    line-height: 1;
+    display: inline-block;
+    text-shadow: 
+        2px 2px 0 var(--accent-color),
+        4px 4px 0 rgba(139, 0, 0, 0.5);
+    font-style: italic;
+    background: transparent;
+}
+
+.signature {
+    font-size: clamp(1rem, 3vw, 1.2rem);
+    font-style: italic;
+    color: var(--secondary-color);
+    opacity: 0;
+    transform-style: preserve-3d;
+    animation: 
+        signatureAppear 2s ease-out forwards 1s,
+        signatureFloat 4s infinite ease-in-out 3s;
+    text-shadow: 
+        0 0 5px #0066ff,
+        0 0 10px rgba(0, 100, 255, 0.5);
+    filter: drop-shadow(0 0 5px rgba(0, 180, 255, 0.7));
+    z-index: 3;
+    position: relative;
+    text-align: center;
+    background: transparent;
+}
+
+.telegram-elements {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    width: 100%;
+    max-width: 500px;
+    background: transparent;
+}
+
+.tg-button {
+    font-family: 'Special Elite', cursive;
+    background: linear-gradient(45deg, #0088cc, #00b4ff);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 25px;
+    font-size: 1rem;
+    cursor: pointer;
+    animation: pulseBlue 2s infinite;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    z-index: 3;
+    text-align: center;
+    width: 100%;
+    max-width: 300px;
+}
+
+.tg-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0, 180, 255, 0.4);
+}
+
+.channel-stats {
+    display: flex;
+    gap: 20px;
+    color: var(--primary-color);
+    font-size: 0.9rem;
+    z-index: 3;
+    flex-wrap: wrap;
+    justify-content: center;
+    background: transparent;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: statPulse 3s infinite;
+    min-width: 100px;
+    background: transparent;
+}
+
+.goal-container {
+    width: 100%;
+    max-width: 300px;
+    margin-top: 10px;
+    text-align: center;
+    background: transparent;
+}
+
+.goal-text {
+    font-size: 1rem;
+    color: var(--primary-color);
+    margin-top: 5px;
+    text-align: center;
+    font-style: italic;
+    font-weight: bold;
+    background: transparent;
+}
+
+.help-text {
+    font-size: 0.9rem;
+    color: var(--secondary-color);
+    margin-top: 10px;
+    text-align: center;
+    animation: helpPulse 2s infinite;
+    background: transparent;
+}
+
+.progress-container {
+    width: 100%;
+    max-width: 300px;
+    margin-top: 10px;
+    background: transparent;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 5px;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    border-radius: 4px;
+    width: 0%;
+    transition: width 2s ease-in-out;
+}
+
+.progress-text {
+    font-size: 0.7rem;
+    color: var(--secondary-color);
+    margin-top: 3px;
+    text-align: center;
+    background: transparent;
+}
+
+.benefits {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 15px;
+    border: 1px solid rgba(255, 51, 102, 0.3);
+    backdrop-filter: blur(10px);
+    animation: previewGlow 4s infinite alternate;
+    z-index: 3;
+    width: 100%;
+}
+
+.benefits-title {
+    color: var(--primary-color);
+    text-align: center;
+    margin-bottom: 10px;
+    font-size: 1rem;
+}
+
+.benefits-list {
+    color: #fff;
+    font-size: 0.8rem;
+    text-align: center;
+    margin: 0;
+    line-height: 1.5;
+}
+
+.share-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+    background: transparent;
+}
+
+.share-text {
+    font-size: 0.8rem;
+    color: var(--secondary-color);
+    text-align: center;
+    background: transparent;
+}
+
+.share-buttons {
+    display: flex;
+    gap: 10px;
+    background: transparent;
+}
+
+.share-button {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--secondary-color);
+    color: var(--secondary-color);
+    padding: 8px 15px;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Special Elite', cursive;
+}
+
+.share-button:hover {
+    background: var(--secondary-color);
+    color: white;
+    transform: translateY(-2px);
+}
+
+.countdown-section {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 20px;
+    border: 1px solid rgba(255, 51, 102, 0.3);
+    backdrop-filter: blur(10px);
+    text-align: center;
+    width: 100%;
+    max-width: 500px;
+    margin-top: 10px;
+    animation: countdownGlow 3s infinite alternate;
+}
+
+.countdown-title {
+    color: var(--primary-color);
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+    font-weight: bold;
+    text-shadow: 0 0 10px rgba(255, 51, 102, 0.5);
+}
+
+.countdown-timer {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.time-unit {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+}
+
+.time-number {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--secondary-color);
+    background: rgba(0, 0, 0, 0.3);
+    padding: 10px;
+    border-radius: 10px;
+    min-width: 60px;
+    text-shadow: 0 0 10px rgba(0, 180, 255, 0.7);
+    animation: numberPulse 1s infinite;
+}
+
+.time-label {
+    font-size: 0.8rem;
+    color: var(--text-color);
+    margin-top: 5px;
+    opacity: 0.8;
+}
+
+.countdown-message {
+    color: var(--primary-color);
+    font-size: 0.9rem;
+    font-style: italic;
+    min-height: 20px;
+    animation: messagePulse 2s infinite;
+}
+
+/* Анимации */
+@keyframes floatParticle {
+    0% {
+        transform: translateY(100vh) rotate(0deg);
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+    }
+    90% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-100px) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+@keyframes pulseBlue {
+    0%, 100% {
+        box-shadow: 0 0 10px rgba(0, 180, 255, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(0, 180, 255, 0.8);
+    }
+}
+
+@keyframes statPulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+@keyframes helpPulse {
+    0%, 100% {
+        opacity: 0.8;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.05);
+    }
+}
+
+@keyframes previewGlow {
+    0% {
+        box-shadow: 0 0 10px rgba(255, 51, 102, 0.3);
+    }
+    100% {
+        box-shadow: 0 0 20px rgba(255, 51, 102, 0.6);
+    }
+}
+
+@keyframes snakeAppear3D {
+    0% {
+        opacity: 0;
+        transform: rotateX(90deg) translateY(100px) scale(0.5);
+    }
+    60% {
+        opacity: 0.8;
+        transform: rotateX(-15deg) translateY(-10px) scale(1.1);
+    }
+    100% {
+        opacity: 1;
+        transform: rotateX(0deg) translateY(0) scale(1);
+    }
+}
+
+@keyframes snakeMove3D {
+    0%, 100% {
+        transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg) translateY(0);
+    }
+    15% {
+        transform: rotateX(10deg) rotateY(5deg) rotateZ(2deg) translateY(-10px);
+    }
+    30% {
+        transform: rotateX(-5deg) rotateY(-3deg) rotateZ(-1deg) translateY(5px);
+    }
+    45% {
+        transform: rotateX(5deg) rotateY(8deg) rotateZ(3deg) translateY(-7px);
+    }
+    60% {
+        transform: rotateX(-8deg) rotateY(-5deg) rotateZ(-2deg) translateY(3px);
+    }
+    75% {
+        transform: rotateX(3deg) rotateY(10deg) rotateZ(1deg) translateY(-5px);
+    }
+}
+
+@keyframes crossAppear3D {
+    0% {
+        opacity: 0;
+        transform: rotateY(90deg) scale(0);
+    }
+    100% {
+        opacity: 1;
+        transform: rotateY(0deg) scale(1);
+    }
+}
+
+@keyframes crossFloat3D {
+    0%, 100% {
+        transform: rotateY(0deg) rotateX(0deg) translateY(0);
+    }
+    50% {
+        transform: rotateY(10deg) rotateX(5deg) translateY(-15px);
+    }
+}
+
+@keyframes signatureAppear {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes signatureFloat {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-5px);
+    }
+}
+
+@keyframes countdownGlow {
+    0% {
+        box-shadow: 0 0 15px rgba(255, 51, 102, 0.3);
+    }
+    100% {
+        box-shadow: 0 0 25px rgba(255, 51, 102, 0.6);
+    }
+}
+
+@keyframes numberPulse {
+    0%, 100% {
+        transform: scale(1);
+        text-shadow: 0 0 10px rgba(0, 180, 255, 0.7);
+    }
+    50% {
+        transform: scale(1.05);
+        text-shadow: 0 0 15px rgba(0, 180, 255, 1);
+    }
+}
+
+@keyframes messagePulse {
+    0%, 100% {
+        opacity: 0.7;
+    }
+    50% {
+        opacity: 1;
+    }
+}
+
+@keyframes hintPulse {
+    0%, 100% {
+        opacity: 0.5;
+        transform: translateY(0);
+    }
+    50% {
+        opacity: 1;
+        transform: translateY(-3px);
+    }
+}
+
+.text-container {
+    animation: glow 2s infinite alternate;
+}
+
+@keyframes glow {
+    0% {
+        filter: drop-shadow(0 0 10px rgba(255, 51, 102, 0.7));
+    }
+    100% {
+        filter: drop-shadow(0 0 20px rgba(255, 0, 102, 0.9));
+    }
+}
+
+/* Адаптация по размерам экрана */
+@media (max-width: 768px) {
+    .desktop-version {
+        display: none;
     }
     
-    // Общие функции
-    initCommonFeatures();
-});
-
-// Мобильная версия
-function initMobileVersion() {
-    console.log('📱 Mobile version initialized');
-    
-    // Запускаем обратный отсчет для мобильных
-    startMobileCountdown();
-    
-    // Инициализируем навигацию
-    initMobileNavigation();
-    
-    // Обновляем статистику для мобильных
-    updateMobileStats();
-}
-
-// ПК версия  
-function initDesktopVersion() {
-    console.log('💻 Desktop version initialized');
-    
-    // Анимация текста
-    animateDesktopText();
-    
-    // Запускаем обратный отсчет для ПК
-    startDesktopCountdown();
-    
-    // Обновляем статистику для ПК
-    updateDesktopStats();
-}
-
-// Общие функции
-function initCommonFeatures() {
-    // Инициализация частиц
-    initParticles();
-}
-
-// Обратный отсчет для мобильных
-function startMobileCountdown() {
-    const targetDate = new Date('2026-01-01T00:00:00').getTime();
-    
-    function update() {
-        const now = new Date().getTime();
-        const distance = targetDate - now;
-        
-        if (distance < 0) {
-            updateMobileTimer('00', '00', '00', '00');
-            return;
-        }
-        
-        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-        
-        updateMobileTimer(
-            days.toString().padStart(2, '0'),
-            hours.toString().padStart(2, '0'), 
-            minutes.toString().padStart(2, '0'),
-            seconds.toString().padStart(2, '0')
-        );
+    .mobile-version {
+        display: block;
     }
     
-    function updateMobileTimer(days, hours, minutes, seconds) {
-        const elements = {
-            days: document.getElementById('mobile-days'),
-            hours: document.getElementById('mobile-hours'),
-            minutes: document.getElementById('mobile-minutes'), 
-            seconds: document.getElementById('mobile-seconds')
-        };
-        
-        for (const [key, element] of Object.entries(elements)) {
-            if (element) element.textContent = eval(key);
-        }
-    }
-    
-    update();
-    setInterval(update, 1000);
-}
-
-// Обратный отсчет для ПК
-function startDesktopCountdown() {
-    const targetDate = new Date('2026-01-01T00:00:00').getTime();
-    const messageElement = document.getElementById('countdownMessage');
-    
-    const messages = [
-        "🎉 Скоро Новый 2026 Год!",
-        "⏰ Время летит незаметно...", 
-        "🚀 Готовься к празднику!",
-        "🎁 Сколько планов на следующий год?"
-    ];
-
-    function update() {
-        const now = new Date().getTime();
-        const distance = targetDate - now;
-        
-        if (distance < 0) {
-            updateDesktopTimer('00', '00', '00', '00');
-            if (messageElement) {
-                messageElement.textContent = '🎉 С НОВЫМ 2026 ГОДОМ! 🎉';
-                messageElement.style.color = '#ff3366';
-            }
-            return;
-        }
-        
-        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-        
-        updateDesktopTimer(
-            days.toString().padStart(2, '0'),
-            hours.toString().padStart(2, '0'),
-            minutes.toString().padStart(2, '0'), 
-            seconds.toString().padStart(2, '0')
-        );
-        
-        // Смена сообщения
-        if (messageElement && seconds % 10 === 0) {
-            const randomIndex = Math.floor(Math.random() * messages.length);
-            messageElement.textContent = messages[randomIndex];
-        }
-    }
-    
-    function updateDesktopTimer(days, hours, minutes, seconds) {
-        const elements = {
-            days: document.getElementById('days'),
-            hours: document.getElementById('hours'),
-            minutes: document.getElementById('minutes'),
-            seconds: document.getElementById('seconds')
-        };
-        
-        for (const [key, element] of Object.entries(elements)) {
-            if (element) element.textContent = eval(key);
-        }
-    }
-    
-    update();
-    setInterval(update, 1000);
-    
-    // Первое сообщение
-    if (messageElement) {
-        messageElement.textContent = messages[0];
+    html, body {
+        overflow: auto;
     }
 }
 
-// Анимация текста для ПК
-function animateDesktopText() {
-    const text = document.getElementById('text');
-    if (!text) return;
+@media (min-width: 769px) {
+    .mobile-version {
+        display: none;
+    }
     
-    const textContent = text.textContent;
-    text.innerHTML = '';
-    
-    for (let i = 0; i < textContent.length; i++) {
-        const letter = document.createElement('span');
-        letter.className = 'letter';
-        letter.textContent = textContent[i];
-        const delay = i * 0.2;
-        letter.style.animationDelay = `${delay}s, ${delay + 2}s`;
-        text.appendChild(letter);
+    .desktop-version {
+        display: flex;
     }
 }
 
-// Статистика для мобильных
-function updateMobileStats() {
-    const subscribers = 51;
-    const posts = 484;
-    
-    // Прогресс-бары
-    const subsProgress = document.getElementById('mobile-subs-progress');
-    const postsProgress = document.getElementById('mobile-posts-progress');
-    
-    // Тексты
-    const subsText = document.getElementById('mobile-subs-text');
-    const postsText = document.getElementById('mobile-posts-text');
-    
-    if (subsProgress) subsProgress.style.width = subscribers + '%';
-    if (postsProgress) postsProgress.style.width = (posts/10) + '%';
-    if (subsText) subsText.textContent = subscribers + '/100';
-    if (postsText) postsText.textContent = posts + '/1000';
-}
-
-// Статистика для ПК
-function updateDesktopStats() {
-    const subscribers = 51;
-    const posts = 484;
-    
-    // Прогресс-бары
-    const subsProgress = document.getElementById('subscribers-progress');
-    const postsProgress = document.getElementById('posts-progress');
-    
-    // Тексты  
-    const subsText = document.getElementById('subscribers-text');
-    const postsText = document.getElementById('posts-text');
-    
-    if (subsProgress) subsProgress.style.width = subscribers + '%';
-    if (postsProgress) postsProgress.style.width = (posts/10) + '%';
-    if (subsText) subsText.textContent = subscribers + '/100';
-    if (postsText) postsText.textContent = posts + '/1000';
-}
-
-// Навигация для мобильных
-function initMobileNavigation() {
-    const sections = document.querySelectorAll('.mobile-section');
-    const dots = document.querySelectorAll('.dot');
-    let currentSection = 0;
-    
-    // Показываем первую секцию
-    showMobileSection(0);
-    
-    // Обработчик скролла
-    let isScrolling = false;
-    
-    window.addEventListener('wheel', function(e) {
-        if (isScrolling) return;
-        
-        isScrolling = true;
-        
-        if (e.deltaY > 0 && currentSection < sections.length - 1) {
-            showMobileSection(currentSection + 1);
-        } else if (e.deltaY < 0 && currentSection > 0) {
-            showMobileSection(currentSection - 1);
-        }
-        
-        setTimeout(() => { isScrolling = false; }, 800);
-    });
-    
-    // Обработчик касаний
-    let startY = 0;
-    
-    window.addEventListener('touchstart', function(e) {
-        startY = e.touches[0].clientY;
-    });
-    
-    window.addEventListener('touchend', function(e) {
-        if (isScrolling) return;
-        
-        const endY = e.changedTouches[0].clientY;
-        const diff = startY - endY;
-        
-        if (Math.abs(diff) > 50) {
-            isScrolling = true;
-            
-            if (diff > 0 && currentSection < sections.length - 1) {
-                showMobileSection(currentSection + 1);
-            } else if (diff < 0 && currentSection > 0) {
-                showMobileSection(currentSection - 1);
-            }
-            
-            setTimeout(() => { isScrolling = false; }, 800);
-        }
-    });
-    
-    // Клики по точкам
-    dots.forEach(dot => {
-        dot.addEventListener('click', function() {
-            const sectionIndex = parseInt(this.getAttribute('data-page'));
-            showMobileSection(sectionIndex);
-        });
-    });
-    
-    function showMobileSection(index) {
-        // Скрываем все секции
-        sections.forEach(section => {
-            section.classList.remove('active');
-        });
-        
-        // Показываем выбранную секцию
-        sections[index].classList.add('active');
-        
-        // Обновляем точки
-        dots.forEach(dot => {
-            dot.classList.remove('active');
-        });
-        dots[index].classList.add('active');
-        
-        currentSection = index;
-        
-        // Плавная прокрутка
-        sections[index].scrollIntoView({
-            behavior: 'smooth',
-            block: 'start'
-        });
+/* Для очень маленьких мобильных */
+@media (max-width: 360px) {
+    .mobile-section {
+        transform: scale(0.9);
     }
-}
-
-// Частицы
-function initParticles() {
-    const particlesContainer = document.getElementById('particles');
-    if (!particlesContainer) return;
     
-    const particleCount = isMobile() ? 15 : 30;
-    
-    for (let i = 0; i < particleCount; i++) {
-        const particle = document.createElement('div');
-        particle.className = 'particle';
-        const left = Math.random() * 100;
-        const delay = Math.random() * 8;
-        const duration = 6 + Math.random() * 6;
-        const size = isMobile() ? 1 : 1 + Math.random() * 2;
-        particle.style.left = `${left}%`;
-        particle.style.animationDelay = `${delay}s`;
-        particle.style.animationDuration = `${duration}s`;
-        particle.style.width = `${size}px`;
-        particle.style.height = `${size}px`;
-        const colors = ['#ff3366', '#00b4ff', '#8b0000', '#0066ff'];
-        const randomColor = colors[Math.floor(Math.random() * colors.length)];
-        particle.style.background = randomColor;
-        particlesContainer.appendChild(particle);
+    .title-text, .title-cross {
+        font-size: 2.4rem;
     }
-}
-
-// Функции для кнопок
-function shareTelegram() {
-    const url = 'https://t.me/Lysmanov';
-    const text = 'Подпишись на крутой канал LYSMANOV ✞ - важные новости и интересный контент!';
-    window.open('https://t.me/share/url?url=' + encodeURIComponent(url) + '&text=' + encodeURIComponent(text), '_blank');
-}
-
-function copyLink() {
-    const url = 'https://t.me/Lysmanov';
-    navigator.clipboard.writeText(url).then(function() {
-        alert('Ссылка скопирована!');
-    }).catch(function() {
-        const textArea = document.createElement('textarea');
-        textArea.value = url;
-        document.body.appendChild(textArea);
-        textArea.select();
-        document.execCommand('copy');
-        document.body.removeChild(textArea);
-        alert('Ссылка скопирована!');
-    });
+    
+    .mobile-button {
+        font-size: 1.1rem;
+        padding: 14px 25px;
+    }
+    
+    .countdown-timer {
+        gap: 5px;
+    }
+    
+    .time-number {
+        font-size: 1.4rem;
+        padding: 8px 4px;
+    }
 }
