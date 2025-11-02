@@ -12,7 +12,7 @@
     <div class="overlay"></div>
     <div class="particles" id="particles"></div>
     
-    <!-- Индикатор текущей страницы -->
+    <!-- Индикатор страниц -->
     <div class="page-indicator">
         <span class="page-dot active" data-page="0"></span>
         <span class="page-dot" data-page="1"></span>
@@ -20,10 +20,10 @@
         <span class="page-dot" data-page="3"></span>
     </div>
     
-    <!-- Контейнер для всех страниц -->
+    <!-- Контейнер страниц -->
     <div class="pages-container">
         <!-- Страница 1: Главная -->
-        <div class="page active" id="page-0">
+        <section class="page active" id="page-0">
             <div class="container">
                 <div class="watermark">
                     <div class="text-container">
@@ -40,16 +40,16 @@
                     </a>
                     
                     <div class="swipe-hint">
-                        ⬇️ Листайте вниз для подробностей
+                        ⬇️ Листайте вниз
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
 
         <!-- Страница 2: Статистика -->
-        <div class="page" id="page-1">
+        <section class="page" id="page-1">
             <div class="container">
-                <div class="page-title">📊 Статистика канала</div>
+                <div class="page-title">📊 Статистика</div>
                 
                 <div class="channel-stats">
                     <div class="stat-item">
@@ -82,15 +82,14 @@
                     ⬇️ Листайте дальше
                 </div>
             </div>
-        </div>
+        </section>
 
         <!-- Страница 3: Обратный отсчет -->
-        <div class="page" id="page-2">
+        <section class="page" id="page-2">
             <div class="container">
-                <div class="page-title">⏰ Обратный отсчет</div>
+                <div class="page-title">⏰ До Нового 2026 года</div>
                 
                 <div class="countdown-section">
-                    <div class="countdown-title">🎄 До Нового 2026 года:</div>
                     <div class="countdown-timer" id="countdown">
                         <div class="time-unit">
                             <span class="time-number" id="days">00</span>
@@ -116,15 +115,14 @@
                     ⬇️ Последняя страница
                 </div>
             </div>
-        </div>
+        </section>
 
         <!-- Страница 4: Преимущества -->
-        <div class="page" id="page-3">
+        <section class="page" id="page-3">
             <div class="container">
-                <div class="page-title">💎 Преимущества</div>
+                <div class="page-title">💎 Что вы получите</div>
                 
                 <div class="benefits">
-                    <div class="benefits-title">ЧТО ВЫ ПОЛУЧИТЕ:</div>
                     <p class="benefits-list">
                         Важные новости • Интересный контент • Повседневность<br>
                         Эксклюзивные материалы • Личный опыт • Полезные советы<br>
@@ -141,10 +139,10 @@
                 </div>
                 
                 <div class="swipe-hint">
-                    ⬆️ Листайте вверх чтобы вернуться
+                    ⬆️ Листайте вверх
                 </div>
             </div>
-        </div>
+        </section>
     </div>
 
     <script src="script.js"></script>
