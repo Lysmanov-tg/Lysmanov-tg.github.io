@@ -1,445 +1,208 @@
-// Определяем устройство
+// Простая проверка на мобильное устройство
 function isMobile() {
     return window.innerWidth <= 768;
 }
 
-// Инициализация при загрузке
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚀 LYSMANOV Site Started');
+// Запускаем когда страница загрузится
+window.addEventListener('DOMContentLoaded', function() {
+    console.log('🚀 Site loading...');
     
-    try {
-        // Сначала обновляем прогресс-бары
-        updateAllStats();
-        
-        // Показываем правильную версию
-        checkVersion();
-        
-        // Общие функции
-        initCommonFeatures();
-        
-        // Слушаем изменение размера окна
-        window.addEventListener('resize', checkVersion);
-        
-    } catch (error) {
-        console.error('Ошибка инициализации:', error);
-    }
+    // Показываем правильную версию
+    showCorrectVersion();
+    
+    // Запускаем обратный отсчет
+    startCountdown();
+    
+    // Показываем прогресс-бары
+    showProgressBars();
+    
+    // Добавляем частицы
+    addParticles();
 });
 
-// Проверка и показ правильной версии
-function checkVersion() {
-    try {
-        const mobileVersion = document.querySelector('.mobile-version');
-        const desktopVersion = document.querySelector('.desktop-version');
+// Показываем правильную версию сайта
+function showCorrectVersion() {
+    const mobile = document.querySelector('.mobile-version');
+    const desktop = document.querySelector('.desktop-version');
+    
+    if (isMobile()) {
+        if (mobile) mobile.style.display = 'block';
+        if (desktop) desktop.style.display = 'none';
+        console.log('📱 Mobile version shown');
+    } else {
+        if (mobile) mobile.style.display = 'none';
+        if (desktop) desktop.style.display = 'flex';
+        console.log('💻 Desktop version shown');
+    }
+}
+
+// Показываем прогресс-бары
+function showProgressBars() {
+    // Мобильные прогресс-бары
+    const mobileSubs = document.getElementById('mobile-subs-progress');
+    const mobilePosts = document.getElementById('mobile-posts-progress');
+    
+    if (mobileSubs) {
+        mobileSubs.style.width = '51%';
+        mobileSubs.style.background = 'linear-gradient(90deg, #ff3366, #00b4ff)';
+    }
+    if (mobilePosts) {
+        mobilePosts.style.width = '48.4%';
+        mobilePosts.style.background = 'linear-gradient(90deg, #ff3366, #00b4ff)';
+    }
+    
+    // ПК прогресс-бары
+    const desktopSubs = document.getElementById('subscribers-progress');
+    const desktopPosts = document.getElementById('posts-progress');
+    
+    if (desktopSubs) {
+        desktopSubs.style.width = '51%';
+        desktopSubs.style.background = 'linear-gradient(90deg, #ff3366, #00b4ff)';
+    }
+    if (desktopPosts) {
+        desktopPosts.style.width = '48.4%';
+        desktopPosts.style.background = 'linear-gradient(90deg, #ff3366, #00b4ff)';
+    }
+    
+    console.log('📊 Progress bars shown');
+}
+
+// Обратный отсчет
+function startCountdown() {
+    const targetDate = new Date('2026-01-01T00:00:00').getTime();
+    
+    function updateCountdown() {
+        const now = new Date().getTime();
+        const distance = targetDate - now;
         
-        if (!mobileVersion || !desktopVersion) {
-            console.error('Не найдены версии сайта');
+        // Если время вышло
+        if (distance < 0) {
+            setTimerValues('00', '00', '00', '00');
+            showNewYearMessage();
             return;
         }
         
-        if (isMobile()) {
-            console.log('📱 Mobile version');
-            mobileVersion.style.display = 'block';
-            desktopVersion.style.display = 'none';
-            initMobileVersion();
-        } else {
-            console.log('💻 Desktop version');
-            mobileVersion.style.display = 'none';
-            desktopVersion.style.display = 'flex';
-            initDesktopVersion();
-        }
-    } catch (error) {
-        console.error('Ошибка checkVersion:', error);
+        // Вычисляем время
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+        
+        // Обновляем таймер
+        setTimerValues(
+            days.toString().padStart(2, '0'),
+            hours.toString().padStart(2, '0'),
+            minutes.toString().padStart(2, '0'),
+            seconds.toString().padStart(2, '0')
+        );
+    }
+    
+    // Запускаем сразу и каждую секунду
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+    
+    console.log('⏰ Countdown started');
+}
+
+// Устанавливаем значения таймера
+function setTimerValues(days, hours, minutes, seconds) {
+    // Мобильные элементы
+    const mobileElements = {
+        days: document.getElementById('mobile-days'),
+        hours: document.getElementById('mobile-hours'),
+        minutes: document.getElementById('mobile-minutes'),
+        seconds: document.getElementById('mobile-seconds')
+    };
+    
+    // ПК элементы
+    const desktopElements = {
+        days: document.getElementById('days'),
+        hours: document.getElementById('hours'),
+        minutes: document.getElementById('minutes'),
+        seconds: document.getElementById('seconds')
+    };
+    
+    // Обновляем мобильный таймер
+    for (const [key, element] of Object.entries(mobileElements)) {
+        if (element) element.textContent = eval(key);
+    }
+    
+    // Обновляем ПК таймер
+    for (const [key, element] of Object.entries(desktopElements)) {
+        if (element) element.textContent = eval(key);
     }
 }
 
-// Мобильная версия
-function initMobileVersion() {
-    console.log('📱 Mobile version initialized');
-    try {
-        startMobileCountdown();
-        initMobileNavigation();
-    } catch (error) {
-        console.error('Ошибка initMobileVersion:', error);
+// Показываем сообщение о Новом годе
+function showNewYearMessage() {
+    const mobileMessage = document.getElementById('mobile-countdown-message');
+    const desktopMessage = document.getElementById('countdownMessage');
+    
+    const message = '🎉 С НОВЫМ 2026 ГОДОМ! 🎉';
+    
+    if (mobileMessage) {
+        mobileMessage.textContent = message;
+        mobileMessage.style.color = '#ff3366';
+    }
+    
+    if (desktopMessage) {
+        desktopMessage.textContent = message;
+        desktopMessage.style.color = '#ff3366';
     }
 }
 
-// ПК версия  
-function initDesktopVersion() {
-    console.log('💻 Desktop version initialized');
-    try {
-        animateDesktopText();
-        startDesktopCountdown();
-    } catch (error) {
-        console.error('Ошибка initDesktopVersion:', error);
+// Добавляем частицы на фон
+function addParticles() {
+    const container = document.getElementById('particles');
+    if (!container) return;
+    
+    const count = isMobile() ? 15 : 25;
+    
+    for (let i = 0; i < count; i++) {
+        const particle = document.createElement('div');
+        particle.style.position = 'absolute';
+        particle.style.width = '2px';
+        particle.style.height = '2px';
+        particle.style.background = '#ff3366';
+        particle.style.borderRadius = '50%';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.animation = `floatParticle ${6 + Math.random() * 6}s infinite linear`;
+        particle.style.animationDelay = Math.random() * 5 + 's';
+        
+        container.appendChild(particle);
     }
+    
+    console.log('✨ Particles added');
 }
 
-// Общие функции
-function initCommonFeatures() {
-    try {
-        initParticles();
-    } catch (error) {
-        console.error('Ошибка initCommonFeatures:', error);
-    }
-}
-
-// ОБНОВЛЕНИЕ ВСЕХ ПРОГРЕСС-БАРОВ
-function updateAllStats() {
-    try {
-        const subscribers = 51;
-        const posts = 484;
-        
-        // Ждем немного чтобы элементы точно были в DOM
-        setTimeout(() => {
-            // Мобильные элементы
-            const mobileSubsProgress = document.getElementById('mobile-subs-progress');
-            const mobilePostsProgress = document.getElementById('mobile-posts-progress');
-            const mobileSubsText = document.getElementById('mobile-subs-text');
-            const mobilePostsText = document.getElementById('mobile-posts-text');
-            
-            // ПК элементы
-            const desktopSubsProgress = document.getElementById('subscribers-progress');
-            const desktopPostsProgress = document.getElementById('posts-progress');
-            const desktopSubsText = document.getElementById('subscribers-text');
-            const desktopPostsText = document.getElementById('posts-text');
-            
-            // Обновляем мобильные прогресс-бары
-            if (mobileSubsProgress) {
-                mobileSubsProgress.style.width = '51%';
-                mobileSubsProgress.style.transition = 'width 2s ease-in-out';
-            }
-            if (mobilePostsProgress) {
-                mobilePostsProgress.style.width = '48.4%';
-                mobilePostsProgress.style.transition = 'width 2s ease-in-out';
-            }
-            if (mobileSubsText) mobileSubsText.textContent = subscribers + '/100';
-            if (mobilePostsText) mobilePostsText.textContent = posts + '/1000';
-            
-            // Обновляем ПК прогресс-бары
-            if (desktopSubsProgress) {
-                desktopSubsProgress.style.width = '51%';
-                desktopSubsProgress.style.transition = 'width 2s ease-in-out';
-            }
-            if (desktopPostsProgress) {
-                desktopPostsProgress.style.width = '48.4%';
-                desktopPostsProgress.style.transition = 'width 2s ease-in-out';
-            }
-            if (desktopSubsText) desktopSubsText.textContent = subscribers + '/100';
-            if (desktopPostsText) desktopPostsText.textContent = posts + '/1000';
-            
-            console.log('📊 Progress bars updated');
-        }, 100);
-        
-    } catch (error) {
-        console.error('Ошибка updateAllStats:', error);
-    }
-}
-
-// Обратный отсчет для мобильных
-function startMobileCountdown() {
-    try {
-        const targetDate = new Date('2026-01-01T00:00:00').getTime();
-        const messageElement = document.getElementById('mobile-countdown-message');
-        
-        const messages = [
-            "🎉 Скоро Новый 2026 Год!",
-            "⏰ Время летит незаметно...", 
-            "🚀 Готовься к празднику!",
-            "🎁 Сколько планов на следующий год?"
-        ];
-
-        function update() {
-            const now = new Date().getTime();
-            const distance = targetDate - now;
-            
-            if (distance < 0) {
-                updateMobileTimer('00', '00', '00', '00');
-                if (messageElement) {
-                    messageElement.textContent = '🎉 С НОВЫМ 2026 ГОДОМ! 🎉';
-                    messageElement.style.color = '#ff3366';
-                }
-                return;
-            }
-            
-            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-            
-            updateMobileTimer(
-                days.toString().padStart(2, '0'),
-                hours.toString().padStart(2, '0'), 
-                minutes.toString().padStart(2, '0'),
-                seconds.toString().padStart(2, '0')
-            );
-            
-            // Смена сообщения
-            if (messageElement && seconds % 10 === 0) {
-                const randomIndex = Math.floor(Math.random() * messages.length);
-                messageElement.textContent = messages[randomIndex];
-            }
-        }
-        
-        function updateMobileTimer(days, hours, minutes, seconds) {
-            const elements = {
-                days: document.getElementById('mobile-days'),
-                hours: document.getElementById('mobile-hours'),
-                minutes: document.getElementById('mobile-minutes'), 
-                seconds: document.getElementById('mobile-seconds')
-            };
-            
-            for (const [key, element] of Object.entries(elements)) {
-                if (element) element.textContent = eval(key);
-            }
-        }
-        
-        update();
-        setInterval(update, 1000);
-        
-        // Первое сообщение
-        if (messageElement) {
-            messageElement.textContent = messages[0];
-        }
-        
-        console.log('⏰ Mobile countdown started');
-    } catch (error) {
-        console.error('Ошибка startMobileCountdown:', error);
-    }
-}
-
-// Обратный отсчет для ПК
-function startDesktopCountdown() {
-    try {
-        const targetDate = new Date('2026-01-01T00:00:00').getTime();
-        const messageElement = document.getElementById('countdownMessage');
-        
-        const messages = [
-            "🎉 Скоро Новый 2026 Год!",
-            "⏰ Время летит незаметно...", 
-            "🚀 Готовься к празднику!",
-            "🎁 Сколько планов на следующий год?"
-        ];
-
-        function update() {
-            const now = new Date().getTime();
-            const distance = targetDate - now;
-            
-            if (distance < 0) {
-                updateDesktopTimer('00', '00', '00', '00');
-                if (messageElement) {
-                    messageElement.textContent = '🎉 С НОВЫМ 2026 ГОДОМ! 🎉';
-                    messageElement.style.color = '#ff3366';
-                }
-                return;
-            }
-            
-            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-            
-            updateDesktopTimer(
-                days.toString().padStart(2, '0'),
-                hours.toString().padStart(2, '0'),
-                minutes.toString().padStart(2, '0'), 
-                seconds.toString().padStart(2, '0')
-            );
-            
-            // Смена сообщения
-            if (messageElement && seconds % 10 === 0) {
-                const randomIndex = Math.floor(Math.random() * messages.length);
-                messageElement.textContent = messages[randomIndex];
-            }
-        }
-        
-        function updateDesktopTimer(days, hours, minutes, seconds) {
-            const elements = {
-                days: document.getElementById('days'),
-                hours: document.getElementById('hours'),
-                minutes: document.getElementById('minutes'),
-                seconds: document.getElementById('seconds')
-            };
-            
-            for (const [key, element] of Object.entries(elements)) {
-                if (element) element.textContent = eval(key);
-            }
-        }
-        
-        update();
-        setInterval(update, 1000);
-        
-        if (messageElement) {
-            messageElement.textContent = messages[0];
-        }
-        
-        console.log('⏰ Desktop countdown started');
-    } catch (error) {
-        console.error('Ошибка startDesktopCountdown:', error);
-    }
-}
-
-// Анимация текста для ПК
-function animateDesktopText() {
-    try {
-        const text = document.getElementById('text');
-        if (!text) return;
-        
-        const textContent = text.textContent;
-        text.innerHTML = '';
-        
-        for (let i = 0; i < textContent.length; i++) {
-            const letter = document.createElement('span');
-            letter.className = 'letter';
-            letter.textContent = textContent[i];
-            const delay = i * 0.2;
-            letter.style.animationDelay = `${delay}s, ${delay + 2}s`;
-            text.appendChild(letter);
-        }
-    } catch (error) {
-        console.error('Ошибка animateDesktopText:', error);
-    }
-}
-
-// Навигация для мобильных
-function initMobileNavigation() {
-    try {
-        const sections = document.querySelectorAll('.mobile-section');
-        const dots = document.querySelectorAll('.dot');
-        let currentSection = 0;
-        
-        // Показываем первую секцию
-        if (sections.length > 0) {
-            sections[0].classList.add('active');
-        }
-        
-        let isScrolling = false;
-        
-        window.addEventListener('wheel', function(e) {
-            if (isScrolling) return;
-            
-            isScrolling = true;
-            
-            if (e.deltaY > 0 && currentSection < sections.length - 1) {
-                showMobileSection(currentSection + 1);
-            } else if (e.deltaY < 0 && currentSection > 0) {
-                showMobileSection(currentSection - 1);
-            }
-            
-            setTimeout(() => { isScrolling = false; }, 800);
-        });
-        
-        // Обработчик касаний
-        let startY = 0;
-        
-        window.addEventListener('touchstart', function(e) {
-            startY = e.touches[0].clientY;
-        });
-        
-        window.addEventListener('touchend', function(e) {
-            if (isScrolling) return;
-            
-            const endY = e.changedTouches[0].clientY;
-            const diff = startY - endY;
-            
-            if (Math.abs(diff) > 50) {
-                isScrolling = true;
-                
-                if (diff > 0 && currentSection < sections.length - 1) {
-                    showMobileSection(currentSection + 1);
-                } else if (diff < 0 && currentSection > 0) {
-                    showMobileSection(currentSection - 1);
-                }
-                
-                setTimeout(() => { isScrolling = false; }, 800);
-            }
-        });
-        
-        // Клики по точкам
-        dots.forEach(dot => {
-            dot.addEventListener('click', function() {
-                const sectionIndex = parseInt(this.getAttribute('data-page'));
-                showMobileSection(sectionIndex);
-            });
-        });
-        
-        function showMobileSection(index) {
-            // Скрываем все секции
-            sections.forEach(section => {
-                section.classList.remove('active');
-            });
-            
-            // Показываем выбранную секцию
-            sections[index].classList.add('active');
-            
-            // Обновляем точки
-            dots.forEach(dot => {
-                dot.classList.remove('active');
-            });
-            dots[index].classList.add('active');
-            
-            currentSection = index;
-        }
-    } catch (error) {
-        console.error('Ошибка initMobileNavigation:', error);
-    }
-}
-
-// Частицы
-function initParticles() {
-    try {
-        const particlesContainer = document.getElementById('particles');
-        if (!particlesContainer) return;
-        
-        const particleCount = isMobile() ? 15 : 30;
-        
-        for (let i = 0; i < particleCount; i++) {
-            const particle = document.createElement('div');
-            particle.className = 'particle';
-            const left = Math.random() * 100;
-            const delay = Math.random() * 8;
-            const duration = 6 + Math.random() * 6;
-            const size = isMobile() ? 1 : 1 + Math.random() * 2;
-            particle.style.left = `${left}%`;
-            particle.style.animationDelay = `${delay}s`;
-            particle.style.animationDuration = `${duration}s`;
-            particle.style.width = `${size}px`;
-            particle.style.height = `${size}px`;
-            const colors = ['#ff3366', '#00b4ff', '#8b0000', '#0066ff'];
-            const randomColor = colors[Math.floor(Math.random() * colors.length)];
-            particle.style.background = randomColor;
-            particlesContainer.appendChild(particle);
-        }
-    } catch (error) {
-        console.error('Ошибка initParticles:', error);
-    }
-}
-
-// Функции для кнопок
+// Функции для кнопок "Поделиться"
 function shareTelegram() {
-    try {
-        const url = 'https://t.me/Lysmanov';
-        const text = 'Подпишись на крутой канал LYSMANOV ✞ - важные новости и интересный контент!';
-        window.open('https://t.me/share/url?url=' + encodeURIComponent(url) + '&text=' + encodeURIComponent(text), '_blank');
-    } catch (error) {
-        console.error('Ошибка shareTelegram:', error);
-    }
+    const url = 'https://t.me/Lysmanov';
+    const text = 'Подпишись на крутой канал LYSMANOV ✞ - важные новости и интересный контент!';
+    window.open('https://t.me/share/url?url=' + encodeURIComponent(url) + '&text=' + encodeURIComponent(text), '_blank');
 }
 
 function copyLink() {
-    try {
-        const url = 'https://t.me/Lysmanov';
+    const url = 'https://t.me/Lysmanov';
+    
+    // Пробуем современный способ
+    if (navigator.clipboard) {
         navigator.clipboard.writeText(url).then(function() {
             alert('✅ Ссылка скопирована!');
-        }).catch(function() {
-            const textArea = document.createElement('textarea');
-            textArea.value = url;
-            document.body.appendChild(textArea);
-            textArea.select();
-            document.execCommand('copy');
-            document.body.removeChild(textArea);
-            alert('✅ Ссылка скопирована!');
         });
-    } catch (error) {
-        console.error('Ошибка copyLink:', error);
+    } else {
+        // Старый способ для поддержки
+        const input = document.createElement('input');
+        input.value = url;
+        document.body.appendChild(input);
+        input.select();
+        document.execCommand('copy');
+        document.body.removeChild(input);
+        alert('✅ Ссылка скопирована!');
     }
 }
+
+// Обработчик изменения размера окна
+window.addEventListener('resize', function() {
+    showCorrectVersion();
+});
