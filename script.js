@@ -1,4 +1,4 @@
-// script.js - СТАТИСТИКА ИЗ ФАЙЛА
+// script.js - ПОЛНЫЙ КОД С СТАТИСТИКОЙ ИЗ ФАЙЛА
 class LysmanovSite {
     constructor() {
         this.stats = {
@@ -19,7 +19,7 @@ class LysmanovSite {
         console.log('🚀 LYSMANOV Site Initializing...');
         
         this.showCorrectVersion();
-        await this.loadStatsFromFile(); // Загружаем из файла
+        await this.loadStatsFromFile();
         this.initCountdown();
         this.initParticles();
         this.initAnimatedTips();
@@ -34,7 +34,6 @@ class LysmanovSite {
         console.log('✅ Site fully loaded!');
     }
 
-    // ЗАГРУЗКА СТАТИСТИКИ ИЗ ФАЙЛА
     async loadStatsFromFile() {
         try {
             console.log('📊 Loading stats from file...');
@@ -46,7 +45,6 @@ class LysmanovSite {
             
             const fileStats = await response.json();
             
-            // Проверяем что данные валидные
             if (fileStats && typeof fileStats.subscribers === 'number' && typeof fileStats.posts === 'number') {
                 this.stats = {
                     subscribers: fileStats.subscribers,
@@ -61,7 +59,6 @@ class LysmanovSite {
             
         } catch (error) {
             console.log('❌ Error loading stats from file, using defaults:', error.message);
-            // Используем значения по умолчанию
             this.stats = {
                 subscribers: 51,
                 posts: 485,
@@ -117,7 +114,6 @@ class LysmanovSite {
         console.log('📈 Current stats displayed:', this.stats);
     }
 
-    // СИСТЕМА АНИМИРОВАННЫХ СОВЕТОВ
     initAnimatedTips() {
         this.tips = [
             "💡 Знаете ли вы? Можно поделиться сайтом с друзьями!",
@@ -455,7 +451,6 @@ class LysmanovSite {
     }
 }
 
-// ГЛОБАЛЬНЫЕ ФУНКЦИИ
 function shareTelegram() {
     const url = 'https://t.me/Lysmanov';
     const text = 'Подпишись на крутой канал LYSMANOV ✞ - важные новости и интересный контент!';
@@ -503,18 +498,15 @@ function showCopyNotification() {
     setTimeout(() => notification.remove(), 2000);
 }
 
-// ФУНКЦИЯ ДЛЯ ОБНОВЛЕНИЯ СТАТИСТИКИ (если нужно принудительно)
 function refreshStats() {
     if (window.lysmanovSite) {
         window.lysmanovSite.loadStatsFromFile();
     }
 }
 
-// ЗАПУСК САЙТА
 document.addEventListener('DOMContentLoaded', () => {
     window.lysmanovSite = new LysmanovSite();
     
-    // Добавляем кнопку обновления для разработки
     if (location.hostname === 'lysmanov-tg.github.io') {
         const refreshBtn = document.createElement('button');
         refreshBtn.innerHTML = '🔄';
@@ -543,7 +535,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// СТИЛИ ДЛЯ СОВЕТОВ И УВЕДОМЛЕНИЙ
 const style = document.createElement('style');
 style.textContent = `
     .animated-tips-container {
@@ -560,6 +551,18 @@ style.textContent = `
         z-index: 10000;
         font-family: 'Special Elite', cursive;
         overflow: hidden;
+        animation: tipSlideIn 0.5s ease-out;
+    }
+    
+    @keyframes tipSlideIn {
+        from {
+            transform: translateX(-100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
     }
     
     .tip-header {
@@ -699,6 +702,36 @@ style.textContent = `
         0% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
         50% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
         100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+    }
+    
+    .progress-fill {
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .progress-fill::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.4),
+            transparent
+        );
+        animation: progressShine 2s infinite;
+    }
+    
+    @keyframes progressShine {
+        0% {
+            left: -100%;
+        }
+        100% {
+            left: 100%;
+        }
     }
 `;
 document.head.appendChild(style);
