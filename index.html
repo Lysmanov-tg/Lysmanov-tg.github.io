@@ -12,137 +12,88 @@
     <div class="overlay"></div>
     <div class="particles" id="particles"></div>
     
-    <!-- Индикатор страниц -->
-    <div class="page-indicator">
-        <span class="page-dot active" data-page="0"></span>
-        <span class="page-dot" data-page="1"></span>
-        <span class="page-dot" data-page="2"></span>
-        <span class="page-dot" data-page="3"></span>
-    </div>
-    
-    <!-- Контейнер страниц -->
-    <div class="pages-container">
-        <!-- Страница 1: Главная -->
-        <section class="page active" id="page-0">
-            <div class="container">
-                <div class="watermark">
-                    <div class="text-container">
-                        <span class="main-text" id="text">LYSMANOV</span>
-                        <span class="cross">✞</span>
-                    </div>
-                </div>
-                
-                <div class="signature" id="signature">https://t.me/Lysmanov</div>
-
-                <div class="telegram-elements">
-                    <a href="https://t.me/Lysmanov" class="tg-button" target="_blank">
-                        📢 ПОДПИСАТЬСЯ НА КАНАЛ
-                    </a>
-                    
-                    <div class="swipe-hint">
-                        ⬇️ Листайте вниз
-                    </div>
-                </div>
+    <div class="container">
+        <div class="watermark">
+            <div class="text-container">
+                <span class="main-text" id="text">LYSMANOV</span>
+                <span class="cross">✞</span>
             </div>
-        </section>
+        </div>
+        
+        <div class="signature" id="signature">https://t.me/Lysmanov</div>
 
-        <!-- Страница 2: Статистика -->
-        <section class="page" id="page-1">
-            <div class="container">
-                <div class="page-title">📊 Статистика</div>
-                
-                <div class="channel-stats">
-                    <div class="stat-item">
-                        <div class="goal-container">
-                            <div class="goal-text">ЦЕЛЬ: 100 ПОДПИСЧИКОВ</div>
-                            <div class="progress-container">
-                                <div class="progress-bar">
-                                    <div class="progress-fill" id="subscribers-progress"></div>
-                                </div>
-                                <div class="progress-text" id="subscribers-text">51/100</div>
+        <div class="telegram-elements">
+            <a href="https://t.me/Lysmanov" class="tg-button" target="_blank">
+                📢 ПОДПИСАТЬСЯ НА КАНАЛ
+            </a>
+            
+            <div class="channel-stats">
+                <div class="stat-item">
+                    <div class="goal-container">
+                        <div class="goal-text">ЦЕЛЬ: 100 ПОДПИСЧИКОВ</div>
+                        <div class="progress-container">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="subscribers-progress"></div>
                             </div>
-                            <div class="help-text">Помогите достичь цели!</div>
+                            <div class="progress-text" id="subscribers-text">51/100</div>
                         </div>
+                        <div class="help-text">Помогите достичь цели!</div>
                     </div>
-                    <div class="stat-item">
-                        <div class="goal-container">
-                            <div class="goal-text">ЦЕЛЬ: 1000 ПОСТОВ</div>
-                            <div class="progress-container">
-                                <div class="progress-bar">
-                                    <div class="progress-fill" id="posts-progress"></div>
-                                </div>
-                                <div class="progress-text" id="posts-text">484/1000</div>
+                </div>
+                <div class="stat-item">
+                    <div class="goal-container">
+                        <div class="goal-text">ЦЕЛЬ: 1000 ПОСТОВ</div>
+                        <div class="progress-container">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="posts-progress"></div>
                             </div>
-                            <div class="help-text">Следите за новым контентом!</div>
+                            <div class="progress-text" id="posts-text">484/1000</div>
                         </div>
+                        <div class="help-text">Следите за новым контентом!</div>
                     </div>
                 </div>
-                
-                <div class="swipe-hint">
-                    ⬇️ Листайте дальше
-                </div>
             </div>
-        </section>
-
-        <!-- Страница 3: Обратный отсчет -->
-        <section class="page" id="page-2">
-            <div class="container">
-                <div class="page-title">⏰ До Нового 2026 года</div>
-                
-                <div class="countdown-section">
-                    <div class="countdown-timer" id="countdown">
-                        <div class="time-unit">
-                            <span class="time-number" id="days">00</span>
-                            <span class="time-label">дней</span>
-                        </div>
-                        <div class="time-unit">
-                            <span class="time-number" id="hours">00</span>
-                            <span class="time-label">часов</span>
-                        </div>
-                        <div class="time-unit">
-                            <span class="time-number" id="minutes">00</span>
-                            <span class="time-label">минут</span>
-                        </div>
-                        <div class="time-unit">
-                            <span class="time-number" id="seconds">00</span>
-                            <span class="time-label">секунд</span>
-                        </div>
+            
+            <div class="countdown-section">
+                <div class="countdown-title">🎄 До Нового 2026 года:</div>
+                <div class="countdown-timer" id="countdown">
+                    <div class="time-unit">
+                        <span class="time-number" id="days">00</span>
+                        <span class="time-label">дней</span>
                     </div>
-                    <div class="countdown-message" id="countdownMessage"></div>
-                </div>
-                
-                <div class="swipe-hint">
-                    ⬇️ Последняя страница
-                </div>
-            </div>
-        </section>
-
-        <!-- Страница 4: Преимущества -->
-        <section class="page" id="page-3">
-            <div class="container">
-                <div class="page-title">💎 Что вы получите</div>
-                
-                <div class="benefits">
-                    <p class="benefits-list">
-                        Важные новости • Интересный контент • Повседневность<br>
-                        Эксклюзивные материалы • Личный опыт • Полезные советы<br>
-                        Ежедневные обновления • Многое другое!
-                    </p>
-                </div>
-                
-                <div class="share-section">
-                    <div class="share-text">Поделитесь с друзьями:</div>
-                    <div class="share-buttons">
-                        <button class="share-button" onclick="shareTelegram()">Telegram</button>
-                        <button class="share-button" onclick="copyLink()">Скопировать ссылку</button>
+                    <div class="time-unit">
+                        <span class="time-number" id="hours">00</span>
+                        <span class="time-label">часов</span>
+                    </div>
+                    <div class="time-unit">
+                        <span class="time-number" id="minutes">00</span>
+                        <span class="time-label">минут</span>
+                    </div>
+                    <div class="time-unit">
+                        <span class="time-number" id="seconds">00</span>
+                        <span class="time-label">секунд</span>
                     </div>
                 </div>
-                
-                <div class="swipe-hint">
-                    ⬆️ Листайте вверх
+                <div class="countdown-message" id="countdownMessage"></div>
+            </div>
+            
+            <div class="benefits">
+                <div class="benefits-title">💎 ЧТО ВЫ ПОЛУЧИТЕ:</div>
+                <p class="benefits-list">
+                    Важные новости • Интересный контент • Повседневность<br>
+                    Эксклюзивные материалы • Личный опыт • Полезные советы<br>
+                    Ежедневные обновления • Многое другое!
+                </p>
+            </div>
+            
+            <div class="share-section">
+                <div class="share-text">Поделитесь с друзьями:</div>
+                <div class="share-buttons">
+                    <button class="share-button" onclick="shareTelegram()">Telegram</button>
+                    <button class="share-button" onclick="copyLink()">Скопировать ссылку</button>
                 </div>
             </div>
-        </section>
+        </div>
     </div>
 
     <script src="script.js"></script>
