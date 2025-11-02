@@ -182,7 +182,7 @@ body {
     transform: scale(0.95);
 }
 
-/* Мобильная статистика - ИСПРАВЛЕННЫЕ ПРОГРЕСС-БАРЫ */
+/* Мобильная статистика */
 .mobile-stats {
     width: 100%;
     background: transparent;
@@ -593,7 +593,7 @@ body {
     box-shadow: 0 10px 20px rgba(0, 180, 255, 0.4);
 }
 
-/* ПК СТАТИСТИКА - ИСПРАВЛЕННЫЕ ПРОГРЕСС-БАРЫ */
+/* ПК СТАТИСТИКА */
 .channel-stats {
     display: flex;
     gap: 20px;
@@ -1052,4 +1052,67 @@ body {
         font-size: 1.4rem;
         padding: 8px 4px;
     }
+}
+
+/* ИСПРАВЛЕНИЯ ДЛЯ РАБОТЫ НА GITHUB PAGES */
+
+/* Гарантируем что прогресс-бары видны */
+#subscribers-progress {
+    width: 51% !important;
+}
+
+#posts-progress {
+    width: 48.4% !important;
+}
+
+#mobile-subs-progress {
+    width: 51% !important;
+}
+
+#mobile-posts-progress {
+    width: 48.4% !important;
+}
+
+/* Гарантия что прогресс-бары видны */
+.progress-fill {
+    background: linear-gradient(90deg, #ff3366, #00b4ff) !important;
+    height: 100% !important;
+    border-radius: 6px !important;
+    display: block !important;
+}
+
+/* Исправление обратного отсчета */
+.time-number {
+    min-width: 60px !important;
+    display: block !important;
+}
+
+/* Гарантия что все элементы видны */
+#days, #hours, #minutes, #seconds,
+#mobile-days, #mobile-hours, #mobile-minutes, #mobile-seconds {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* Убедимся что секции активны */
+.mobile-section.active {
+    display: flex !important;
+}
+
+/* Фикс для точек навигации */
+.dot.active {
+    background: #ff3366 !important;
+}
+
+/* Гарантия что кнопки работают */
+.mobile-button, .tg-button {
+    cursor: pointer !important;
+    pointer-events: all !important;
+}
+
+/* Фикс для частиц */
+.particle {
+    display: block !important;
+    opacity: 0.7 !important;
 }
