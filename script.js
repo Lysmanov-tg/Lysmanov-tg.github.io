@@ -98,9 +98,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 1000);
     }
 
-    // ОБРАТНЫЙ ОТСЧЕТ ДО НОВОГО ГОДА
+    // ОБРАТНЫЙ ОТСЧЕТ ДО НОВОГО 2026 ГОДА
     function startCountdown() {
-        const targetDate = new Date('2025-01-01T00:00:00').getTime();
+        const targetDate = new Date('2026-01-01T00:00:00').getTime();
         const daysElement = document.getElementById('days');
         const hoursElement = document.getElementById('hours');
         const minutesElement = document.getElementById('minutes');
@@ -108,13 +108,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const messageElement = document.getElementById('countdownMessage');
 
         const messages = [
-            "🎉 Скоро Новый Год!",
+            "🎉 Скоро Новый 2026 Год!",
             "⏰ Время летит незаметно...",
             "🚀 Готовься к празднику!",
             "🎁 Сколько планов на следующий год?",
             "✨ Пусть мечты сбываются!",
             "🔥 Готов к новым свершениям?",
-            "🌟 Новый год - новые возможности!"
+            "🌟 Новый год - новые возможности!",
+            "💫 2026 год будет твоим годом!",
+            "🚀 Двигаемся к новым целям!",
+            "🎯 Готовь список желаний на 2026!"
         ];
 
         let currentMessageIndex = 0;
@@ -128,7 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 hoursElement.textContent = '00';
                 minutesElement.textContent = '00';
                 secondsElement.textContent = '00';
-                messageElement.textContent = '🎉 С НОВЫМ 2025 ГОДОМ! 🎉';
+                messageElement.textContent = '🎉 С НОВЫМ 2026 ГОДОМ! 🎉';
                 messageElement.style.color = '#ff3366';
                 messageElement.style.fontSize = '1.2rem';
                 messageElement.style.fontWeight = 'bold';
@@ -150,14 +153,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 currentMessageIndex = (currentMessageIndex + 1) % messages.length;
             }
 
-            if (days === 0 && hours < 24) {
-                messageElement.style.animation = 'messagePulse 0.5s infinite';
+            // Специальные эффекты при приближении
+            if (days < 30) {
+                messageElement.style.animation = 'messagePulse 1s infinite';
+            }
+            
+            if (days < 7) {
                 document.querySelector('.countdown-section').style.animation = 'countdownGlow 0.5s infinite alternate';
             }
 
-            if (days === 0 && hours === 0 && minutes < 1) {
+            if (days === 0 && hours < 24) {
                 document.body.style.background = 'linear-gradient(45deg, #ff0000, #ff3366)';
-                messageElement.textContent = '🎇 ПОСЛЕДНЯЯ МИНУТА! 🎇';
+                messageElement.textContent = '🎇 СЧЕТЧИК ЗАПУЩЕН! СКОРО 2026! 🎇';
+            }
+            
+            // Эффект для последнего часа
+            if (days === 0 && hours < 1) {
+                messageElement.textContent = '⚡ ПОСЛЕДНИЙ ЧАС 2025 ГОДА! ⚡';
+                messageElement.style.color = '#00ff88';
             }
         }
 
