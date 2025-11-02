@@ -1,12 +1,11 @@
 /* Добавь эти стили в конец твоего CSS файла */
 
-/* Контейнер для всех страниц */
+/* Контейнер страниц */
 .pages-container {
     position: relative;
     width: 100%;
     height: 100vh;
     overflow: hidden;
-    scroll-snap-type: y mandatory;
 }
 
 /* Отдельная страница */
@@ -19,16 +18,12 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    scroll-snap-align: start;
-    transition: transform 0.5s ease-in-out;
+    transition: transform 0.6s ease-in-out;
     transform: translateY(100vh);
-    opacity: 0;
 }
 
 .page.active {
     transform: translateY(0);
-    opacity: 1;
-    position: relative;
 }
 
 /* Индикатор страниц */
@@ -48,17 +43,18 @@
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.3);
     transition: all 0.3s ease;
+    cursor: pointer;
 }
 
 .page-dot.active {
-    background: var(--primary-color);
+    background: #ff3366;
     transform: scale(1.2);
 }
 
 /* Заголовок страницы */
 .page-title {
     font-size: clamp(1.5rem, 6vw, 2.5rem);
-    color: var(--primary-color);
+    color: #ff3366;
     text-align: center;
     margin-bottom: 2rem;
     text-shadow: 0 0 10px rgba(255, 51, 102, 0.5);
@@ -68,7 +64,7 @@
 /* Подсказка для свайпа */
 .swipe-hint {
     text-align: center;
-    color: var(--secondary-color);
+    color: #00b4ff;
     font-size: 0.9rem;
     margin-top: 2rem;
     opacity: 0.7;
@@ -88,49 +84,13 @@
 
 /* Адаптация для мобильных */
 @media (max-width: 768px) {
-    .pages-container {
-        overflow-y: auto;
-        scroll-snap-type: y mandatory;
-        -webkit-overflow-scrolling: touch;
-    }
-    
-    .page {
-        position: relative;
-        min-height: 100vh;
-        transform: none;
-        opacity: 1;
-    }
-    
-    .page:not(.active) {
-        display: none;
-    }
-    
     .page-indicator {
-        top: 10px;
-        right: 10px;
+        top: 15px;
+        right: 15px;
     }
     
     .swipe-hint {
         font-size: 0.8rem;
         margin-top: 1.5rem;
-    }
-}
-
-/* Для десктопа - вертикальный скролл */
-@media (min-width: 769px) {
-    .pages-container {
-        overflow-y: scroll;
-        scroll-behavior: smooth;
-    }
-    
-    .page {
-        position: relative;
-        min-height: 100vh;
-        transform: none;
-        opacity: 1;
-    }
-    
-    .swipe-hint {
-        display: none;
     }
 }
