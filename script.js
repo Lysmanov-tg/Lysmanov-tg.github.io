@@ -47,10 +47,10 @@ document.addEventListener('DOMContentLoaded', () => {
         particlesContainer.appendChild(particle);
     }
     
-    // РЕАЛЬНЫЕ ДАННЫЕ ПОДПИСЧИКОВ - НАЧАЛО
+    // РЕАЛЬНЫЕ ДАННЫЕ ПОДПИСЧИКОВ
     function updateRealStats() {
-        const REAL_SUBSCRIBERS = 51;  // ТЕКУЩИЕ ПОДПИСЧИКИ
-        const REAL_POSTS = 484;       // ТЕКУЩИЕ ПОСТЫ
+        const REAL_SUBSCRIBERS = 51;
+        const REAL_POSTS = 484;
         
         const subscribersProgress = document.getElementById('subscribers-progress');
         const postsProgress = document.getElementById('posts-progress');
@@ -58,16 +58,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const postsText = document.getElementById('posts-text');
         const helpText = document.querySelector('.stat-item .help-text');
         
-        // Обновляем подписчиков
         subscribersProgress.style.width = `${REAL_SUBSCRIBERS}%`;
         subscribersText.textContent = `${REAL_SUBSCRIBERS}/100`;
         
-        // Обновляем посты
         const postsPercentage = (REAL_POSTS / 1000) * 100;
         postsProgress.style.width = `${postsPercentage}%`;
         postsText.textContent = `${REAL_POSTS}/1000`;
         
-        // Динамические сообщения в зависимости от прогресса
         if (REAL_SUBSCRIBERS >= 100) {
             helpText.textContent = '🎉 Цель достигнута! Спасибо!';
             helpText.style.color = '#ff3366';
@@ -86,14 +83,9 @@ document.addEventListener('DOMContentLoaded', () => {
             helpText.style.color = '#ff3366';
         }
         
-        // Сохраняем в localStorage
-        localStorage.setItem('lastSubscribers', REAL_SUBSCRIBERS);
-        localStorage.setItem('lastPosts', REAL_POSTS);
-        
-        console.log(`📊 Статистика обновлена: ${REAL_SUBSCRIBERS} подписчиков, ${REAL_POSTS} постов`);
+        console.log(`📊 Статистика: ${REAL_SUBSCRIBERS} подписчиков, ${REAL_POSTS} постов`);
     }
 
-    // Функция для красивого появления прогресс-баров
     function animateProgressBars() {
         setTimeout(() => {
             const subscribersProgress = document.getElementById('subscribers-progress');
@@ -102,26 +94,81 @@ document.addEventListener('DOMContentLoaded', () => {
             subscribersProgress.style.transition = 'width 2s ease-in-out';
             postsProgress.style.transition = 'width 2s ease-in-out';
             
-            // Запускаем обновление статистики
             updateRealStats();
         }, 1000);
     }
 
-    // Автоматическое обновление каждые 10 минут
-    function startAutoUpdate() {
-        // Первый запуск
-        animateProgressBars();
-        
-        // Дополнительно: обновляем каждые 10 минут
-        setInterval(() => {
-            console.log('🔄 Автообновление статистики...');
-            updateRealStats();
-        }, 10 * 60 * 1000);
+    // ОБРАТНЫЙ ОТСЧЕТ ДО НОВОГО ГОДА
+    function startCountdown() {
+        const targetDate = new Date('2025-01-01T00:00:00').getTime();
+        const daysElement = document.getElementById('days');
+        const hoursElement = document.getElementById('hours');
+        const minutesElement = document.getElementById('minutes');
+        const secondsElement = document.getElementById('seconds');
+        const messageElement = document.getElementById('countdownMessage');
+
+        const messages = [
+            "🎉 Скоро Новый Год!",
+            "⏰ Время летит незаметно...",
+            "🚀 Готовься к празднику!",
+            "🎁 Сколько планов на следующий год?",
+            "✨ Пусть мечты сбываются!",
+            "🔥 Готов к новым свершениям?",
+            "🌟 Новый год - новые возможности!"
+        ];
+
+        let currentMessageIndex = 0;
+
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+
+            if (distance < 0) {
+                daysElement.textContent = '00';
+                hoursElement.textContent = '00';
+                minutesElement.textContent = '00';
+                secondsElement.textContent = '00';
+                messageElement.textContent = '🎉 С НОВЫМ 2025 ГОДОМ! 🎉';
+                messageElement.style.color = '#ff3366';
+                messageElement.style.fontSize = '1.2rem';
+                messageElement.style.fontWeight = 'bold';
+                return;
+            }
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            daysElement.textContent = days.toString().padStart(2, '0');
+            hoursElement.textContent = hours.toString().padStart(2, '0');
+            minutesElement.textContent = minutes.toString().padStart(2, '0');
+            secondsElement.textContent = seconds.toString().padStart(2, '0');
+
+            if (seconds % 10 === 0) {
+                messageElement.textContent = messages[currentMessageIndex];
+                currentMessageIndex = (currentMessageIndex + 1) % messages.length;
+            }
+
+            if (days === 0 && hours < 24) {
+                messageElement.style.animation = 'messagePulse 0.5s infinite';
+                document.querySelector('.countdown-section').style.animation = 'countdownGlow 0.5s infinite alternate';
+            }
+
+            if (days === 0 && hours === 0 && minutes < 1) {
+                document.body.style.background = 'linear-gradient(45deg, #ff0000, #ff3366)';
+                messageElement.textContent = '🎇 ПОСЛЕДНЯЯ МИНУТА! 🎇';
+            }
+        }
+
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+        messageElement.textContent = messages[Math.floor(Math.random() * messages.length)];
     }
 
-    // Запускаем обновление статистики с реальными цифрами
-    startAutoUpdate();
-    // РЕАЛЬНЫЕ ДАННЫЕ ПОДПИСЧИКОВ - КОНЕЦ
+    // ЗАПУСК ВСЕХ ФУНКЦИЙ
+    animateProgressBars();
+    startCountdown();
     
     document.addEventListener('mousemove', (e) => {
         const particles = document.querySelectorAll('.particle');
