@@ -1,4 +1,4 @@
-// script.js - ПОЛНОСТЬЮ ИСПРАВЛЕННЫЙ КОД С ЗАГРУЗКОЙ ИЗ ФАЙЛА
+// script.js - ПОЛНОСТЬЮ ИСПРАВЛЕННЫЙ КОД С ЗАГРУЗКОЙ ИЗ ФАЙЛА И ФОНОМ
 class LysmanovSite {
     constructor() {
         this.stats = {
@@ -20,6 +20,7 @@ class LysmanovSite {
     async init() {
         console.log('🚀 LYSMANOV Site Initializing...');
         
+        this.createBackgroundElements(); // Создаем фон
         this.showCorrectVersion();
         await this.loadStatsFromFile();
         this.initCountdown();
@@ -33,6 +34,90 @@ class LysmanovSite {
         
         window.addEventListener('resize', () => this.handleResize());
         console.log('✅ Site fully loaded!');
+    }
+
+    createBackgroundElements() {
+        console.log('🎨 Creating background elements...');
+        
+        const backgroundContainer = document.querySelector('.background-elements');
+        if (!backgroundContainer) {
+            console.error('❌ Background container not found');
+            return;
+        }
+
+        // Очищаем контейнер
+        backgroundContainer.innerHTML = '<div class="background-gradient"></div>';
+
+        // Создаем сердечки
+        for (let i = 0; i < 15; i++) {
+            const heart = document.createElement('div');
+            heart.className = 'heart';
+            heart.style.left = Math.random() * 100 + '%';
+            heart.style.animationDelay = Math.random() * 10 + 's';
+            heart.style.fontSize = (15 + Math.random() * 20) + 'px';
+            heart.style.color = this.getRandomHeartColor();
+            backgroundContainer.appendChild(heart);
+        }
+
+        // Создаем цифры 11:11
+        for (let i = 0; i < 6; i++) {
+            const eleven = document.createElement('div');
+            eleven.className = 'eleven-eleven';
+            eleven.textContent = '11:11';
+            eleven.style.top = (10 + Math.random() * 80) + '%';
+            eleven.style.left = (5 + Math.random() * 90) + '%';
+            eleven.style.transform = `rotate(${Math.random() * 30 - 15}deg)`;
+            eleven.style.animationDelay = Math.random() * 6 + 's';
+            backgroundContainer.appendChild(eleven);
+        }
+
+        // Создаем отсылки к фазе сна
+        for (let i = 0; i < 4; i++) {
+            const dream = document.createElement('div');
+            dream.className = 'dream-phase';
+            dream.textContent = '🚗💨 Автостопом по фазе сна';
+            dream.style.top = (10 + Math.random() * 80) + '%';
+            if (i % 2 === 0) {
+                dream.style.left = '3%';
+                dream.style.writingMode = 'vertical-rl';
+            } else {
+                dream.style.right = '3%';
+                dream.style.writingMode = 'vertical-rl';
+            }
+            dream.style.animationDelay = Math.random() * 10 + 's';
+            backgroundContainer.appendChild(dream);
+        }
+
+        // Создаем магические линии
+        for (let i = 0; i < 8; i++) {
+            const line = document.createElement('div');
+            line.className = 'magic-line';
+            line.style.top = Math.random() * 100 + '%';
+            line.style.width = (50 + Math.random() * 200) + 'px';
+            line.style.animationDelay = Math.random() * 4 + 's';
+            line.style.animationDuration = (3 + Math.random() * 5) + 's';
+            backgroundContainer.appendChild(line);
+        }
+
+        // Создаем пульсирующие круги
+        for (let i = 0; i < 5; i++) {
+            const circle = document.createElement('div');
+            circle.className = 'pulse-circle';
+            circle.style.width = (100 + Math.random() * 400) + 'px';
+            circle.style.height = circle.style.width;
+            circle.style.top = Math.random() * 100 + '%';
+            circle.style.left = Math.random() * 100 + '%';
+            circle.style.animationDelay = Math.random() * 8 + 's';
+            backgroundContainer.appendChild(circle);
+        }
+    }
+
+    getRandomHeartColor() {
+        const colors = [
+            '#ff3366', '#ff0066', '#ff6699', '#ff66cc',
+            '#00b4ff', '#00ccff', '#66ffff', '#ff00ff'
+        ];
+        return colors[Math.floor(Math.random() * colors.length)];
     }
 
     async loadStatsFromFile() {
