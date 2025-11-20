@@ -1,4 +1,4 @@
-/* LYSMANOV SITE STYLES - 10/10 VERSION */
+/* LYSMANOV SITE STYLES - FULL WORKING VERSION */
 @import url('https://fonts.googleapis.com/css2?family=Special+Elite&display=swap');
 
 :root {
@@ -298,11 +298,15 @@ body {
     height: 100%;
     background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
     border-radius: 7px;
-    width: 0%;
+    width: 51%;
     transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
     box-shadow: 0 0 10px rgba(255, 51, 102, 0.5);
+}
+
+#mobile-posts-progress {
+    width: 48.4%;
 }
 
 .progress-fill::before {
@@ -834,11 +838,15 @@ body {
     height: 100%;
     background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
     border-radius: 7px;
-    width: 0%;
+    width: 51%;
     transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
     box-shadow: 0 0 10px rgba(255, 51, 102, 0.5);
+}
+
+#posts-progress {
+    width: 48.4%;
 }
 
 .progress-fill::before {
