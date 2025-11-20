@@ -1,753 +1,501 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: 'Special Elite', cursive, sans-serif;
-    background: linear-gradient(135deg, #0c0c0c, #1a1a2e, #16213e);
-    color: white;
-    overflow-x: hidden;
-    min-height: 100vh;
-}
-
-/* Particles */
-#particles {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-    pointer-events: none;
-}
-
-.particle {
-    position: absolute;
-    background: #ff3366;
-    border-radius: 50%;
-    animation: float 6s ease-in-out infinite;
-}
-
-@keyframes float {
-    0%, 100% {
-        transform: translateY(0) translateX(0);
-        opacity: 0.7;
+// script.js - ПОЛНЫЙ КОД С СТАТИСТИКОЙ ИЗ ФАЙЛА
+class LysmanovSite {
+    constructor() {
+        this.stats = {
+            subscribers: 51,
+            posts: 485
+        };
+        this.isMobile = this.checkMobile();
+        this.currentSection = 0;
+        this.isScrolling = false;
+        this.init();
     }
-    25% {
-        transform: translateY(-20px) translateX(10px);
-        opacity: 1;
+
+    checkMobile() {
+        return window.innerWidth <= 768;
     }
-    50% {
-        transform: translateY(-40px) translateX(-10px);
-        opacity: 0.8;
+
+    async init() {
+        console.log('🚀 LYSMANOV Site Initializing...');
+        
+        this.showCorrectVersion();
+        await this.loadStatsFromFile();
+        this.initCountdown();
+        this.initParticles();
+        
+        if (this.isMobile) {
+            this.initMobileNavigation();
+        } else {
+            this.initDesktopAnimations();
+        }
+        
+        window.addEventListener('resize', () => this.handleResize());
+        console.log('✅ Site fully loaded!');
     }
-    75% {
-        transform: translateY(-20px) translateX(10px);
-        opacity: 0.9;
+
+    async loadStatsFromFile() {
+        try {
+            console.log('📊 Loading stats from file...');
+            
+            const response = await fetch('stats.json');
+            if (!response.ok) {
+                throw new Error('Stats file not found');
+            }
+            
+            const fileStats = await response.json();
+            
+            if (fileStats && typeof fileStats.subscribers === 'number' && typeof fileStats.posts === 'number') {
+                this.stats = {
+                    subscribers: fileStats.subscribers,
+                    posts: fileStats.posts,
+                    lastUpdated: fileStats.updated || new Date().toISOString(),
+                    isReal: true
+                };
+                console.log('✅ Stats loaded from file:', this.stats);
+                this.showNotification('Статистика обновлена!', `Подписчики: ${this.stats.subscribers}, Посты: ${this.stats.posts}`);
+            } else {
+                throw new Error('Invalid stats format');
+            }
+            
+        } catch (error) {
+            console.log('❌ Error loading stats from file, using defaults:', error.message);
+            this.stats = {
+                subscribers: 51,
+                posts: 485,
+                lastUpdated: new Date().toISOString(),
+                isReal: false
+            };
+        }
+        
+        this.updateStatsUI();
     }
-}
 
-/* Desktop Version */
-.desktop-version {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    padding: 20px;
-    max-width: 1200px;
-    margin: 0 auto;
-}
+    updateStatsUI() {
+        const subsProgress = (this.stats.subscribers / 100) * 100;
+        const postsProgress = (this.stats.posts / 1000) * 100;
 
-.desktop-header {
-    text-align: center;
-    margin-bottom: 40px;
-    padding-top: 20px;
-}
+        const safeSubsProgress = Math.min(subsProgress, 100);
+        const safePostsProgress = Math.min(postsProgress, 100);
 
-#text {
-    font-size: 4rem;
-    background: linear-gradient(45deg, #ff3366, #00b4ff, #ff00ff);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    margin-bottom: 10px;
-    animation: glow 2s ease-in-out infinite alternate;
-}
+        // Обновляем прогресс-бары
+        const progressBars = [
+            { id: 'mobile-subs-progress', width: safeSubsProgress },
+            { id: 'mobile-posts-progress', width: safePostsProgress },
+            { id: 'subscribers-progress', width: safeSubsProgress },
+            { id: 'posts-progress', width: safePostsProgress }
+        ];
 
-@keyframes glow {
-    from {
-        text-shadow: 0 0 10px #ff3366, 0 0 20px #ff3366, 0 0 30px #ff3366;
+        progressBars.forEach(({ id, width }) => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.style.width = '0%';
+                setTimeout(() => {
+                    element.style.transition = 'width 1.5s ease-in-out';
+                    element.style.width = width + '%';
+                }, 100);
+            }
+        });
+
+        // Обновляем текстовые значения
+        const textElements = [
+            { id: 'mobile-subs-text', value: `${this.stats.subscribers}/100` },
+            { id: 'mobile-posts-text', value: `${this.stats.posts}/1000` },
+            { id: 'subscribers-text', value: `${this.stats.subscribers}/100` },
+            { id: 'posts-text', value: `${this.stats.posts}/1000` }
+        ];
+
+        textElements.forEach(({ id, value }) => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.textContent = value;
+                element.classList.add('stats-updated');
+                setTimeout(() => element.classList.remove('stats-updated'), 1000);
+            }
+        });
+
+        console.log('📈 Current stats displayed:', this.stats);
     }
-    to {
-        text-shadow: 0 0 20px #00b4ff, 0 0 30px #00b4ff, 0 0 40px #00b4ff;
+
+    showNotification(title, message) {
+        const notification = document.getElementById('notification');
+        const notificationTitle = document.getElementById('notification-title');
+        const notificationMessage = document.getElementById('notification-message');
+        
+        if (notification && notificationTitle && notificationMessage) {
+            notificationTitle.textContent = title;
+            notificationMessage.textContent = message;
+            notification.style.display = 'block';
+            notification.classList.remove('fade-out');
+            
+            setTimeout(() => {
+                notification.classList.add('fade-out');
+                setTimeout(() => {
+                    notification.style.display = 'none';
+                }, 500);
+            }, 3000);
+        }
     }
-}
 
-.tagline {
-    font-size: 1.2rem;
-    opacity: 0.8;
-    margin-top: 10px;
-}
-
-.letter {
-    display: inline-block;
-    opacity: 0;
-    animation: letterAppear 0.5s forwards, letterGlow 2s 2s infinite alternate;
-}
-
-@keyframes letterAppear {
-    to {
-        opacity: 1;
+    showCorrectVersion() {
+        const mobile = document.querySelector('.mobile-version');
+        const desktop = document.querySelector('.desktop-version');
+        
+        if (this.isMobile) {
+            if (mobile) mobile.style.display = 'block';
+            if (desktop) desktop.style.display = 'none';
+        } else {
+            if (mobile) mobile.style.display = 'none';
+            if (desktop) desktop.style.display = 'flex';
+        }
     }
-}
 
-@keyframes letterGlow {
-    from {
-        text-shadow: 0 0 5px currentColor;
+    handleResize() {
+        const wasMobile = this.isMobile;
+        this.isMobile = this.checkMobile();
+        
+        if (wasMobile !== this.isMobile) {
+            this.showCorrectVersion();
+        }
     }
-    to {
-        text-shadow: 0 0 20px currentColor, 0 0 30px currentColor;
+
+    initCountdown() {
+        const targetDate = new Date('2026-01-01T00:00:00').getTime();
+        const messages = [
+            "🎉 Скоро Новый 2026 Год!",
+            "⏰ Время летит незаметно...", 
+            "🚀 Готовься к празднику!",
+            "🎁 Сколько планов на следующий год?"
+        ];
+
+        let messageIndex = 0;
+        
+        const update = () => {
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+            
+            if (distance < 0) {
+                this.updateTimerDisplay('00', '00', '00', '00');
+                this.showNewYearMessage();
+                return;
+            }
+            
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            
+            this.updateTimerDisplay(
+                days.toString().padStart(2, '0'),
+                hours.toString().padStart(2, '0'),
+                minutes.toString().padStart(2, '0'),
+                seconds.toString().padStart(2, '0')
+            );
+            
+            if (seconds % 15 === 0) {
+                this.updateCountdownMessage(messages[messageIndex]);
+                messageIndex = (messageIndex + 1) % messages.length;
+            }
+        };
+        
+        this.updateCountdownMessage(messages[0]);
+        update();
+        setInterval(update, 1000);
     }
-}
 
-/* Stats Container */
-.stats-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-    margin-bottom: 40px;
-}
-
-.stat-card {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 15px;
-    padding: 25px;
-    text-align: center;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.stat-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-}
-
-.stat-card h3 {
-    font-size: 1.1rem;
-    margin-bottom: 15px;
-    color: #00b4ff;
-}
-
-.stat-number {
-    font-size: 2rem;
-    font-weight: bold;
-    margin-bottom: 15px;
-    background: linear-gradient(45deg, #ff3366, #00b4ff);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-.progress-bar {
-    width: 100%;
-    height: 8px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 4px;
-    overflow: hidden;
-}
-
-.progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, #ff3366, #00b4ff);
-    border-radius: 4px;
-    transition: width 1s ease-in-out;
-}
-
-/* Countdown */
-.countdown-container {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 15px;
-    padding: 30px;
-    text-align: center;
-    margin-bottom: 40px;
-}
-
-.countdown-container h3 {
-    font-size: 1.5rem;
-    margin-bottom: 25px;
-    color: #00b4ff;
-}
-
-.countdown-timer {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 15px;
-    margin-bottom: 20px;
-}
-
-.time-unit {
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 10px;
-    padding: 15px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.time-number {
-    font-size: 2.5rem;
-    font-weight: bold;
-    display: block;
-    background: linear-gradient(45deg, #ff3366, #00b4ff);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-.time-label {
-    font-size: 0.9rem;
-    opacity: 0.8;
-    margin-top: 5px;
-    display: block;
-}
-
-.countdown-message {
-    font-size: 1.1rem;
-    margin-top: 15px;
-    color: #ff3366;
-}
-
-/* Benefits */
-.benefits-container {
-    margin-bottom: 40px;
-}
-
-.benefits-container h3 {
-    text-align: center;
-    font-size: 1.5rem;
-    margin-bottom: 25px;
-    color: #00b4ff;
-}
-
-.benefits-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
-}
-
-.benefit-card {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 15px;
-    padding: 25px;
-    text-align: center;
-    transition: transform 0.3s ease;
-}
-
-.benefit-card:hover {
-    transform: translateY(-5px);
-}
-
-.benefit-icon {
-    font-size: 2.5rem;
-    margin-bottom: 15px;
-    display: block;
-}
-
-.benefit-card h4 {
-    font-size: 1.2rem;
-    margin-bottom: 10px;
-    color: #ff3366;
-}
-
-.benefit-card p {
-    opacity: 0.8;
-    line-height: 1.4;
-}
-
-/* Share Container */
-.share-container {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 15px;
-    padding: 30px;
-    text-align: center;
-}
-
-.share-container h3 {
-    font-size: 1.5rem;
-    margin-bottom: 25px;
-    color: #00b4ff;
-}
-
-.share-buttons {
-    display: flex;
-    gap: 15px;
-    justify-content: center;
-    margin-bottom: 25px;
-    flex-wrap: wrap;
-}
-
-.share-btn {
-    padding: 12px 25px;
-    border: none;
-    border-radius: 25px;
-    font-family: inherit;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-weight: bold;
-}
-
-.telegram-btn {
-    background: linear-gradient(135deg, #0088cc, #00b4ff);
-    color: white;
-}
-
-.copy-btn {
-    background: linear-gradient(135deg, #ff3366, #ff00ff);
-    color: white;
-}
-
-.share-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-}
-
-.channel-preview {
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 10px;
-    padding: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.preview-stats {
-    display: flex;
-    justify-content: space-around;
-    margin-bottom: 15px;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-
-.channel-link {
-    display: inline-block;
-    background: linear-gradient(135deg, #ff3366, #00b4ff);
-    color: white;
-    padding: 10px 20px;
-    border-radius: 20px;
-    text-decoration: none;
-    font-weight: bold;
-    transition: transform 0.3s ease;
-}
-
-.channel-link:hover {
-    transform: translateY(-2px);
-}
-
-/* Mobile Version */
-.mobile-version {
-    display: none;
-    min-height: 100vh;
-    position: relative;
-    overflow: hidden;
-}
-
-.mobile-section {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-    opacity: 0;
-    transform: translateY(20px);
-    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-    pointer-events: none;
-}
-
-.mobile-section.active {
-    opacity: 1;
-    transform: translateY(0);
-    pointer-events: all;
-}
-
-.mobile-header {
-    text-align: center;
-    margin-bottom: 40px;
-}
-
-.mobile-header h1 {
-    font-size: 2.5rem;
-    background: linear-gradient(45deg, #ff3366, #00b4ff);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    margin-bottom: 10px;
-}
-
-.mobile-tagline {
-    font-size: 1rem;
-    opacity: 0.8;
-}
-
-.mobile-welcome {
-    text-align: center;
-}
-
-.welcome-icon {
-    font-size: 4rem;
-    margin-bottom: 20px;
-    animation: bounce 2s infinite;
-}
-
-@keyframes bounce {
-    0%, 20%, 50%, 80%, 100% {
-        transform: translateY(0);
+    updateTimerDisplay(days, hours, minutes, seconds) {
+        const elements = {
+            mobile: {
+                days: 'mobile-days',
+                hours: 'mobile-hours', 
+                minutes: 'mobile-minutes',
+                seconds: 'mobile-seconds'
+            },
+            desktop: {
+                days: 'days',
+                hours: 'hours',
+                minutes: 'minutes', 
+                seconds: 'seconds'
+            }
+        };
+        
+        Object.values(elements).forEach(version => {
+            Object.entries(version).forEach(([unit, id]) => {
+                const element = document.getElementById(id);
+                if (element) {
+                    const newValue = eval(unit);
+                    if (element.textContent !== newValue) {
+                        element.textContent = newValue;
+                        element.style.animation = 'none';
+                        setTimeout(() => {
+                            element.style.animation = 'numberPulse 1s infinite';
+                        }, 10);
+                    }
+                }
+            });
+        });
     }
-    40% {
-        transform: translateY(-10px);
+
+    updateCountdownMessage(message) {
+        const mobileMessage = document.getElementById('mobile-countdown-message');
+        const desktopMessage = document.getElementById('countdownMessage');
+        
+        if (mobileMessage && mobileMessage.textContent !== message) {
+            mobileMessage.textContent = message;
+        }
+        if (desktopMessage && desktopMessage.textContent !== message) {
+            desktopMessage.textContent = message;
+        }
     }
-    60% {
-        transform: translateY(-5px);
+
+    showNewYearMessage() {
+        const messages = document.querySelectorAll('.countdown-message, #countdownMessage');
+        messages.forEach(msg => {
+            if (msg) {
+                msg.textContent = '🎉 С НОВЫМ 2026 ГОДОМ! 🎉';
+                msg.style.color = '#ff3366';
+            }
+        });
+    }
+
+    initParticles() {
+        const container = document.getElementById('particles');
+        if (!container) return;
+        
+        container.innerHTML = '';
+        const count = this.isMobile ? 20 : 30;
+        
+        for (let i = 0; i < count; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.top = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 5 + 's';
+            particle.style.animationDuration = (4 + Math.random() * 4) + 's';
+            
+            const colors = ['#ff3366', '#00b4ff'];
+            particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+            particle.style.opacity = '0.7';
+            
+            container.appendChild(particle);
+        }
+    }
+
+    initMobileNavigation() {
+        if (!this.isMobile) return;
+        
+        const sections = document.querySelectorAll('.mobile-section');
+        const dots = document.querySelectorAll('.dot');
+        
+        this.showMobileSection(0);
+        
+        window.addEventListener('wheel', (e) => {
+            if (this.isScrolling) return;
+            this.isScrolling = true;
+            
+            if (e.deltaY > 0 && this.currentSection < sections.length - 1) {
+                this.showMobileSection(this.currentSection + 1);
+            } else if (e.deltaY < 0 && this.currentSection > 0) {
+                this.showMobileSection(this.currentSection - 1);
+            }
+            
+            setTimeout(() => { this.isScrolling = false; }, 800);
+        });
+        
+        let startY = 0;
+        window.addEventListener('touchstart', (e) => {
+            startY = e.touches[0].clientY;
+        });
+        
+        window.addEventListener('touchend', (e) => {
+            if (this.isScrolling) return;
+            
+            const endY = e.changedTouches[0].clientY;
+            const diff = startY - endY;
+            
+            if (Math.abs(diff) > 50) {
+                this.isScrolling = true;
+                
+                if (diff > 0 && this.currentSection < sections.length - 1) {
+                    this.showMobileSection(this.currentSection + 1);
+                } else if (diff < 0 && this.currentSection > 0) {
+                    this.showMobileSection(this.currentSection - 1);
+                }
+                
+                setTimeout(() => { this.isScrolling = false; }, 800);
+            }
+        });
+        
+        dots.forEach((dot, index) => {
+            dot.addEventListener('click', () => {
+                this.showMobileSection(index);
+            });
+        });
+    }
+
+    showMobileSection(index) {
+        const sections = document.querySelectorAll('.mobile-section');
+        const dots = document.querySelectorAll('.dot');
+        
+        if (index < 0 || index >= sections.length) return;
+        
+        sections.forEach(section => {
+            section.classList.remove('active');
+        });
+        
+        sections[index].classList.add('active');
+        
+        dots.forEach(dot => dot.classList.remove('active'));
+        dots[index].classList.add('active');
+        
+        this.currentSection = index;
+    }
+
+    initDesktopAnimations() {
+        if (this.isMobile) return;
+        
+        const text = document.getElementById('text');
+        if (text) {
+            const textContent = text.textContent;
+            text.innerHTML = '';
+            
+            for (let i = 0; i < textContent.length; i++) {
+                const letter = document.createElement('span');
+                letter.className = 'letter';
+                letter.textContent = textContent[i];
+                const delay = i * 0.2;
+                letter.style.animationDelay = `${delay}s, ${delay + 2}s`;
+                text.appendChild(letter);
+            }
+        }
     }
 }
 
-.mobile-welcome h2 {
-    font-size: 1.8rem;
-    margin-bottom: 15px;
-    color: #00b4ff;
+function shareTelegram() {
+    const url = 'https://t.me/Lysmanov';
+    const text = 'Подпишись на крутой канал LYSMANOV ✞ - важные новости и интересный контент!';
+    window.open(`https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`, '_blank');
 }
 
-.swipe-hint {
-    margin-top: 30px;
-    padding: 10px 20px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 20px;
-    font-size: 0.9rem;
-    opacity: 0.7;
-    animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-    0%, 100% {
-        opacity: 0.7;
-    }
-    50% {
-        opacity: 1;
+function copyLink() {
+    const url = 'https://t.me/Lysmanov';
+    
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).then(() => {
+            showCopyNotification();
+        }).catch(() => {
+            fallbackCopy(url);
+        });
+    } else {
+        fallbackCopy(url);
     }
 }
 
-/* Mobile Stats */
-.mobile-stats {
-    width: 100%;
-    max-width: 400px;
-}
-
-.mobile-stats h2 {
-    text-align: center;
-    font-size: 1.8rem;
-    margin-bottom: 30px;
-    color: #00b4ff;
-}
-
-.mobile-stat-card {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 15px;
-    padding: 20px;
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-.stat-icon {
-    font-size: 2rem;
-}
-
-.stat-info {
-    flex: 1;
-}
-
-.stat-info h3 {
-    font-size: 1rem;
-    margin-bottom: 5px;
-    color: #ff3366;
-}
-
-.mobile-stat-number {
-    font-size: 1.5rem;
-    font-weight: bold;
-    background: linear-gradient(45deg, #ff3366, #00b4ff);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-.mobile-progress-bar {
-    width: 80px;
-    height: 6px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 3px;
-    overflow: hidden;
-}
-
-.mobile-progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, #ff3366, #00b4ff);
-    border-radius: 3px;
-    transition: width 1s ease-in-out;
-}
-
-/* Mobile Countdown */
-.mobile-countdown {
-    text-align: center;
-    width: 100%;
-    max-width: 400px;
-}
-
-.mobile-countdown h2 {
-    font-size: 1.8rem;
-    margin-bottom: 30px;
-    color: #00b4ff;
-}
-
-.mobile-timer {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
-    margin-bottom: 25px;
-}
-
-.mobile-time-unit {
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 10px;
-    padding: 15px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.mobile-time-number {
-    font-size: 2rem;
-    font-weight: bold;
-    display: block;
-    background: linear-gradient(45deg, #ff3366, #00b4ff);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-.mobile-time-label {
-    font-size: 0.8rem;
-    opacity: 0.8;
-    margin-top: 5px;
-    display: block;
-}
-
-.mobile-countdown-message {
-    font-size: 1rem;
-    color: #ff3366;
-    margin-top: 15px;
-}
-
-/* Mobile Share */
-.mobile-share {
-    text-align: center;
-    width: 100%;
-    max-width: 400px;
-}
-
-.mobile-share h2 {
-    font-size: 1.8rem;
-    margin-bottom: 25px;
-    color: #00b4ff;
-}
-
-.mobile-benefits {
-    margin-bottom: 25px;
-}
-
-.mobile-benefit {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    padding: 12px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
-    margin-bottom: 10px;
-    font-size: 0.9rem;
-}
-
-.benefit-emoji {
-    font-size: 1.2rem;
-}
-
-.mobile-share-buttons {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    margin-bottom: 25px;
-}
-
-.mobile-share-btn {
-    padding: 15px 25px;
-    border: none;
-    border-radius: 25px;
-    font-family: inherit;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-weight: bold;
-}
-
-.mobile-channel-link a {
-    display: inline-block;
-    background: linear-gradient(135deg, #ff3366, #00b4ff);
-    color: white;
-    padding: 12px 25px;
-    border-radius: 25px;
-    text-decoration: none;
-    font-weight: bold;
-    transition: transform 0.3s ease;
-}
-
-.mobile-channel-link a:hover {
-    transform: translateY(-2px);
-}
-
-/* Mobile Navigation */
-.mobile-navigation {
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    gap: 10px;
-    z-index: 1000;
-}
-
-.dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.3);
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.dot.active {
-    background: #00b4ff;
-    transform: scale(1.2);
-}
-
-/* Notification */
-.notification {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background: linear-gradient(135deg, #ff3366, #00b4ff);
-    color: white;
-    padding: 15px 25px;
-    border-radius: 10px;
-    z-index: 10000;
-    transform: translateX(150%);
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    max-width: 300px;
-}
-
-.notification.show {
-    transform: translateX(0);
-}
-
-.notification-text {
-    font-weight: bold;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-    .desktop-version {
-        display: none;
+function fallbackCopy(url) {
+    const textArea = document.createElement('textarea');
+    textArea.value = url;
+    textArea.style.position = 'fixed';
+    textArea.style.opacity = '0';
+    document.body.appendChild(textArea);
+    textArea.select();
+    
+    try {
+        document.execCommand('copy');
+        showCopyNotification();
+    } catch (err) {
+        console.error('Fallback copy failed:', err);
     }
     
-    .mobile-version {
-        display: block;
-    }
+    document.body.removeChild(textArea);
+}
+
+function showCopyNotification() {
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(0, 180, 255, 0.9);
+        color: white;
+        padding: 15px 25px;
+        border-radius: 10px;
+        z-index: 10000;
+        font-family: 'Special Elite', cursive;
+        font-size: 1.1rem;
+        animation: fadeInOut 2s ease-in-out;
+        pointer-events: none;
+    `;
+    notification.textContent = '✅ Ссылка скопирована!';
     
-    #text {
-        font-size: 2.5rem;
-    }
+    document.body.appendChild(notification);
     
-    .countdown-timer {
-        grid-template-columns: repeat(2, 1fr);
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.remove();
+        }
+    }, 2000);
+}
+
+function refreshStats() {
+    if (window.lysmanovSite) {
+        window.lysmanovSite.loadStatsFromFile();
     }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    window.lysmanovSite = new LysmanovSite();
     
-    .share-buttons {
-        flex-direction: column;
-        align-items: center;
+    // Кнопка обновления статистики только на GitHub Pages
+    if (location.hostname === 'lysmanov-tg.github.io') {
+        const refreshBtn = document.createElement('button');
+        refreshBtn.innerHTML = '🔄';
+        refreshBtn.style.cssText = `
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #00b4ff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            z-index: 10000;
+            font-size: 18px;
+            opacity: 0.3;
+            transition: opacity 0.3s;
+        `;
+        refreshBtn.title = 'Обновить статистику';
+        refreshBtn.addEventListener('mouseenter', () => refreshBtn.style.opacity = '1');
+        refreshBtn.addEventListener('mouseleave', () => refreshBtn.style.opacity = '0.3');
+        refreshBtn.addEventListener('click', refreshStats);
+        
+        document.body.appendChild(refreshBtn);
     }
-    
-    .share-btn {
-        width: 100%;
-        max-width: 250px;
+});
+
+// Добавляем стили для анимации копирования
+const copyStyle = document.createElement('style');
+copyStyle.textContent = `
+    @keyframes fadeInOut {
+        0% { 
+            opacity: 0; 
+            transform: translate(-50%, -50%) scale(0.8); 
+        }
+        20% { 
+            opacity: 1; 
+            transform: translate(-50%, -50%) scale(1); 
+        }
+        80% { 
+            opacity: 1; 
+            transform: translate(-50%, -50%) scale(1); 
+        }
+        100% { 
+            opacity: 0; 
+            transform: translate(-50%, -50%) scale(0.8); 
+        }
     }
-}
+`;
+document.head.appendChild(copyStyle);
 
-@media (max-width: 480px) {
-    .mobile-header h1 {
-        font-size: 2rem;
-    }
-    
-    .mobile-timer {
-        grid-template-columns: 1fr;
-    }
-    
-    .preview-stats {
-        flex-direction: column;
-        gap: 10px;
-    }
-}
-
-/* Animation Classes */
-.stat-updated {
-    animation: statUpdate 0.6s ease-in-out;
-}
-
-.number-change {
-    animation: numberChange 0.5s ease-in-out;
-}
-
-.message-change {
-    animation: messageChange 1s ease-in-out;
-}
-
-@keyframes statUpdate {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.1); color: #00b4ff; }
-    100% { transform: scale(1); }
-}
-
-@keyframes numberChange {
-    0% { opacity: 0.5; transform: translateY(-10px); }
-    100% { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes messageChange {
-    0% { opacity: 0; transform: translateY(10px); }
-    100% { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes pulseBlue {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.7; }
-}
+console.log('📄 LYSMANOV site with file-based stats loaded!');
