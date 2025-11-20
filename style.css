@@ -108,7 +108,7 @@ body {
     background: transparent;
     opacity: 0;
     transform: translateY(20px);
-    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .mobile-section.active {
@@ -1244,6 +1244,50 @@ body {
     100% {
         left: 100%;
     }
+}
+
+/* ГАРАНТИЯ ВИДИМОСТИ ТЕКСТА ПРИ АВТОПРОКРУТКЕ */
+.mobile-section.active {
+    opacity: 1 !important;
+    visibility: visible !important;
+    display: flex !important;
+}
+
+.mobile-container {
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+/* Явные стили для текста */
+.title-text,
+.title-cross,
+.mobile-subtitle,
+.stat-title,
+.stat-label,
+.stat-numbers,
+.countdown-title,
+.time-number,
+.time-label,
+.countdown-message,
+.benefits-title,
+.benefit-text,
+.share-title,
+.share-btn,
+.mobile-hint {
+    opacity: 1 !important;
+    visibility: visible !important;
+    color: inherit !important;
+}
+
+/* Фикс для анимаций */
+.mobile-section {
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Гарантия что контент виден */
+.mobile-section > * {
+    opacity: 1 !important;
+    visibility: visible !important;
 }
 
 /* Адаптация по размерам экрана */
