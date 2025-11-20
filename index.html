@@ -116,68 +116,63 @@
         .heart:nth-child(9) { left: 90%; animation-delay: 8s; font-size: 19px; }
         .heart:nth-child(10) { left: 15%; animation-delay: 9s; font-size: 23px; }
 
-        /* Цифры 11:11 в стиле сайта */
+        /* Цифры 11:11 на всем фоне */
         .eleven-eleven {
             position: absolute;
-            font-size: 80px;
+            font-size: 60px;
             font-weight: bold;
             color: transparent;
-            -webkit-text-stroke: 1px rgba(255, 51, 102, 0.3);
-            opacity: 0.4;
-            animation: elevenGlow 8s ease-in-out infinite;
+            -webkit-text-stroke: 1px rgba(255, 51, 102, 0.15);
+            opacity: 0.3;
+            animation: elevenGlow 10s ease-in-out infinite;
             font-family: 'Special Elite', cursive;
             pointer-events: none;
             z-index: 1;
             text-shadow: none;
         }
 
-        .eleven-eleven:nth-child(1) {
-            top: 15%;
-            left: 8%;
-            transform: rotate(-5deg);
-            animation-delay: 0s;
-            -webkit-text-stroke: 1px rgba(255, 51, 102, 0.4);
-        }
-
-        .eleven-eleven:nth-child(2) {
-            top: 25%;
-            right: 10%;
-            transform: rotate(3deg);
-            animation-delay: 2s;
-            -webkit-text-stroke: 1px rgba(0, 180, 255, 0.3);
-        }
-
-        .eleven-eleven:nth-child(3) {
-            bottom: 35%;
-            left: 12%;
-            transform: rotate(-2deg);
-            animation-delay: 4s;
-            -webkit-text-stroke: 1px rgba(255, 51, 102, 0.35);
-        }
-
-        .eleven-eleven:nth-child(4) {
-            bottom: 20%;
-            right: 8%;
-            transform: rotate(4deg);
-            animation-delay: 6s;
-            -webkit-text-stroke: 1px rgba(0, 180, 255, 0.25);
-        }
-
-        .eleven-eleven:nth-child(5) {
-            top: 60%;
-            left: 5%;
-            transform: rotate(-3deg);
-            animation-delay: 1s;
-            -webkit-text-stroke: 1px rgba(255, 0, 255, 0.3);
-        }
-
-        .eleven-eleven:nth-child(6) {
-            top: 45%;
-            right: 5%;
-            transform: rotate(2deg);
-            animation-delay: 5s;
-            -webkit-text-stroke: 1px rgba(255, 51, 102, 0.3);
-        }
+        /* Создаем сетку из 11:11 по всему экрану */
+        .eleven-eleven:nth-child(1) { top: 5%; left: 5%; transform: rotate(-5deg); animation-delay: 0s; }
+        .eleven-eleven:nth-child(2) { top: 5%; left: 25%; transform: rotate(3deg); animation-delay: 1s; }
+        .eleven-eleven:nth-child(3) { top: 5%; left: 45%; transform: rotate(-2deg); animation-delay: 2s; }
+        .eleven-eleven:nth-child(4) { top: 5%; left: 65%; transform: rotate(4deg); animation-delay: 3s; }
+        .eleven-eleven:nth-child(5) { top: 5%; left: 85%; transform: rotate(-3deg); animation-delay: 4s; }
+        
+        .eleven-eleven:nth-child(6) { top: 20%; left: 2%; transform: rotate(2deg); animation-delay: 0.5s; }
+        .eleven-eleven:nth-child(7) { top: 20%; left: 22%; transform: rotate(-4deg); animation-delay: 1.5s; }
+        .eleven-eleven:nth-child(8) { top: 20%; left: 42%; transform: rotate(1deg); animation-delay: 2.5s; }
+        .eleven-eleven:nth-child(9) { top: 20%; left: 62%; transform: rotate(-1deg); animation-delay: 3.5s; }
+        .eleven-eleven:nth-child(10) { top: 20%; left: 82%; transform: rotate(3deg); animation-delay: 4.5s; }
+        
+        .eleven-eleven:nth-child(11) { top: 35%; left: 8%; transform: rotate(-2deg); animation-delay: 1s; }
+        .eleven-eleven:nth-child(12) { top: 35%; left: 28%; transform: rotate(5deg); animation-delay: 2s; }
+        .eleven-eleven:nth-child(13) { top: 35%; left: 48%; transform: rotate(-3deg); animation-delay: 3s; }
+        .eleven-eleven:nth-child(14) { top: 35%; left: 68%; transform: rotate(2deg); animation-delay: 4s; }
+        .eleven-eleven:nth-child(15) { top: 35%; left: 88%; transform: rotate(-4deg); animation-delay: 5s; }
+        
+        .eleven-eleven:nth-child(16) { top: 50%; left: 3%; transform: rotate(3deg); animation-delay: 1.5s; }
+        .eleven-eleven:nth-child(17) { top: 50%; left: 23%; transform: rotate(-1deg); animation-delay: 2.5s; }
+        .eleven-eleven:nth-child(18) { top: 50%; left: 43%; transform: rotate(4deg); animation-delay: 3.5s; }
+        .eleven-eleven:nth-child(19) { top: 50%; left: 63%; transform: rotate(-2deg); animation-delay: 4.5s; }
+        .eleven-eleven:nth-child(20) { top: 50%; left: 83%; transform: rotate(1deg); animation-delay: 5.5s; }
+        
+        .eleven-eleven:nth-child(21) { top: 65%; left: 7%; transform: rotate(-3deg); animation-delay: 2s; }
+        .eleven-eleven:nth-child(22) { top: 65%; left: 27%; transform: rotate(2deg); animation-delay: 3s; }
+        .eleven-eleven:nth-child(23) { top: 65%; left: 47%; transform: rotate(-4deg); animation-delay: 4s; }
+        .eleven-eleven:nth-child(24) { top: 65%; left: 67%; transform: rotate(1deg); animation-delay: 5s; }
+        .eleven-eleven:nth-child(25) { top: 65%; left: 87%; transform: rotate(-2deg); animation-delay: 6s; }
+        
+        .eleven-eleven:nth-child(26) { top: 80%; left: 4%; transform: rotate(4deg); animation-delay: 2.5s; }
+        .eleven-eleven:nth-child(27) { top: 80%; left: 24%; transform: rotate(-2deg); animation-delay: 3.5s; }
+        .eleven-eleven:nth-child(28) { top: 80%; left: 44%; transform: rotate(3deg); animation-delay: 4.5s; }
+        .eleven-eleven:nth-child(29) { top: 80%; left: 64%; transform: rotate(-1deg); animation-delay: 5.5s; }
+        .eleven-eleven:nth-child(30) { top: 80%; left: 84%; transform: rotate(2deg); animation-delay: 6.5s; }
+        
+        .eleven-eleven:nth-child(31) { top: 95%; left: 10%; transform: rotate(-1deg); animation-delay: 3s; }
+        .eleven-eleven:nth-child(32) { top: 95%; left: 30%; transform: rotate(3deg); animation-delay: 4s; }
+        .eleven-eleven:nth-child(33) { top: 95%; left: 50%; transform: rotate(-2deg); animation-delay: 5s; }
+        .eleven-eleven:nth-child(34) { top: 95%; left: 70%; transform: rotate(4deg); animation-delay: 6s; }
+        .eleven-eleven:nth-child(35) { top: 95%; left: 90%; transform: rotate(-3deg); animation-delay: 7s; }
 
         /* Отсылка к фазе сна */
         .dream-phase {
@@ -272,22 +267,22 @@
 
         @keyframes elevenGlow {
             0%, 100% {
-                opacity: 0.3;
+                opacity: 0.2;
                 transform: scale(1) rotate(var(--rotation, 0deg));
                 -webkit-text-stroke-width: 1px;
             }
             25% {
-                opacity: 0.5;
+                opacity: 0.4;
                 transform: scale(1.02) rotate(calc(var(--rotation, 0deg) + 1deg));
                 -webkit-text-stroke-width: 1.2px;
             }
             50% {
-                opacity: 0.4;
+                opacity: 0.3;
                 transform: scale(1) rotate(calc(var(--rotation, 0deg) - 1deg));
                 -webkit-text-stroke-width: 1px;
             }
             75% {
-                opacity: 0.6;
+                opacity: 0.5;
                 transform: scale(1.01) rotate(calc(var(--rotation, 0deg) + 0.5deg));
                 -webkit-text-stroke-width: 1.1px;
             }
@@ -366,6 +361,7 @@
             }
         }
 
+        /* Остальные стили остаются без изменений */
         /* ===== МОБИЛЬНАЯ ВЕРСИЯ ===== */
         .mobile-version {
             display: none;
@@ -1500,35 +1496,10 @@
             }
             
             .eleven-eleven {
-                font-size: 50px;
-                opacity: 0.25;
+                font-size: 40px;
+                opacity: 0.2;
             }
             
-            .eleven-eleven:nth-child(1) {
-                top: 10%;
-                left: 5%;
-            }
-            
-            .eleven-eleven:nth-child(2) {
-                top: 15%;
-                right: 5%;
-            }
-            
-            .eleven-eleven:nth-child(3) {
-                bottom: 25%;
-                left: 8%;
-            }
-            
-            .eleven-eleven:nth-child(4) {
-                bottom: 15%;
-                right: 5%;
-            }
-            
-            .eleven-eleven:nth-child(5),
-            .eleven-eleven:nth-child(6) {
-                display: none;
-            }
-
             .desktop-version {
                 display: none;
             }
@@ -1676,39 +1647,6 @@
                 width: 100%;
             }
         }
-
-        /* Для мобильных - уменьшаем размер */
-        @media (max-width: 768px) {
-            .eleven-eleven {
-                font-size: 50px;
-                opacity: 0.25;
-            }
-            
-            .eleven-eleven:nth-child(1) {
-                top: 10%;
-                left: 5%;
-            }
-            
-            .eleven-eleven:nth-child(2) {
-                top: 15%;
-                right: 5%;
-            }
-            
-            .eleven-eleven:nth-child(3) {
-                bottom: 25%;
-                left: 8%;
-            }
-            
-            .eleven-eleven:nth-child(4) {
-                bottom: 15%;
-                right: 5%;
-            }
-            
-            .eleven-eleven:nth-child(5),
-            .eleven-eleven:nth-child(6) {
-                display: none;
-            }
-        }
     </style>
 </head>
 <body>
@@ -1728,7 +1666,36 @@
         <div class="heart"></div>
         <div class="heart"></div>
         
-        <!-- Цифры 11:11 -->
+        <!-- Цифры 11:11 по всему фону -->
+        <div class="eleven-eleven">11:11</div>
+        <div class="eleven-eleven">11:11</div>
+        <div class="eleven-eleven">11:11</div>
+        <div class="eleven-eleven">11:11</div>
+        <div class="eleven-eleven">11:11</div>
+        <div class="eleven-eleven">11:11</div>
+        <div class="eleven-eleven">11:11</div>
+        <div class="eleven-eleven">11:11</div>
+        <div class="eleven-eleven">11:11</div>
+        <div class="eleven-eleven">11:11</div>
+        <div class="eleven-eleven">11:11</div>
+        <div class="eleven-eleven">11:11</div>
+        <div class="eleven-eleven">11:11</div>
+        <div class="eleven-eleven">11:11</div>
+        <div class="eleven-eleven">11:11</div>
+        <div class="eleven-eleven">11:11</div>
+        <div class="eleven-eleven">11:11</div>
+        <div class="eleven-eleven">11:11</div>
+        <div class="eleven-eleven">11:11</div>
+        <div class="eleven-eleven">11:11</div>
+        <div class="eleven-eleven">11:11</div>
+        <div class="eleven-eleven">11:11</div>
+        <div class="eleven-eleven">11:11</div>
+        <div class="eleven-eleven">11:11</div>
+        <div class="eleven-eleven">11:11</div>
+        <div class="eleven-eleven">11:11</div>
+        <div class="eleven-eleven">11:11</div>
+        <div class="eleven-eleven">11:11</div>
+        <div class="eleven-eleven">11:11</div>
         <div class="eleven-eleven">11:11</div>
         <div class="eleven-eleven">11:11</div>
         <div class="eleven-eleven">11:11</div>
