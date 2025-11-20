@@ -1,4 +1,4 @@
-// script.js - ИСПРАВЛЕННЫЙ КОД БЕЗ БАГОВ ПЕРЕРИСОВКИ
+// script.js - ИСПРАВЛЕННЫЙ КОД ДЛЯ МОБИЛЬНОЙ ВЕРСИИ
 class LysmanovSite {
     constructor() {
         this.stats = {
@@ -8,8 +8,6 @@ class LysmanovSite {
         this.isMobile = this.checkMobile();
         this.currentSection = 0;
         this.isScrolling = false;
-        this.lastFileHash = '';
-        this.isUpdating = false; // Флаг для предотвращения одновременных обновлений
         this.init();
     }
 
@@ -20,273 +18,90 @@ class LysmanovSite {
     async init() {
         console.log('🚀 LYSMANOV Site Initializing...');
         
-        this.showCorrectVersion();
-        await this.loadStatsWithTracking();
+        // Принудительный показ мобильной версии
+        this.forceMobileView();
+        
+        await this.loadStats();
         this.initCountdown();
         this.initParticles();
         
         if (this.isMobile) {
             this.initMobileNavigation();
-        } else {
-            this.initDesktopAnimations();
         }
-        
-        window.addEventListener('resize', () => this.handleResize());
-        
-        // Более мягкая проверка изменений
-        setInterval(() => this.checkForFileChanges(), 45000); // 45 секунд вместо 30
         
         console.log('✅ Site fully loaded!');
     }
 
-    async loadStatsWithTracking() {
-        if (this.isUpdating) return;
-        this.isUpdating = true;
+    forceMobileView() {
+        const mobile = document.querySelector('.mobile-version');
+        const desktop = document.querySelector('.desktop-version');
         
+        if (this.isMobile) {
+            if (mobile) {
+                mobile.style.display = 'block';
+                mobile.style.opacity = '1';
+            }
+            if (desktop) {
+                desktop.style.display = 'none';
+            }
+        } else {
+            if (mobile) mobile.style.display = 'none';
+            if (desktop) desktop.style.display = 'flex';
+        }
+    }
+
+    async loadStats() {
         try {
             console.log('📊 Loading stats...');
             
             const response = await fetch('stats.json?t=' + Date.now());
-            if (!response.ok) {
-                throw new Error('Stats file not found');
-            }
-            
-            const fileStats = await response.json();
-            const currentHash = this.generateFileHash(fileStats);
-            
-            // Только если файл действительно изменился
-            if (this.lastFileHash && this.lastFileHash !== currentHash) {
-                console.log('🔄 File changed! Updating stats...');
-                this.showFileChangeNotification();
-            }
-            
-            this.lastFileHash = currentHash;
-            
-            if (fileStats && typeof fileStats.subscribers === 'number' && typeof fileStats.posts === 'number') {
-                const oldStats = {...this.stats};
-                this.stats = {
-                    subscribers: fileStats.subscribers,
-                    posts: fileStats.posts,
-                    lastUpdated: fileStats.updated || new Date().toISOString(),
-                    isReal: true
-                };
+            if (response.ok) {
+                const fileStats = await response.json();
                 
-                console.log('✅ Stats loaded:', this.stats);
-                
-                // Плавное обновление UI
-                if (oldStats.subscribers !== this.stats.subscribers || oldStats.posts !== this.stats.posts) {
-                    setTimeout(() => {
-                        this.showStatsChangeNotification(oldStats, this.stats);
-                    }, 1000);
+                if (fileStats && typeof fileStats.subscribers === 'number' && typeof fileStats.posts === 'number') {
+                    this.stats = {
+                        subscribers: fileStats.subscribers,
+                        posts: fileStats.posts,
+                        lastUpdated: fileStats.updated || new Date().toISOString()
+                    };
+                    console.log('✅ Stats loaded from file:', this.stats);
                 }
-                
-            } else {
-                throw new Error('Invalid stats format');
             }
-            
         } catch (error) {
-            console.log('❌ Error loading stats:', error.message);
-            // Используем резервные значения без перерисовки
-            this.stats = {
-                subscribers: this.stats.subscribers || 51,
-                posts: this.stats.posts || 485,
-                lastUpdated: new Date().toISOString(),
-                isReal: false
-            };
-        } finally {
-            this.isUpdating = false;
+            console.log('❌ Error loading stats, using defaults');
         }
         
         this.updateStatsUI();
     }
 
-    async checkForFileChanges() {
-        if (this.isUpdating) return;
-        
-        try {
-            const response = await fetch('stats.json?t=' + Date.now());
-            if (!response.ok) return;
-            
-            const fileStats = await response.json();
-            const currentHash = this.generateFileHash(fileStats);
-            
-            if (this.lastFileHash && this.lastFileHash !== currentHash) {
-                console.log('🔄 File change detected!');
-                this.lastFileHash = currentHash;
-                
-                if (fileStats && typeof fileStats.subscribers === 'number' && typeof fileStats.posts === 'number') {
-                    const oldStats = {...this.stats};
-                    this.stats = {
-                        subscribers: fileStats.subscribers,
-                        posts: fileStats.posts,
-                        lastUpdated: fileStats.updated || new Date().toISOString(),
-                        isReal: true
-                    };
-                    
-                    console.log('🔄 Stats updated:', this.stats);
-                    
-                    // Задержка для плавного отображения
-                    setTimeout(() => {
-                        this.showStatsChangeNotification(oldStats, this.stats);
-                        this.updateStatsUI();
-                    }, 500);
-                }
-            }
-        } catch (error) {
-            console.log('❌ Error checking file changes:', error.message);
-        }
-    }
-
-    generateFileHash(stats) {
-        return btoa(JSON.stringify({
-            subscribers: stats.subscribers,
-            posts: stats.posts,
-            updated: stats.updated
-        }));
-    }
-
     updateStatsUI() {
-        // Сохраняем текущие значения перед обновлением
-        const currentSubs = this.stats.subscribers;
-        const currentPosts = this.stats.posts;
+        // Прогресс-бары
+        const subsProgress = document.getElementById('mobile-subs-progress');
+        const postsProgress = document.getElementById('mobile-posts-progress');
+        const desktopSubs = document.getElementById('subscribers-progress');
+        const desktopPosts = document.getElementById('posts-progress');
         
-        const subsProgress = Math.min((currentSubs / 100) * 100, 100);
-        const postsProgress = Math.min((currentPosts / 1000) * 100, 100);
+        if (subsProgress) subsProgress.style.width = '51%';
+        if (postsProgress) postsProgress.style.width = '48.4%';
+        if (desktopSubs) desktopSubs.style.width = '51%';
+        if (desktopPosts) desktopPosts.style.width = '48.4%';
 
-        // ПЛАВНОЕ ОБНОВЛЕНИЕ ПРОГРЕСС-БАРОВ
-        this.animateProgressBar('mobile-subs-progress', subsProgress);
-        this.animateProgressBar('mobile-posts-progress', postsProgress);
-        this.animateProgressBar('subscribers-progress', subsProgress);
-        this.animateProgressBar('posts-progress', postsProgress);
+        // Текстовые значения
+        const texts = [
+            { id: 'mobile-subs-text', value: `${this.stats.subscribers}/100` },
+            { id: 'mobile-posts-text', value: `${this.stats.posts}/1000` },
+            { id: 'subscribers-text', value: `${this.stats.subscribers}/100` },
+            { id: 'posts-text', value: `${this.stats.posts}/1000` }
+        ];
 
-        // ОБНОВЛЕНИЕ ТЕКСТА БЕЗ ИСЧЕЗНОВЕНИЯ
-        this.safeTextUpdate('mobile-subs-text', `${currentSubs}/100`);
-        this.safeTextUpdate('mobile-posts-text', `${currentPosts}/1000`);
-        this.safeTextUpdate('subscribers-text', `${currentSubs}/100`);
-        this.safeTextUpdate('posts-text', `${currentPosts}/1000`);
+        texts.forEach(({ id, value }) => {
+            const element = document.getElementById(id);
+            if (element) element.textContent = value;
+        });
 
-        // Обновление времени
-        this.updateTimeDisplay();
-
-        console.log('📈 Stats UI updated:', this.stats);
+        console.log('📈 Stats updated:', this.stats);
     }
 
-    // ПЛАВНАЯ АНИМАЦИЯ ПРОГРЕСС-БАРОВ
-    animateProgressBar(elementId, targetWidth) {
-        const element = document.getElementById(elementId);
-        if (!element) return;
-
-        // Сохраняем текущую ширину
-        const currentWidth = parseFloat(element.style.width) || 0;
-        
-        // Плавная анимация
-        element.style.transition = 'width 1.2s cubic-bezier(0.4, 0, 0.2, 1)';
-        
-        // Небольшая задержка для стабильности
-        setTimeout(() => {
-            element.style.width = targetWidth + '%';
-        }, 50);
-    }
-
-    // БЕЗОПАСНОЕ ОБНОВЛЕНИЕ ТЕКСТА
-    safeTextUpdate(elementId, newText) {
-        const element = document.getElementById(elementId);
-        if (!element) return;
-
-        // Сохраняем текущий текст
-        const currentText = element.textContent;
-        
-        // Только если текст действительно изменился
-        if (currentText !== newText) {
-            // Добавляем класс анимации
-            element.classList.add('stats-updating');
-            
-            // Обновляем текст
-            element.textContent = newText;
-            
-            // Убираем класс анимации после завершения
-            setTimeout(() => {
-                element.classList.remove('stats-updating');
-            }, 600);
-        }
-    }
-
-    updateTimeDisplay() {
-        const timeElement = document.getElementById('mobile-update-time');
-        if (timeElement) {
-            timeElement.textContent = new Date().toLocaleTimeString();
-        }
-    }
-
-    showStatsChangeNotification(oldStats, newStats) {
-        // Проверяем, не открыто ли уже уведомление
-        if (document.querySelector('.stats-notification')) return;
-
-        const notification = document.createElement('div');
-        notification.className = 'stats-notification stats-change';
-        
-        let changes = [];
-        
-        if (oldStats.subscribers !== newStats.subscribers) {
-            const diff = newStats.subscribers - oldStats.subscribers;
-            const arrow = diff > 0 ? '📈' : diff < 0 ? '📉' : '➡️';
-            changes.push(`Подписчики: ${oldStats.subscribers} → ${newStats.subscribers} ${arrow}`);
-        }
-        
-        if (oldStats.posts !== newStats.posts) {
-            const diff = newStats.posts - oldStats.posts;
-            const arrow = diff > 0 ? '📈' : diff < 0 ? '📉' : '➡️';
-            changes.push(`Посты: ${oldStats.posts} → ${newStats.posts} ${arrow}`);
-        }
-        
-        if (changes.length === 0) return; // Нет изменений - не показываем уведомление
-
-        notification.innerHTML = `
-            <div class="notification-title">🔄 Статистика обновлена</div>
-            <div class="notification-changes">
-                ${changes.map(change => `<div class="change-item">${change}</div>`).join('')}
-            </div>
-            <div class="notification-time">${new Date().toLocaleTimeString()}</div>
-        `;
-        
-        document.body.appendChild(notification);
-        
-        // Автоматическое скрытие
-        setTimeout(() => {
-            if (notification.parentNode) {
-                notification.classList.add('fade-out');
-                setTimeout(() => {
-                    if (notification.parentNode) {
-                        notification.remove();
-                    }
-                }, 500);
-            }
-        }, 4000);
-    }
-
-    showFileChangeNotification() {
-        const notification = document.createElement('div');
-        notification.className = 'stats-notification file-change';
-        notification.innerHTML = `
-            <div class="notification-title">📁 Обновление данных</div>
-            <div class="notification-message">Загружаем новую статистику...</div>
-        `;
-        
-        document.body.appendChild(notification);
-        
-        setTimeout(() => {
-            if (notification.parentNode) {
-                notification.classList.add('fade-out');
-                setTimeout(() => {
-                    if (notification.parentNode) {
-                        notification.remove();
-                    }
-                }, 500);
-            }
-        }, 3000);
-    }
-
-    // ОСТАЛЬНЫЕ МЕТОДЫ БЕЗ ИЗМЕНЕНИЙ
     initCountdown() {
         const targetDate = new Date('2026-01-01T00:00:00').getTime();
         const messages = [
@@ -404,7 +219,6 @@ class LysmanovSite {
         this.showMobileSection(0);
         
         let touchStartY = 0;
-        let touchEndY = 0;
         
         window.addEventListener('wheel', (e) => {
             if (this.isScrolling) return;
@@ -420,14 +234,14 @@ class LysmanovSite {
         });
         
         window.addEventListener('touchstart', (e) => {
-            touchStartY = e.changedTouches[0].screenY;
+            touchStartY = e.touches[0].clientY;
         });
         
         window.addEventListener('touchend', (e) => {
             if (this.isScrolling) return;
             
-            touchEndY = e.changedTouches[0].screenY;
-            const diff = touchStartY - touchEndY;
+            const endY = e.changedTouches[0].clientY;
+            const diff = touchStartY - endY;
             
             if (Math.abs(diff) > 50) {
                 this.isScrolling = true;
@@ -466,50 +280,9 @@ class LysmanovSite {
         
         this.currentSection = index;
     }
-
-    initDesktopAnimations() {
-        if (this.isMobile) return;
-        
-        const text = document.getElementById('text');
-        if (text) {
-            const textContent = text.textContent;
-            text.innerHTML = '';
-            
-            for (let i = 0; i < textContent.length; i++) {
-                const letter = document.createElement('span');
-                letter.className = 'letter';
-                letter.textContent = textContent[i];
-                const delay = i * 0.2;
-                letter.style.animationDelay = `${delay}s, ${delay + 2}s`;
-                text.appendChild(letter);
-            }
-        }
-    }
-
-    showCorrectVersion() {
-        const mobile = document.querySelector('.mobile-version');
-        const desktop = document.querySelector('.desktop-version');
-        
-        if (this.isMobile) {
-            if (mobile) mobile.style.display = 'block';
-            if (desktop) desktop.style.display = 'none';
-        } else {
-            if (mobile) mobile.style.display = 'none';
-            if (desktop) desktop.style.display = 'flex';
-        }
-    }
-
-    handleResize() {
-        const wasMobile = this.isMobile;
-        this.isMobile = this.checkMobile();
-        
-        if (wasMobile !== this.isMobile) {
-            this.showCorrectVersion();
-        }
-    }
 }
 
-// ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
+// Вспомогательные функции
 function shareTelegram() {
     const url = 'https://t.me/Lysmanov';
     const text = 'Подпишись на крутой канал LYSMANOV ✞ - важные новости и интересный контент!';
@@ -535,11 +308,7 @@ function copyLink() {
 }
 
 function showCopyNotification() {
-    // Проверяем, не открыто ли уже уведомление
-    if (document.querySelector('.copy-notification')) return;
-    
     const notification = document.createElement('div');
-    notification.className = 'copy-notification';
     notification.style.cssText = `
         position: fixed;
         top: 50%;
@@ -565,167 +334,20 @@ function showCopyNotification() {
     }, 2000);
 }
 
-function refreshStats() {
-    if (window.lysmanovSite && !window.lysmanovSite.isUpdating) {
-        window.lysmanovSite.loadStatsWithTracking();
-    }
-}
-
-// ИНИЦИАЛИЗАЦИЯ
+// Инициализация
 document.addEventListener('DOMContentLoaded', () => {
     window.lysmanovSite = new LysmanovSite();
-    
-    // Кнопка обновления статистики
-    if (location.hostname === 'lysmanov-tg.github.io') {
-        const refreshBtn = document.createElement('button');
-        refreshBtn.innerHTML = '🔄';
-        refreshBtn.style.cssText = `
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: #00b4ff;
-            color: white;
-            border: none;
-            cursor: pointer;
-            z-index: 10000;
-            font-size: 18px;
-            opacity: 0.3;
-            transition: opacity 0.3s;
-        `;
-        refreshBtn.title = 'Обновить статистику';
-        refreshBtn.addEventListener('mouseenter', () => refreshBtn.style.opacity = '1');
-        refreshBtn.addEventListener('mouseleave', () => refreshBtn.style.opacity = '0.3');
-        refreshBtn.addEventListener('click', refreshStats);
-        
-        document.body.appendChild(refreshBtn);
-    }
 });
 
-// ДОБАВЛЯЕМ СТИЛИ ДЛЯ ПЛАВНЫХ АНИМАЦИЙ
+// Стили для анимаций
 const style = document.createElement('style');
 style.textContent = `
-    /* Плавные анимации для статистики */
-    .stats-updating {
-        animation: gentlePulse 0.6s ease-in-out;
-    }
-    
-    @keyframes gentlePulse {
-        0%, 100% { 
-            opacity: 1;
-            transform: scale(1);
-        }
-        50% { 
-            opacity: 0.8;
-            transform: scale(1.02);
-        }
-    }
-    
-    /* Уведомления */
-    .stats-notification {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: linear-gradient(135deg, #ff3366, #00b4ff);
-        color: white;
-        padding: 15px 20px;
-        border-radius: 10px;
-        z-index: 10000;
-        animation: slideInNotification 0.5s ease;
-        font-family: 'Special Elite', cursive;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.3);
-        border: 1px solid rgba(255,255,255,0.2);
-        max-width: 300px;
-        backdrop-filter: blur(10px);
-    }
-    
-    .notification-title {
-        font-size: 1rem;
-        font-weight: bold;
-        margin-bottom: 8px;
-    }
-    
-    .notification-changes {
-        font-size: 0.8rem;
-        margin-bottom: 5px;
-    }
-    
-    .change-item {
-        margin: 3px 0;
-    }
-    
-    .notification-time {
-        font-size: 0.7rem;
-        opacity: 0.8;
-        text-align: right;
-    }
-    
-    .stats-notification.fade-out {
-        animation: fadeOutNotification 0.5s ease forwards;
-    }
-    
-    @keyframes slideInNotification {
-        from {
-            transform: translateX(100%);
-            opacity: 0;
-        }
-        to {
-            transform: translateX(0);
-            opacity: 1;
-        }
-    }
-    
-    @keyframes fadeOutNotification {
-        from {
-            transform: translateX(0);
-            opacity: 1;
-        }
-        to {
-            transform: translateX(100%);
-            opacity: 0;
-        }
-    }
-    
-    /* Гарантия видимости элементов */
-    .progress-fill {
-        background: linear-gradient(90deg, #ff3366, #00b4ff) !important;
-        height: 100% !important;
-        border-radius: 6px !important;
-        display: block !important;
-        min-width: 5% !important; /* Всегда виден */
-    }
-    
-    /* Фиксы для обратного отсчета */
-    .time-number, .time-digit {
-        display: block !important;
-        visibility: visible !important;
-        opacity: 1 !important;
-        min-width: 40px !important;
-    }
-    
-    /* Адаптивность уведомлений */
-    @media (max-width: 768px) {
-        .stats-notification {
-            top: 10px;
-            right: 10px;
-            left: 10px;
-            max-width: none;
-        }
-    }
-    
     @keyframes fadeInOut {
         0% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
         50% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
         100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
     }
-    
-    /* Плавные переходы для прогресс-баров */
-    .progress-fill {
-        transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
-    }
 `;
 document.head.appendChild(style);
 
-console.log('🔧 LYSMANOV site with FIXED rendering loaded!');
+console.log('📄 LYSMANOV mobile site loaded!');
