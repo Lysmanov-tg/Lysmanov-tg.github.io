@@ -27,7 +27,7 @@ class LysmanovSite {
         // ПРИНУДИТЕЛЬНОЕ ОТОБРАЖЕНИЕ ПЕРВОЙ СЕКЦИИ
         setTimeout(() => {
             this.showMobileSection(0);
-        }, 500);
+        }, 100);
         
         if (this.isMobile) {
             this.initMobileNavigation();
@@ -281,7 +281,7 @@ class LysmanovSite {
             
             scrollTimeout = setTimeout(() => {
                 this.isScrolling = false;
-            }, 800);
+            }, 1000);
         });
         
         // Тач события
@@ -306,7 +306,7 @@ class LysmanovSite {
                 
                 setTimeout(() => {
                     this.isScrolling = false;
-                }, 800);
+                }, 1000);
             }
         });
         
@@ -327,7 +327,7 @@ class LysmanovSite {
                 this.isScrolling = true;
                 setTimeout(() => {
                     this.isScrolling = false;
-                }, 1000);
+                }, 1500);
             }
         }, 20000);
     }
@@ -336,20 +336,14 @@ class LysmanovSite {
         const sections = document.querySelectorAll('.mobile-section');
         const dots = document.querySelectorAll('.dot');
         
-        // Скрываем все секции с анимацией
+        // Скрываем все секции
         sections.forEach(section => {
             section.classList.remove('active');
-            section.style.opacity = '0';
-            section.style.transform = 'translateY(20px)';
         });
         
-        // Показываем выбранную секцию с анимацией
+        // Показываем выбранную секцию
         if (sections[index]) {
-            setTimeout(() => {
-                sections[index].classList.add('active');
-                sections[index].style.opacity = '1';
-                sections[index].style.transform = 'translateY(0)';
-            }, 50);
+            sections[index].classList.add('active');
         }
         
         // Обновляем точки навигации
@@ -529,59 +523,4 @@ function showCopyNotification() {
         if (notification.parentNode) {
             notification.remove();
         }
-    }, 2000);
-}
-
-// Автоматическое обновление статистики
-function autoUpdateStats() {
-    if (window.lysmanovSite) {
-        window.lysmanovSite.loadStats();
-    }
-}
-
-// Инициализация
-document.addEventListener('DOMContentLoaded', () => {
-    window.lysmanovSite = new LysmanovSite();
-    
-    // Автоматическое обновление каждые 2 минуты
-    setInterval(autoUpdateStats, 120000);
-    
-    // Кнопка обновления для разработки
-    if (location.hostname === 'lysmanov-tg.github.io') {
-        const refreshBtn = document.createElement('button');
-        refreshBtn.innerHTML = '🔄';
-        refreshBtn.title = 'Обновить статистику';
-        refreshBtn.style.cssText = `
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #ff3366, #00b4ff);
-            color: white;
-            border: none;
-            cursor: pointer;
-            z-index: 10000;
-            font-size: 20px;
-            opacity: 0.7;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(255,255,255,0.2);
-        `;
-        refreshBtn.addEventListener('mouseenter', () => {
-            refreshBtn.style.opacity = '1';
-            refreshBtn.style.transform = 'scale(1.1)';
-        });
-        refreshBtn.addEventListener('mouseleave', () => {
-            refreshBtn.style.opacity = '0.7';
-            refreshBtn.style.transform = 'scale(1)';
-        });
-        refreshBtn.addEventListener('click', autoUpdateStats);
-        
-        document.body.appendChild(refreshBtn);
-    }
-});
-
-console.log('🎯 LYSMANOV 10/10 site loaded successfully!');
+    }, 200
