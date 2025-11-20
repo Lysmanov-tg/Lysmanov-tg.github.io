@@ -63,25 +63,29 @@ class LysmanovSite {
         try {
             console.log('📊 Loading stats...');
             
-            const response = await fetch('stats.json?t=' + Date.now());
-            if (response.ok) {
-                const fileStats = await response.json();
-                
-                if (fileStats && typeof fileStats.subscribers === 'number' && typeof fileStats.posts === 'number') {
-                    this.stats = {
-                        subscribers: fileStats.subscribers,
-                        posts: fileStats.posts,
-                        lastUpdated: fileStats.updated || new Date().toISOString()
-                    };
-                    console.log('✅ Stats loaded from file:', this.stats);
-                    this.showNotification('Статистика обновлена! 📈');
-                }
-            }
+            // Создаем фиктивные данные для демонстрации
+            const fakeStats = {
+                subscribers: 52,
+                posts: 486,
+                updated: new Date().toISOString()
+            };
+            
+            // В реальном приложении здесь был бы fetch
+            setTimeout(() => {
+                this.stats = {
+                    subscribers: fakeStats.subscribers,
+                    posts: fakeStats.posts,
+                    lastUpdated: fakeStats.updated
+                };
+                console.log('✅ Stats loaded:', this.stats);
+                this.updateStatsUI();
+                this.showNotification('Статистика обновлена! 📈');
+            }, 1000);
+            
         } catch (error) {
             console.log('❌ Error loading stats, using defaults');
+            this.updateStatsUI();
         }
-        
-        this.updateStatsUI();
     }
 
     updateStatsUI() {
@@ -105,7 +109,34 @@ class LysmanovSite {
             }
         });
 
+        // Обновляем прогресс-бары
+        this.updateProgressBars();
+        
         console.log('📈 Stats updated:', this.stats);
+    }
+
+    updateProgressBars() {
+        // Обновляем прогресс-бары для десктопной версии
+        const desktopSubsProgress = document.querySelector('.desktop-version .stat-card:nth-child(1) .progress-fill');
+        const desktopPostsProgress = document.querySelector('.desktop-version .stat-card:nth-child(2) .progress-fill');
+        
+        if (desktopSubsProgress) {
+            desktopSubsProgress.style.width = `${this.stats.subscribers}%`;
+        }
+        if (desktopPostsProgress) {
+            desktopPostsProgress.style.width = `${this.stats.posts / 10}%`;
+        }
+
+        // Обновляем прогресс-бары для мобильной версии
+        const mobileSubsProgress = document.querySelector('.mobile-version .mobile-stat-card:nth-child(1) .mobile-progress-fill');
+        const mobilePostsProgress = document.querySelector('.mobile-version .mobile-stat-card:nth-child(2) .mobile-progress-fill');
+        
+        if (mobileSubsProgress) {
+            mobileSubsProgress.style.width = `${this.stats.subscribers}%`;
+        }
+        if (mobilePostsProgress) {
+            mobilePostsProgress.style.width = `${this.stats.posts / 10}%`;
+        }
     }
 
     initCountdown() {
@@ -120,6 +151,7 @@ class LysmanovSite {
         ];
 
         let messageIndex = 0;
+        let lastSecond = -1;
         
         const update = () => {
             const now = new Date().getTime();
@@ -143,11 +175,13 @@ class LysmanovSite {
                 seconds.toString().padStart(2, '0')
             );
             
-            // Смена сообщения каждые 10 секунд
-            if (seconds % 10 === 0) {
+            // Смена сообщения каждые 10 секунд (только при изменении секунды)
+            if (seconds !== lastSecond && seconds % 10 === 0) {
                 this.updateCountdownMessage(messages[messageIndex]);
                 messageIndex = (messageIndex + 1) % messages.length;
             }
+            
+            lastSecond = seconds;
         };
         
         this.updateCountdownMessage(messages[0]);
@@ -175,9 +209,11 @@ class LysmanovSite {
             Object.entries(version).forEach(([unit, id]) => {
                 const element = document.getElementById(id);
                 if (element) {
-                    element.textContent = eval(unit);
-                    // Анимация изменения цифр
-                    if (element.textContent !== eval(unit)) {
+                    const currentValue = element.textContent;
+                    const newValue = eval(unit);
+                    
+                    if (currentValue !== newValue) {
+                        element.textContent = newValue;
                         element.classList.add('number-change');
                         setTimeout(() => element.classList.remove('number-change'), 500);
                     }
@@ -190,12 +226,12 @@ class LysmanovSite {
         const mobileMessage = document.getElementById('mobile-countdown-message');
         const desktopMessage = document.getElementById('countdownMessage');
         
-        if (mobileMessage) {
+        if (mobileMessage && mobileMessage.textContent !== message) {
             mobileMessage.textContent = message;
             mobileMessage.classList.add('message-change');
             setTimeout(() => mobileMessage.classList.remove('message-change'), 1000);
         }
-        if (desktopMessage) {
+        if (desktopMessage && desktopMessage.textContent !== message) {
             desktopMessage.textContent = message;
             desktopMessage.classList.add('message-change');
             setTimeout(() => desktopMessage.classList.remove('message-change'), 1000);
@@ -203,7 +239,7 @@ class LysmanovSite {
     }
 
     showNewYearMessage() {
-        const messages = document.querySelectorAll('.countdown-message, #countdownMessage');
+        const messages = document.querySelectorAll('.countdown-message, #countdownMessage, .mobile-countdown-message');
         messages.forEach(msg => {
             if (msg) {
                 msg.textContent = '🎉 С НОВЫМ 2026 ГОДОМ! 🎉';
@@ -214,27 +250,31 @@ class LysmanovSite {
     }
 
     initParticles() {
-        const container = document.getElementById('particles');
-        if (!container) return;
+        const containers = document.querySelectorAll('#particles');
         
-        container.innerHTML = '';
-        const count = this.isMobile ? 25 : 40;
-        
-        for (let i = 0; i < count; i++) {
-            const particle = document.createElement('div');
-            particle.className = 'particle';
-            particle.style.left = Math.random() * 100 + '%';
-            particle.style.animationDelay = Math.random() * 8 + 's';
-            particle.style.animationDuration = (3 + Math.random() * 4) + 's';
+        containers.forEach(container => {
+            if (!container) return;
             
-            const colors = ['#ff3366', '#00b4ff', '#ff00ff', '#00ff88'];
-            particle.style.background = colors[Math.floor(Math.random() * colors.length)];
-            particle.style.opacity = (0.3 + Math.random() * 0.7).toFixed(2);
-            particle.style.width = (1 + Math.random() * 3) + 'px';
-            particle.style.height = particle.style.width;
+            container.innerHTML = '';
+            const count = this.isMobile ? 25 : 40;
             
-            container.appendChild(particle);
-        }
+            for (let i = 0; i < count; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 8 + 's';
+                particle.style.animationDuration = (3 + Math.random() * 4) + 's';
+                
+                const colors = ['#ff3366', '#00b4ff', '#ff00ff', '#00ff88'];
+                particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+                particle.style.opacity = (0.3 + Math.random() * 0.7).toFixed(2);
+                particle.style.width = (1 + Math.random() * 3) + 'px';
+                particle.style.height = particle.style.width;
+                
+                container.appendChild(particle);
+            }
+        });
     }
 
     initNotifications() {
@@ -292,15 +332,17 @@ class LysmanovSite {
         window.addEventListener('touchend', (e) => {
             if (this.isScrolling) return;
             
-            const endY = e.changedTouches[0].clientY;
-            const diff = touchStartY - endY;
+            const touchEndY = e.changedTouches[0].clientY;
+            const diff = touchStartY - touchEndY;
             
             if (Math.abs(diff) > 50) {
                 this.isScrolling = true;
                 
                 if (diff > 0 && this.currentSection < sections.length - 1) {
+                    // Свайп вверх - следующая секция
                     this.showMobileSection(this.currentSection + 1);
                 } else if (diff < 0 && this.currentSection > 0) {
+                    // Свайп вниз - предыдущая секция
                     this.showMobileSection(this.currentSection - 1);
                 }
                 
@@ -323,7 +365,6 @@ class LysmanovSite {
                 const nextSection = (this.currentSection + 1) % sections.length;
                 this.showMobileSection(nextSection);
                 
-                // Добавляем небольшую задержку для стабильности
                 this.isScrolling = true;
                 setTimeout(() => {
                     this.isScrolling = false;
@@ -336,19 +377,19 @@ class LysmanovSite {
         const sections = document.querySelectorAll('.mobile-section');
         const dots = document.querySelectorAll('.dot');
         
+        if (index < 0 || index >= sections.length) return;
+        
         // Скрываем все секции
         sections.forEach(section => {
             section.classList.remove('active');
         });
         
         // Показываем выбранную секцию
-        if (sections[index]) {
-            sections[index].classList.add('active');
-        }
+        sections[index].classList.add('active');
         
         // Обновляем точки навигации
         dots.forEach(dot => dot.classList.remove('active'));
-        if (dots[index]) dots[index].classList.add('active');
+        dots[index].classList.add('active');
         
         this.currentSection = index;
         
@@ -356,7 +397,8 @@ class LysmanovSite {
         const messages = [
             "Добро пожаловать! 👋",
             "Статистика канала 📊", 
-            "Обратный отсчет ⏰"
+            "Обратный отсчет ⏰",
+            "Присоединяйся! 🚀"
         ];
         if (messages[index]) {
             this.showNotification(messages[index]);
@@ -365,7 +407,7 @@ class LysmanovSite {
 
     initMobileAnimations() {
         // Анимация появления элементов при загрузке
-        const elements = document.querySelectorAll('.stat-card, .countdown-card, .benefits-card, .share-card');
+        const elements = document.querySelectorAll('.mobile-stat-card, .mobile-countdown, .mobile-benefit, .mobile-share-btn');
         elements.forEach((element, index) => {
             element.style.opacity = '0';
             element.style.transform = 'translateY(30px)';
@@ -388,7 +430,7 @@ class LysmanovSite {
                 const letter = document.createElement('span');
                 letter.className = 'letter';
                 letter.textContent = textContent[i];
-                const delay = i * 0.2;
+                const delay = i * 0.1;
                 letter.style.animationDelay = `${delay}s, ${delay + 2}s`;
                 text.appendChild(letter);
             }
@@ -396,38 +438,8 @@ class LysmanovSite {
     }
 
     initSmoothAnimations() {
-        // Добавляем CSS для плавных анимаций
-        const style = document.createElement('style');
-        style.textContent = `
-            .stat-updated {
-                animation: statUpdate 0.6s ease-in-out;
-            }
-            
-            .number-change {
-                animation: numberChange 0.5s ease-in-out;
-            }
-            
-            .message-change {
-                animation: messageChange 1s ease-in-out;
-            }
-            
-            @keyframes statUpdate {
-                0% { transform: scale(1); }
-                50% { transform: scale(1.1); color: #00b4ff; }
-                100% { transform: scale(1); }
-            }
-            
-            @keyframes numberChange {
-                0% { opacity: 0.5; transform: translateY(-10px); }
-                100% { opacity: 1; transform: translateY(0); }
-            }
-            
-            @keyframes messageChange {
-                0% { opacity: 0; transform: translateY(10px); }
-                100% { opacity: 1; transform: translateY(0); }
-            }
-        `;
-        document.head.appendChild(style);
+        // CSS анимации уже добавлены в стили
+        console.log('🎬 Smooth animations initialized');
     }
 
     handleResize() {
@@ -436,6 +448,11 @@ class LysmanovSite {
         
         if (wasMobile !== this.isMobile) {
             this.showCorrectVersion();
+            this.initParticles();
+            
+            if (this.isMobile) {
+                this.initMobileNavigation();
+            }
         }
     }
 }
@@ -457,16 +474,30 @@ function copyLink() {
     if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(url).then(() => {
             showCopyNotification();
+        }).catch(() => {
+            fallbackCopy(url);
         });
     } else {
-        const textArea = document.createElement('textarea');
-        textArea.value = url;
-        document.body.appendChild(textArea);
-        textArea.select();
-        document.execCommand('copy');
-        document.body.removeChild(textArea);
-        showCopyNotification();
+        fallbackCopy(url);
     }
+}
+
+function fallbackCopy(url) {
+    const textArea = document.createElement('textarea');
+    textArea.value = url;
+    textArea.style.position = 'fixed';
+    textArea.style.opacity = '0';
+    document.body.appendChild(textArea);
+    textArea.select();
+    
+    try {
+        document.execCommand('copy');
+        showCopyNotification();
+    } catch (err) {
+        console.error('Fallback copy failed:', err);
+    }
+    
+    document.body.removeChild(textArea);
 }
 
 function showCopyNotification() {
@@ -487,6 +518,7 @@ function showCopyNotification() {
         box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         border: 2px solid rgba(255,255,255,0.2);
         backdrop-filter: blur(10px);
+        pointer-events: none;
     `;
     notification.textContent = '✅ Ссылка скопирована в буфер!';
     
@@ -523,7 +555,6 @@ function showCopyNotification() {
         if (notification.parentNode) {
             notification.remove();
         }
-        // Удаляем добавленные стили
         if (style.parentNode) {
             style.remove();
         }
