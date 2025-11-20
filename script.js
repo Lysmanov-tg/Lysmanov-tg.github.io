@@ -1,4 +1,4 @@
-// script.js - 10/10 VERSION
+// script.js - FULL WORKING VERSION
 class LysmanovSite {
     constructor() {
         this.stats = {
@@ -23,6 +23,11 @@ class LysmanovSite {
         this.initCountdown();
         this.initParticles();
         this.initNotifications();
+        
+        // ПРИНУДИТЕЛЬНОЕ ОТОБРАЖЕНИЕ ПЕРВОЙ СЕКЦИИ
+        setTimeout(() => {
+            this.showMobileSection(0);
+        }, 500);
         
         if (this.isMobile) {
             this.initMobileNavigation();
@@ -233,7 +238,6 @@ class LysmanovSite {
     }
 
     initNotifications() {
-        // Стили для уведомлений уже в CSS
         console.log('🔔 Notifications system ready');
     }
 
@@ -313,27 +317,39 @@ class LysmanovSite {
             });
         });
         
-        // Автоматическая прокрутка каждые 15 секунд
+        // Автоматическая прокрутка каждые 20 секунд
         setInterval(() => {
             if (!this.isScrolling) {
                 const nextSection = (this.currentSection + 1) % sections.length;
                 this.showMobileSection(nextSection);
+                
+                // Добавляем небольшую задержку для стабильности
+                this.isScrolling = true;
+                setTimeout(() => {
+                    this.isScrolling = false;
+                }, 1000);
             }
-        }, 15000);
+        }, 20000);
     }
 
     showMobileSection(index) {
         const sections = document.querySelectorAll('.mobile-section');
         const dots = document.querySelectorAll('.dot');
         
-        // Скрываем все секции
+        // Скрываем все секции с анимацией
         sections.forEach(section => {
             section.classList.remove('active');
+            section.style.opacity = '0';
+            section.style.transform = 'translateY(20px)';
         });
         
-        // Показываем выбранную секцию
+        // Показываем выбранную секцию с анимацией
         if (sections[index]) {
-            sections[index].classList.add('active');
+            setTimeout(() => {
+                sections[index].classList.add('active');
+                sections[index].style.opacity = '1';
+                sections[index].style.transform = 'translateY(0)';
+            }, 50);
         }
         
         // Обновляем точки навигации
@@ -426,7 +442,6 @@ class LysmanovSite {
         
         if (wasMobile !== this.isMobile) {
             this.showCorrectVersion();
-            location.reload(); // Перезагрузка для чистого переключения
         }
     }
 }
