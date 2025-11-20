@@ -1,4 +1,3 @@
-/* LYSMANOV SITE STYLES - FULL WORKING VERSION */
 @import url('https://fonts.googleapis.com/css2?family=Special+Elite&display=swap');
 
 :root {
@@ -7,8 +6,6 @@
     --accent-color: #8b0000;
     --text-color: #ffffff;
     --bg-color: #000000;
-    --card-bg: rgba(255, 255, 255, 0.1);
-    --card-border: rgba(255, 51, 102, 0.3);
 }
 
 * {
@@ -24,14 +21,13 @@ html, body {
     height: 100%;
     overflow: hidden;
     background: var(--bg-color);
-    font-family: 'Special Elite', cursive;
-    color: var(--text-color);
 }
 
 body {
     background: var(--bg-color);
+    font-family: 'Special Elite', cursive;
+    color: var(--text-color);
     overflow: hidden;
-    position: relative;
 }
 
 /* Фоновые элементы */
@@ -79,7 +75,7 @@ body {
 
 /* ===== МОБИЛЬНАЯ ВЕРСИЯ ===== */
 .mobile-version {
-    display: block;
+    display: none;
     position: relative;
     z-index: 2;
     width: 100%;
@@ -94,6 +90,7 @@ body {
     width: 100%;
     height: 100vh;
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
     scroll-snap-type: y mandatory;
     background: transparent;
 }
@@ -105,14 +102,21 @@ body {
     justify-content: center;
     padding: 20px 15px;
     scroll-snap-align: start;
+    transform: scale(0.95);
+    transform-origin: top center;
     background: transparent;
+    transition: transform 0.5s ease, opacity 0.5s ease;
+}
+
+.mobile-section:not(.active) {
     opacity: 0;
+    pointer-events: none;
     transform: translateY(20px);
-    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .mobile-section.active {
     opacity: 1;
+    pointer-events: all;
     transform: translateY(0);
 }
 
@@ -185,57 +189,10 @@ body {
     transition: all 0.3s ease;
     box-shadow: 0 5px 15px rgba(0, 180, 255, 0.4);
     animation: pulseBlue 2s infinite;
-    position: relative;
-    overflow: hidden;
 }
 
 .mobile-button:active {
     transform: scale(0.95);
-}
-
-.mobile-button::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-    transition: left 0.5s ease;
-}
-
-.mobile-button:active::before {
-    left: 100%;
-}
-
-/* Предпросмотр статистики */
-.mobile-stats-preview {
-    margin: 25px 0;
-}
-
-.preview-stats {
-    display: flex;
-    justify-content: center;
-    gap: 30px;
-}
-
-.preview-stat {
-    text-align: center;
-}
-
-.preview-number {
-    display: block;
-    font-size: 1.8rem;
-    font-weight: bold;
-    color: var(--primary-color);
-    text-shadow: 0 0 10px rgba(255, 51, 102, 0.5);
-    margin-bottom: 5px;
-}
-
-.preview-label {
-    font-size: 0.8rem;
-    color: var(--text-color);
-    opacity: 0.8;
 }
 
 /* Мобильная статистика */
@@ -245,68 +202,56 @@ body {
 }
 
 .stat-card {
-    background: var(--card-bg);
+    background: rgba(255, 255, 255, 0.1);
     border-radius: 15px;
-    padding: 25px;
-    border: 1px solid var(--card-border);
+    padding: 20px;
+    border: 1px solid rgba(255, 51, 102, 0.3);
     backdrop-filter: blur(10px);
     margin-bottom: 20px;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
 }
 
 .stat-title {
     color: var(--primary-color);
     font-size: 1.3rem;
     font-weight: bold;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     text-shadow: 0 0 10px rgba(255, 51, 102, 0.5);
-    text-align: center;
 }
 
 .stat-item {
-    margin-bottom: 20px;
+    margin-bottom: 15px;
 }
 
 .stat-label {
     color: var(--text-color);
     font-size: 1rem;
-    margin-bottom: 8px;
+    margin-bottom: 5px;
     text-align: left;
-    display: flex;
-    align-items: center;
-    gap: 8px;
 }
 
 .stat-progress {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
 }
 
 .progress-bar {
     flex: 1;
-    height: 14px;
+    height: 12px;
     background: rgba(255, 255, 255, 0.1);
-    border-radius: 7px;
+    border-radius: 6px;
     overflow: hidden;
     position: relative;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
 }
 
 .progress-fill {
     height: 100%;
     background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
-    border-radius: 7px;
-    width: 51%;
-    transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 6px;
+    width: 0%;
+    transition: width 2s ease-in-out;
     position: relative;
     overflow: hidden;
-    box-shadow: 0 0 10px rgba(255, 51, 102, 0.5);
-}
-
-#mobile-posts-progress {
-    width: 48.4%;
 }
 
 .progress-fill::before {
@@ -325,196 +270,144 @@ body {
     animation: progressShine 2s infinite;
 }
 
+@keyframes progressShine {
+    0% {
+        left: -100%;
+    }
+    100% {
+        left: 100%;
+    }
+}
+
 .stat-numbers {
     color: var(--secondary-color);
     font-size: 0.9rem;
-    min-width: 60px;
+    min-width: 50px;
     text-align: right;
     font-weight: bold;
-    text-shadow: 0 0 5px rgba(0, 180, 255, 0.5);
-}
-
-/* Информация о статистике */
-.stats-info {
-    background: var(--card-bg);
-    border-radius: 12px;
-    padding: 15px;
-    border: 1px solid var(--card-border);
-    margin-bottom: 20px;
-}
-
-.info-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 8px;
-    font-size: 0.9rem;
-    color: var(--text-color);
-}
-
-.info-item:last-child {
-    margin-bottom: 0;
-}
-
-.info-icon {
-    font-size: 1rem;
 }
 
 /* Мобильный обратный отсчет */
 .countdown-card {
-    background: var(--card-bg);
+    background: rgba(255, 255, 255, 0.1);
     border-radius: 15px;
-    padding: 25px;
-    border: 1px solid var(--card-border);
+    padding: 20px;
+    border: 1px solid rgba(255, 51, 102, 0.3);
     backdrop-filter: blur(10px);
     margin-bottom: 20px;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
 }
 
 .countdown-title {
     color: var(--primary-color);
     font-size: 1.3rem;
     font-weight: bold;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     text-shadow: 0 0 10px rgba(255, 51, 102, 0.5);
-    text-align: center;
 }
 
 .countdown-timer {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-    margin-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
 }
 
 .time-block {
-    text-align: center;
+    flex: 1;
 }
 
 .time-number {
-    font-size: 1.8rem;
+    font-size: 1.6rem;
     font-weight: bold;
     color: var(--secondary-color);
     background: rgba(0, 0, 0, 0.3);
-    padding: 12px 8px;
+    padding: 10px 5px;
     border-radius: 10px;
     margin-bottom: 5px;
     text-shadow: 0 0 10px rgba(0, 180, 255, 0.7);
     animation: numberPulse 1s infinite;
-    border: 1px solid rgba(0, 180, 255, 0.3);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
 }
 
 .time-label {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     color: var(--text-color);
     opacity: 0.8;
-    text-transform: uppercase;
-    letter-spacing: 1px;
 }
 
 .countdown-message {
     color: var(--primary-color);
     font-size: 0.9rem;
     font-style: italic;
-    margin-top: 15px;
+    margin-top: 10px;
     min-height: 20px;
     animation: messagePulse 2s infinite;
-    text-align: center;
 }
 
 /* Мобильные преимущества */
 .benefits-card {
-    background: var(--card-bg);
+    background: rgba(255, 255, 255, 0.1);
     border-radius: 15px;
-    padding: 25px;
-    border: 1px solid var(--card-border);
+    padding: 20px;
+    border: 1px solid rgba(255, 51, 102, 0.3);
     backdrop-filter: blur(10px);
     margin-bottom: 20px;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
 }
 
 .benefits-title {
     color: var(--primary-color);
     font-size: 1.3rem;
     font-weight: bold;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     text-shadow: 0 0 10px rgba(255, 51, 102, 0.5);
-    text-align: center;
 }
 
 .benefits-list {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 8px;
 }
 
 .benefit-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
     color: var(--text-color);
-    font-size: 0.95rem;
-    padding: 12px;
+    font-size: 0.9rem;
+    padding: 8px;
     background: rgba(255, 255, 255, 0.05);
-    border-radius: 10px;
-    transition: all 0.3s ease;
-}
-
-.benefit-item:active {
-    background: rgba(255, 255, 255, 0.1);
-    transform: translateY(-2px);
-}
-
-.benefit-icon {
-    font-size: 1.2rem;
-    flex-shrink: 0;
-}
-
-.benefit-text {
-    flex: 1;
-    text-align: left;
+    border-radius: 8px;
+    text-align: center;
 }
 
 /* Мобильные кнопки поделиться */
 .share-card {
-    background: var(--card-bg);
+    background: rgba(255, 255, 255, 0.1);
     border-radius: 15px;
-    padding: 25px;
-    border: 1px solid var(--card-border);
+    padding: 20px;
+    border: 1px solid rgba(255, 51, 102, 0.3);
     backdrop-filter: blur(10px);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
 }
 
 .share-title {
     color: var(--secondary-color);
     font-size: 1.1rem;
-    margin-bottom: 20px;
-    text-align: center;
-    text-shadow: 0 0 5px rgba(0, 180, 255, 0.5);
+    margin-bottom: 15px;
 }
 
 .share-buttons {
     display: flex;
-    gap: 12px;
+    gap: 10px;
     justify-content: center;
 }
 
 .share-btn {
-    display: flex;
-    align-items: center;
-    gap: 8px;
     background: rgba(255, 255, 255, 0.1);
     border: 1px solid var(--secondary-color);
     color: var(--secondary-color);
-    padding: 14px 20px;
-    border-radius: 12px;
+    padding: 12px 20px;
+    border-radius: 10px;
     font-size: 0.9rem;
     cursor: pointer;
     transition: all 0.3s ease;
     flex: 1;
-    max-width: 160px;
-    justify-content: center;
+    max-width: 140px;
+    font-family: 'Special Elite', cursive;
 }
 
 .share-btn:active {
@@ -523,14 +416,10 @@ body {
     transform: scale(0.95);
 }
 
-.share-icon {
-    font-size: 1.1rem;
-}
-
 /* Мобильный индикатор */
 .mobile-indicator {
     position: fixed;
-    bottom: 25px;
+    bottom: 20px;
     left: 0;
     width: 100%;
     z-index: 1000;
@@ -540,46 +429,25 @@ body {
 
 .indicator-dots {
     display: flex;
-    gap: 12px;
-    background: rgba(0, 0, 0, 0.7);
-    padding: 12px 24px;
-    border-radius: 25px;
+    gap: 10px;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 10px 20px;
+    border-radius: 20px;
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
 }
 
 .dot {
-    width: 12px;
-    height: 12px;
+    width: 10px;
+    height: 10px;
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.3);
     transition: all 0.3s ease;
     cursor: pointer;
-    position: relative;
 }
 
 .dot.active {
     background: var(--primary-color);
-    transform: scale(1.3);
-    box-shadow: 0 0 10px var(--primary-color);
-}
-
-.dot::after {
-    content: '';
-    position: absolute;
-    top: -4px;
-    left: -4px;
-    right: -4px;
-    bottom: -4px;
-    border-radius: 50%;
-    background: var(--primary-color);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.dot.active::after {
-    opacity: 0.2;
+    transform: scale(1.2);
 }
 
 /* Мобильная подсказка */
@@ -587,27 +455,14 @@ body {
     text-align: center;
     color: var(--secondary-color);
     font-size: 0.9rem;
-    margin-top: 25px;
+    margin-top: 20px;
     opacity: 0.7;
     animation: hintPulse 2s infinite;
-    position: relative;
-}
-
-.mobile-hint::before {
-    content: '';
-    position: absolute;
-    top: -8px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 20px;
-    height: 2px;
-    background: var(--secondary-color);
-    border-radius: 1px;
 }
 
 /* ===== ПК ВЕРСИЯ ===== */
 .desktop-version {
-    display: none;
+    display: flex;
     position: relative;
     z-index: 2;
     width: 100%;
@@ -629,8 +484,6 @@ body {
     padding: 2rem;
     gap: 2rem;
     background: transparent;
-    transform: scale(0.9);
-    transform-origin: center;
 }
 
 .watermark {
@@ -656,7 +509,7 @@ body {
 }
 
 .main-text {
-    font-size: clamp(2rem, 6vw, 3rem);
+    font-size: clamp(2.5rem, 8vw, 4rem);
     font-weight: bold;
     font-style: italic;
     color: var(--primary-color);
@@ -683,11 +536,10 @@ body {
     transform: rotateX(90deg) translateY(100px) scale(0.5);
     font-style: italic;
     background: transparent;
-    color: var(--primary-color) !important;
 }
 
 .cross {
-    font-size: clamp(2rem, 6vw, 3rem);
+    font-size: clamp(2.5rem, 8vw, 4rem);
     color: var(--primary-color);
     margin-left: 15px;
     animation: 
@@ -708,7 +560,7 @@ body {
 }
 
 .signature {
-    font-size: clamp(0.9rem, 2.5vw, 1rem);
+    font-size: clamp(1rem, 3vw, 1.2rem);
     font-style: italic;
     color: var(--secondary-color);
     opacity: 0;
@@ -743,9 +595,9 @@ body {
     background: linear-gradient(45deg, #0088cc, #00b4ff);
     color: white;
     border: none;
-    padding: 15px 30px;
+    padding: 12px 24px;
     border-radius: 25px;
-    font-size: 1.1rem;
+    font-size: 1rem;
     cursor: pointer;
     animation: pulseBlue 2s infinite;
     text-decoration: none;
@@ -754,34 +606,17 @@ body {
     text-align: center;
     width: 100%;
     max-width: 300px;
-    position: relative;
-    overflow: hidden;
 }
 
 .tg-button:hover {
     transform: translateY(-3px);
-    box-shadow: 0 10px 25px rgba(0, 180, 255, 0.6);
-}
-
-.tg-button::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-    transition: left 0.5s ease;
-}
-
-.tg-button:hover::before {
-    left: 100%;
+    box-shadow: 0 10px 20px rgba(0, 180, 255, 0.4);
 }
 
 /* ПК СТАТИСТИКА */
 .channel-stats {
     display: flex;
-    gap: 30px;
+    gap: 20px;
     color: var(--primary-color);
     font-size: 0.9rem;
     z-index: 3;
@@ -795,7 +630,7 @@ body {
     flex-direction: column;
     align-items: center;
     animation: statPulse 3s infinite;
-    min-width: 120px;
+    min-width: 100px;
     background: transparent;
 }
 
@@ -815,7 +650,15 @@ body {
     font-style: italic;
     font-weight: bold;
     background: transparent;
-    text-shadow: 0 0 5px rgba(255, 51, 102, 0.5);
+}
+
+.help-text {
+    font-size: 0.9rem;
+    color: var(--secondary-color);
+    margin-top: 10px;
+    text-align: center;
+    animation: helpPulse 2s infinite;
+    background: transparent;
 }
 
 .progress-container {
@@ -827,29 +670,22 @@ body {
 
 .progress-bar {
     width: 100%;
-    height: 14px;
+    height: 12px;
     background: rgba(255, 255, 255, 0.1);
-    border-radius: 7px;
+    border-radius: 6px;
     overflow: hidden;
-    margin-top: 8px;
+    margin-top: 5px;
     position: relative;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
 }
 
 .progress-fill {
     height: 100%;
     background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
-    border-radius: 7px;
-    width: 51%;
-    transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 6px;
+    width: 0%;
+    transition: width 2s ease-in-out;
     position: relative;
     overflow: hidden;
-    box-shadow: 0 0 10px rgba(255, 51, 102, 0.5);
-}
-
-#posts-progress {
-    width: 48.4%;
 }
 
 .progress-fill::before {
@@ -869,86 +705,69 @@ body {
 }
 
 .progress-text {
-    font-size: 0.8rem;
+    font-size: 0.7rem;
     color: var(--secondary-color);
-    margin-top: 5px;
+    margin-top: 3px;
     text-align: center;
     background: transparent;
     font-weight: bold;
-    text-shadow: 0 0 5px rgba(0, 180, 255, 0.5);
-}
-
-.help-text {
-    font-size: 0.9rem;
-    color: var(--secondary-color);
-    margin-top: 10px;
-    text-align: center;
-    animation: helpPulse 2s infinite;
-    background: transparent;
 }
 
 .benefits {
-    background: var(--card-bg);
+    background: rgba(255, 255, 255, 0.1);
     border-radius: 15px;
-    padding: 20px;
-    border: 1px solid var(--card-border);
+    padding: 15px;
+    border: 1px solid rgba(255, 51, 102, 0.3);
     backdrop-filter: blur(10px);
     animation: previewGlow 4s infinite alternate;
     z-index: 3;
     width: 100%;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
 }
 
 .benefits-title {
     color: var(--primary-color);
     text-align: center;
-    margin-bottom: 15px;
-    font-size: 1.1rem;
-    font-weight: bold;
-    text-shadow: 0 0 10px rgba(255, 51, 102, 0.5);
+    margin-bottom: 10px;
+    font-size: 1rem;
 }
 
 .benefits-list {
     color: #fff;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     text-align: center;
     margin: 0;
-    line-height: 1.6;
+    line-height: 1.5;
 }
 
 .share-section {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
     margin-top: 10px;
     background: transparent;
 }
 
 .share-text {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     color: var(--secondary-color);
     text-align: center;
     background: transparent;
-    text-shadow: 0 0 5px rgba(0, 180, 255, 0.5);
 }
 
 .share-buttons {
     display: flex;
-    gap: 12px;
+    gap: 10px;
     background: transparent;
 }
 
 .share-button {
-    display: flex;
-    align-items: center;
-    gap: 8px;
     background: rgba(255, 255, 255, 0.1);
     border: 1px solid var(--secondary-color);
     color: var(--secondary-color);
-    padding: 10px 20px;
-    border-radius: 12px;
-    font-size: 0.9rem;
+    padding: 8px 15px;
+    border-radius: 15px;
+    font-size: 0.8rem;
     cursor: pointer;
     transition: all 0.3s ease;
     font-family: 'Special Elite', cursive;
@@ -958,31 +777,25 @@ body {
     background: var(--secondary-color);
     color: white;
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0, 180, 255, 0.4);
-}
-
-.share-icon {
-    font-size: 1rem;
 }
 
 .countdown-section {
-    background: var(--card-bg);
+    background: rgba(255, 255, 255, 0.1);
     border-radius: 15px;
-    padding: 25px;
-    border: 1px solid var(--card-border);
+    padding: 20px;
+    border: 1px solid rgba(255, 51, 102, 0.3);
     backdrop-filter: blur(10px);
     text-align: center;
     width: 100%;
     max-width: 500px;
     margin-top: 10px;
     animation: countdownGlow 3s infinite alternate;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
 }
 
 .countdown-title {
     color: var(--primary-color);
-    font-size: 1.3rem;
-    margin-bottom: 20px;
+    font-size: 1.2rem;
+    margin-bottom: 15px;
     font-weight: bold;
     text-shadow: 0 0 10px rgba(255, 51, 102, 0.5);
 }
@@ -990,8 +803,8 @@ body {
 .countdown-timer {
     display: flex;
     justify-content: space-between;
-    gap: 12px;
-    margin-bottom: 20px;
+    gap: 10px;
+    margin-bottom: 15px;
 }
 
 .time-unit {
@@ -1002,70 +815,30 @@ body {
 }
 
 .time-number {
-    font-size: 2.2rem;
+    font-size: 2rem;
     font-weight: bold;
     color: var(--secondary-color);
     background: rgba(0, 0, 0, 0.3);
-    padding: 15px 10px;
-    border-radius: 12px;
-    min-width: 70px;
+    padding: 10px;
+    border-radius: 10px;
+    min-width: 60px;
     text-shadow: 0 0 10px rgba(0, 180, 255, 0.7);
     animation: numberPulse 1s infinite;
-    border: 1px solid rgba(0, 180, 255, 0.3);
-    box-shadow: 0 6px 15px rgba(0,0,0,0.3);
 }
 
 .time-label {
     font-size: 0.8rem;
     color: var(--text-color);
-    margin-top: 8px;
+    margin-top: 5px;
     opacity: 0.8;
-    text-transform: uppercase;
-    letter-spacing: 1px;
 }
 
 .countdown-message {
     color: var(--primary-color);
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     font-style: italic;
     min-height: 20px;
     animation: messagePulse 2s infinite;
-}
-
-/* Уведомление */
-.notification {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-    color: white;
-    padding: 15px 20px;
-    border-radius: 10px;
-    z-index: 10000;
-    transform: translateX(120%);
-    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 5px 20px rgba(0,0,0,0.3);
-    border: 1px solid rgba(255,255,255,0.2);
-    backdrop-filter: blur(10px);
-}
-
-.notification.show {
-    transform: translateX(0);
-}
-
-.notification-content {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.notification-icon {
-    font-size: 1.2rem;
-}
-
-.notification-text {
-    font-size: 0.9rem;
-    font-weight: 500;
 }
 
 /* Анимации */
@@ -1240,134 +1013,198 @@ body {
     }
 }
 
-@keyframes progressShine {
+.text-container {
+    animation: glow 2s infinite alternate;
+}
+
+@keyframes glow {
     0% {
-        left: -100%;
+        filter: drop-shadow(0 0 10px rgba(255, 51, 102, 0.7));
     }
     100% {
-        left: 100%;
+        filter: drop-shadow(0 0 20px rgba(255, 0, 102, 0.9));
     }
 }
 
-/* ФИКС ДЛЯ ТЕКСТА ПРИ АВТОПРОКРУТКЕ */
+/* Стили для уведомлений */
+.stats-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, #ff3366, #00b4ff);
+    color: white;
+    padding: 20px;
+    border-radius: 15px;
+    z-index: 10000;
+    animation: slideInNotification 0.5s ease;
+    font-family: 'Special Elite', cursive;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    border: 2px solid rgba(255,255,255,0.2);
+    max-width: 300px;
+    backdrop-filter: blur(10px);
+    display: none;
+}
+
+.notification-title {
+    font-size: 1.1rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.notification-message {
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+.stats-notification.fade-out {
+    animation: fadeOutNotification 0.5s ease forwards;
+}
+
+@keyframes slideInNotification {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOutNotification {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+/* Анимации для обновления статистики */
+.stats-updated {
+    animation: statsPulse 0.6s ease-in-out;
+}
+
+@keyframes statsPulse {
+    0% {
+        transform: scale(1);
+        color: inherit;
+    }
+    50% {
+        transform: scale(1.1);
+        color: #00b4ff;
+        text-shadow: 0 0 10px rgba(0, 180, 255, 0.5);
+    }
+    100% {
+        transform: scale(1);
+        color: inherit;
+    }
+}
+
+/* Стили для уведомления копирования */
+@keyframes fadeInOut {
+    0% { 
+        opacity: 0; 
+        transform: translate(-50%, -50%) scale(0.8); 
+    }
+    20% { 
+        opacity: 1; 
+        transform: translate(-50%, -50%) scale(1); 
+    }
+    80% { 
+        opacity: 1; 
+        transform: translate(-50%, -50%) scale(1); 
+    }
+    100% { 
+        opacity: 0; 
+        transform: translate(-50%, -50%) scale(0.8); 
+    }
+}
+
+/* Адаптивность для уведомлений */
+@media (max-width: 768px) {
+    .stats-notification {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        max-width: none;
+    }
+}
+
+/* Улучшения для мобильной навигации */
+.mobile-section {
+    transition: transform 0.5s ease, opacity 0.5s ease;
+}
+
+.mobile-section:not(.active) {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(20px);
+}
+
 .mobile-section.active {
-    opacity: 1 !important;
-    visibility: visible !important;
-    display: flex !important;
+    opacity: 1;
+    pointer-events: all;
+    transform: translateY(0);
 }
 
-.mobile-container {
-    opacity: 1 !important;
-    visibility: visible !important;
+/* Loading states */
+.loading {
+    opacity: 0.7;
+    pointer-events: none;
 }
 
-/* Гарантия видимости всего текста */
-.title-text,
-.title-cross,
-.mobile-subtitle,
-.stat-title,
-.stat-label,
-.stat-numbers,
-.countdown-title,
-.time-number,
-.time-label,
-.countdown-message,
-.benefits-title,
-.benefit-text,
-.share-title,
-.share-btn,
-.mobile-hint,
-.preview-number,
-.preview-label,
-.info-text {
-    opacity: 1 !important;
-    visibility: visible !important;
-    color: inherit !important;
+.loading::after {
+    content: '...';
+    animation: loadingDots 1.5s infinite;
 }
 
-/* Фикс для 3D текста */
-.letter {
-    color: var(--primary-color) !important;
-    opacity: 1 !important;
-}
-
-.cross {
-    color: var(--primary-color) !important;
-    opacity: 1 !important;
+@keyframes loadingDots {
+    0%, 20% { content: '.'; }
+    40% { content: '..'; }
+    60%, 100% { content: '...'; }
 }
 
 /* Адаптация по размерам экрана */
 @media (max-width: 768px) {
     .desktop-version {
-        display: none !important;
+        display: none;
     }
     
     .mobile-version {
-        display: block !important;
+        display: block;
     }
     
     html, body {
         overflow: auto;
     }
-    
-    .mobile-section {
-        padding: 20px 15px;
-    }
-    
-    .title-text, .title-cross {
-        font-size: 2.5rem;
-    }
-    
-    .mobile-button {
-        font-size: 1.1rem;
-        padding: 14px 25px;
-    }
-    
-    .countdown-timer {
-        gap: 8px;
-    }
-    
-    .time-number {
-        font-size: 1.6rem;
-        padding: 10px 5px;
-    }
-    
-    .preview-stats {
-        gap: 20px;
-    }
-    
-    .preview-number {
-        font-size: 1.6rem;
-    }
 }
 
 @media (min-width: 769px) {
     .mobile-version {
-        display: none !important;
+        display: none;
     }
     
     .desktop-version {
-        display: flex !important;
-    }
-    
-    .container {
-        transform: scale(0.85);
+        display: flex;
     }
 }
 
 /* Для очень маленьких мобильных */
 @media (max-width: 360px) {
     .mobile-section {
-        padding: 15px 10px;
+        transform: scale(0.9);
     }
     
     .title-text, .title-cross {
-        font-size: 2.2rem;
+        font-size: 2.4rem;
     }
     
     .mobile-button {
-        font-size: 1rem;
-        padding: 12px 20px;
+        font-size: 1.1rem;
+        padding: 14px 25px;
     }
     
     .countdown-timer {
@@ -1378,38 +1215,53 @@ body {
         font-size: 1.4rem;
         padding: 8px 4px;
     }
-    
-    .preview-stats {
-        gap: 15px;
-    }
-    
-    .preview-number {
-        font-size: 1.4rem;
-    }
-    
-    .stat-card,
-    .countdown-card,
-    .benefits-card,
-    .share-card {
-        padding: 20px 15px;
-    }
 }
 
-/* Гарантия видимости прогресс-баров */
-#mobile-subs-progress,
-#mobile-posts-progress,
+/* Гарантия что прогресс-бары видны */
 #subscribers-progress,
-#posts-progress {
+#posts-progress,
+#mobile-subs-progress,
+#mobile-posts-progress {
     display: block !important;
     visibility: visible !important;
     opacity: 1 !important;
-    background: linear-gradient(90deg, #ff3366, #00b4ff) !important;
-    height: 100% !important;
-    border-radius: 7px !important;
 }
 
-/* Принудительная ширина */
-#mobile-subs-progress { width: 51% !important; }
-#mobile-posts-progress { width: 48.4% !important; }
-#subscribers-progress { width: 51% !important; }
-#posts-progress { width: 48.4% !important; }
+/* Гарантия что прогресс-бары видны */
+.progress-fill {
+    background: linear-gradient(90deg, #ff3366, #00b4ff) !important;
+    height: 100% !important;
+    border-radius: 6px !important;
+    display: block !important;
+}
+
+/* Исправление обратного отсчета */
+.time-number {
+    min-width: 60px !important;
+    display: block !important;
+}
+
+/* Гарантия что все элементы видны */
+#days, #hours, #minutes, #seconds,
+#mobile-days, #mobile-hours, #mobile-minutes, #mobile-seconds {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* Фикс для точек навигации */
+.dot.active {
+    background: #ff3366 !important;
+}
+
+/* Гарантия что кнопки работают */
+.mobile-button, .tg-button, .share-btn, .share-button {
+    cursor: pointer !important;
+    pointer-events: all !important;
+}
+
+/* Фикс для частиц */
+.particle {
+    display: block !important;
+    opacity: 0.7 !important;
+}
