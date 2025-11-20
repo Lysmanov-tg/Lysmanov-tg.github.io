@@ -553,4 +553,20 @@ document.addEventListener('DOMContentLoaded', () => {
             transition: all 0.3s ease;
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
             backdrop-filter: blur(10px);
-            border
+            border: 2px solid rgba(255,255,255,0.2);
+        `;
+        refreshBtn.addEventListener('mouseenter', () => {
+            refreshBtn.style.opacity = '1';
+            refreshBtn.style.transform = 'scale(1.1)';
+        });
+        refreshBtn.addEventListener('mouseleave', () => {
+            refreshBtn.style.opacity = '0.7';
+            refreshBtn.style.transform = 'scale(1)';
+        });
+        refreshBtn.addEventListener('click', autoUpdateStats);
+        
+        document.body.appendChild(refreshBtn);
+    }
+});
+
+console.log('🎯 LYSMANOV 10/10 site loaded successfully!');
