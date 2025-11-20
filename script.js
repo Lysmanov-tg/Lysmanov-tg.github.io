@@ -1,4 +1,4 @@
-// script.js - ПОЛНОСТЬЮ ИСПРАВЛЕННЫЙ КОД
+// script.js - ПОЛНОСТЬЮ ИСПРАВЛЕННЫЙ КОД С ЗАГРУЗКОЙ ИЗ ФАЙЛА
 class LysmanovSite {
     constructor() {
         this.stats = {
@@ -39,29 +39,35 @@ class LysmanovSite {
         try {
             console.log('📊 Loading stats from file...');
             
-            // Используем данные из stats.json
-            const fileStats = {
-                subscribers: 44,
-                posts: 522,
-                updated: "2024-01-01T12:00:00.000Z"
-            };
+            const response = await fetch('stats.json');
+            if (!response.ok) {
+                throw new Error('Stats file not found');
+            }
             
-            this.stats = {
-                subscribers: fileStats.subscribers,
-                posts: fileStats.posts,
-                lastUpdated: fileStats.updated,
-                isReal: true
-            };
-            console.log('✅ Stats loaded from file:', this.stats);
+            const fileStats = await response.json();
+            
+            if (fileStats && typeof fileStats.subscribers === 'number' && typeof fileStats.posts === 'number') {
+                this.stats = {
+                    subscribers: fileStats.subscribers,
+                    posts: fileStats.posts,
+                    lastUpdated: fileStats.updated || new Date().toISOString(),
+                    isReal: true
+                };
+                console.log('✅ Stats loaded from file:', this.stats);
+                this.showNotification('Статистика обновлена!', `Подписчики: ${this.stats.subscribers}, Посты: ${this.stats.posts}`);
+            } else {
+                throw new Error('Invalid stats format');
+            }
             
         } catch (error) {
-            console.log('❌ Error loading stats, using defaults');
+            console.log('❌ Error loading stats from file, using defaults:', error.message);
             this.stats = {
-                subscribers: 51,
-                posts: 485,
+                subscribers: 44,
+                posts: 522,
                 lastUpdated: new Date().toISOString(),
                 isReal: false
             };
+            this.showNotification('Статистика загружена', 'Используются базовые значения');
         }
         
         this.updateStatsUI();
@@ -115,6 +121,26 @@ class LysmanovSite {
         });
 
         console.log('📈 Current stats displayed:', this.stats);
+    }
+
+    showNotification(title, message) {
+        const notification = document.getElementById('notification');
+        const notificationTitle = document.getElementById('notification-title');
+        const notificationMessage = document.getElementById('notification-message');
+        
+        if (notification && notificationTitle && notificationMessage) {
+            notificationTitle.textContent = title;
+            notificationMessage.textContent = message;
+            notification.style.display = 'block';
+            notification.classList.remove('fade-out');
+            
+            setTimeout(() => {
+                notification.classList.add('fade-out');
+                setTimeout(() => {
+                    notification.style.display = 'none';
+                }, 500);
+            }, 3000);
+        }
     }
 
     showCorrectVersion() {
@@ -570,6 +596,13 @@ function showCopyNotification(message) {
     }, 2000);
 }
 
+// Функция для обновления статистики
+function refreshStats() {
+    if (window.lysmanovSite) {
+        window.lysmanovSite.loadStatsFromFile();
+    }
+}
+
 // Добавляем стили для анимаций
 const animationStyles = document.createElement('style');
 animationStyles.textContent = `
@@ -651,6 +684,34 @@ document.head.appendChild(animationStyles);
 document.addEventListener('DOMContentLoaded', function() {
     console.log('📄 DOM loaded, initializing site...');
     window.lysmanovSite = new LysmanovSite();
+    
+    // Кнопка обновления статистики только на GitHub Pages
+    if (location.hostname === 'lysmanov-tg.github.io') {
+        const refreshBtn = document.createElement('button');
+        refreshBtn.innerHTML = '🔄';
+        refreshBtn.style.cssText = `
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #00b4ff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            z-index: 10000;
+            font-size: 18px;
+            opacity: 0.3;
+            transition: opacity 0.3s;
+        `;
+        refreshBtn.title = 'Обновить статистику';
+        refreshBtn.addEventListener('mouseenter', () => refreshBtn.style.opacity = '1');
+        refreshBtn.addEventListener('mouseleave', () => refreshBtn.style.opacity = '0.3');
+        refreshBtn.addEventListener('click', refreshStats);
+        
+        document.body.appendChild(refreshBtn);
+    }
 });
 
 // Обработка ошибок
