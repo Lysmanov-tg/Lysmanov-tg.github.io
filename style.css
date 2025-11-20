@@ -629,6 +629,8 @@ body {
     padding: 2rem;
     gap: 2rem;
     background: transparent;
+    transform: scale(0.9);
+    transform-origin: center;
 }
 
 .watermark {
@@ -654,7 +656,7 @@ body {
 }
 
 .main-text {
-    font-size: clamp(2.5rem, 8vw, 4rem);
+    font-size: clamp(2rem, 6vw, 3rem);
     font-weight: bold;
     font-style: italic;
     color: var(--primary-color);
@@ -681,10 +683,11 @@ body {
     transform: rotateX(90deg) translateY(100px) scale(0.5);
     font-style: italic;
     background: transparent;
+    color: var(--primary-color) !important;
 }
 
 .cross {
-    font-size: clamp(2.5rem, 8vw, 4rem);
+    font-size: clamp(2rem, 6vw, 3rem);
     color: var(--primary-color);
     margin-left: 15px;
     animation: 
@@ -705,7 +708,7 @@ body {
 }
 
 .signature {
-    font-size: clamp(1rem, 3vw, 1.2rem);
+    font-size: clamp(0.9rem, 2.5vw, 1rem);
     font-style: italic;
     color: var(--secondary-color);
     opacity: 0;
@@ -1246,7 +1249,7 @@ body {
     }
 }
 
-/* ГАРАНТИЯ ВИДИМОСТИ ТЕКСТА ПРИ АВТОПРОКРУТКЕ */
+/* ФИКС ДЛЯ ТЕКСТА ПРИ АВТОПРОКРУТКЕ */
 .mobile-section.active {
     opacity: 1 !important;
     visibility: visible !important;
@@ -1258,7 +1261,7 @@ body {
     visibility: visible !important;
 }
 
-/* Явные стили для текста */
+/* Гарантия видимости всего текста */
 .title-text,
 .title-cross,
 .mobile-subtitle,
@@ -1273,21 +1276,24 @@ body {
 .benefit-text,
 .share-title,
 .share-btn,
-.mobile-hint {
+.mobile-hint,
+.preview-number,
+.preview-label,
+.info-text {
     opacity: 1 !important;
     visibility: visible !important;
     color: inherit !important;
 }
 
-/* Фикс для анимаций */
-.mobile-section {
-    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1) !important;
+/* Фикс для 3D текста */
+.letter {
+    color: var(--primary-color) !important;
+    opacity: 1 !important;
 }
 
-/* Гарантия что контент виден */
-.mobile-section > * {
+.cross {
+    color: var(--primary-color) !important;
     opacity: 1 !important;
-    visibility: visible !important;
 }
 
 /* Адаптация по размерам экрана */
@@ -1342,6 +1348,10 @@ body {
     
     .desktop-version {
         display: flex !important;
+    }
+    
+    .container {
+        transform: scale(0.85);
     }
 }
 
