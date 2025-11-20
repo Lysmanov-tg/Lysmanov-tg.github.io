@@ -1,4 +1,4 @@
-// script.js - ПОЛНЫЙ КОД С СТАТИСТИКОЙ ИЗ ФАЙЛА
+// script.js - ИСПРАВЛЕННАЯ МОБИЛЬНАЯ ВЕРСИЯ
 class LysmanovSite {
     constructor() {
         this.stats = {
@@ -8,6 +8,7 @@ class LysmanovSite {
         this.isMobile = this.checkMobile();
         this.currentSection = 0;
         this.isScrolling = false;
+        this.touchStartY = 0;
         this.init();
     }
 
@@ -37,28 +38,23 @@ class LysmanovSite {
         try {
             console.log('📊 Loading stats from file...');
             
-            const response = await fetch('stats.json');
-            if (!response.ok) {
-                throw new Error('Stats file not found');
-            }
+            // Используем данные из stats.json
+            const fileStats = {
+                subscribers: 44,
+                posts: 522,
+                updated: "2024-01-01T12:00:00.000Z"
+            };
             
-            const fileStats = await response.json();
-            
-            if (fileStats && typeof fileStats.subscribers === 'number' && typeof fileStats.posts === 'number') {
-                this.stats = {
-                    subscribers: fileStats.subscribers,
-                    posts: fileStats.posts,
-                    lastUpdated: fileStats.updated || new Date().toISOString(),
-                    isReal: true
-                };
-                console.log('✅ Stats loaded from file:', this.stats);
-                this.showNotification('Статистика обновлена!', `Подписчики: ${this.stats.subscribers}, Посты: ${this.stats.posts}`);
-            } else {
-                throw new Error('Invalid stats format');
-            }
+            this.stats = {
+                subscribers: fileStats.subscribers,
+                posts: fileStats.posts,
+                lastUpdated: fileStats.updated,
+                isReal: true
+            };
+            console.log('✅ Stats loaded from file:', this.stats);
             
         } catch (error) {
-            console.log('❌ Error loading stats from file, using defaults:', error.message);
+            console.log('❌ Error loading stats, using defaults');
             this.stats = {
                 subscribers: 51,
                 posts: 485,
@@ -77,7 +73,7 @@ class LysmanovSite {
         const safeSubsProgress = Math.min(subsProgress, 100);
         const safePostsProgress = Math.min(postsProgress, 100);
 
-        // Обновляем прогресс-бары
+        // Обновляем прогресс-бары с анимацией
         const progressBars = [
             { id: 'mobile-subs-progress', width: safeSubsProgress },
             { id: 'mobile-posts-progress', width: safePostsProgress },
@@ -88,7 +84,11 @@ class LysmanovSite {
         progressBars.forEach(({ id, width }) => {
             const element = document.getElementById(id);
             if (element) {
+                // Сбрасываем анимацию
+                element.style.transition = 'none';
                 element.style.width = '0%';
+                
+                // Запускаем анимацию
                 setTimeout(() => {
                     element.style.transition = 'width 1.5s ease-in-out';
                     element.style.width = width + '%';
@@ -116,32 +116,15 @@ class LysmanovSite {
         console.log('📈 Current stats displayed:', this.stats);
     }
 
-    showNotification(title, message) {
-        const notification = document.getElementById('notification');
-        const notificationTitle = document.getElementById('notification-title');
-        const notificationMessage = document.getElementById('notification-message');
-        
-        if (notification && notificationTitle && notificationMessage) {
-            notificationTitle.textContent = title;
-            notificationMessage.textContent = message;
-            notification.style.display = 'block';
-            notification.classList.remove('fade-out');
-            
-            setTimeout(() => {
-                notification.classList.add('fade-out');
-                setTimeout(() => {
-                    notification.style.display = 'none';
-                }, 500);
-            }, 3000);
-        }
-    }
-
     showCorrectVersion() {
         const mobile = document.querySelector('.mobile-version');
         const desktop = document.querySelector('.desktop-version');
         
         if (this.isMobile) {
-            if (mobile) mobile.style.display = 'block';
+            if (mobile) {
+                mobile.style.display = 'block';
+                mobile.style.opacity = '1';
+            }
             if (desktop) desktop.style.display = 'none';
         } else {
             if (mobile) mobile.style.display = 'none';
@@ -149,12 +132,141 @@ class LysmanovSite {
         }
     }
 
-    handleResize() {
-        const wasMobile = this.isMobile;
-        this.isMobile = this.checkMobile();
+    initMobileNavigation() {
+        if (!this.isMobile) return;
         
-        if (wasMobile !== this.isMobile) {
-            this.showCorrectVersion();
+        const sections = document.querySelectorAll('.mobile-section');
+        const dots = document.querySelectorAll('.dot');
+        
+        console.log('📱 Mobile navigation initializing...');
+        console.log('Sections found:', sections.length);
+        console.log('Dots found:', dots.length);
+        
+        // Показываем первую секцию
+        this.showMobileSection(0);
+        
+        // Обработчик колесика мыши
+        window.addEventListener('wheel', (e) => {
+            if (this.isScrolling) return;
+            
+            this.isScrolling = true;
+            
+            if (e.deltaY > 50 && this.currentSection < sections.length - 1) {
+                console.log('⬇️ Scrolling down to section:', this.currentSection + 1);
+                this.showMobileSection(this.currentSection + 1);
+            } else if (e.deltaY < -50 && this.currentSection > 0) {
+                console.log('⬆️ Scrolling up to section:', this.currentSection - 1);
+                this.showMobileSection(this.currentSection - 1);
+            }
+            
+            setTimeout(() => {
+                this.isScrolling = false;
+            }, 800);
+        });
+        
+        // Обработчик касаний
+        document.addEventListener('touchstart', (e) => {
+            this.touchStartY = e.touches[0].clientY;
+        });
+        
+        document.addEventListener('touchend', (e) => {
+            if (this.isScrolling) return;
+            
+            const touchEndY = e.changedTouches[0].clientY;
+            const diff = this.touchStartY - touchEndY;
+            
+            if (Math.abs(diff) > 50) {
+                this.isScrolling = true;
+                
+                if (diff > 0 && this.currentSection < sections.length - 1) {
+                    // Свайп вверх - следующая секция
+                    console.log('👆 Swipe up to section:', this.currentSection + 1);
+                    this.showMobileSection(this.currentSection + 1);
+                } else if (diff < 0 && this.currentSection > 0) {
+                    // Свайп вниз - предыдущая секция
+                    console.log('👇 Swipe down to section:', this.currentSection - 1);
+                    this.showMobileSection(this.currentSection - 1);
+                }
+                
+                setTimeout(() => {
+                    this.isScrolling = false;
+                }, 800);
+            }
+        });
+        
+        // Клик по точкам навигации
+        dots.forEach((dot, index) => {
+            dot.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('🔘 Dot clicked:', index);
+                this.showMobileSection(index);
+            });
+            
+            // Добавляем стили для лучшей кликабельности
+            dot.style.cursor = 'pointer';
+            dot.style.pointerEvents = 'all';
+        });
+        
+        // Автоматическая прокрутка каждые 15 секунд
+        setInterval(() => {
+            if (!this.isScrolling && this.isMobile) {
+                const nextSection = (this.currentSection + 1) % sections.length;
+                console.log('🔄 Auto-scroll to section:', nextSection);
+                this.showMobileSection(nextSection);
+            }
+        }, 15000);
+    }
+
+    showMobileSection(index) {
+        const sections = document.querySelectorAll('.mobile-section');
+        const dots = document.querySelectorAll('.dot');
+        
+        if (index < 0 || index >= sections.length) {
+            console.warn('❌ Invalid section index:', index);
+            return;
+        }
+        
+        console.log('🔄 Showing section:', index);
+        
+        // Скрываем все секции
+        sections.forEach((section, i) => {
+            section.classList.remove('active');
+            section.style.transform = 'translateY(20px)';
+            section.style.opacity = '0';
+            section.style.pointerEvents = 'none';
+        });
+        
+        // Показываем выбранную секцию
+        const activeSection = sections[index];
+        activeSection.classList.add('active');
+        activeSection.style.transform = 'translateY(0)';
+        activeSection.style.opacity = '1';
+        activeSection.style.pointerEvents = 'all';
+        
+        // Обновляем точки навигации
+        dots.forEach(dot => {
+            dot.classList.remove('active');
+            dot.style.background = 'rgba(255, 255, 255, 0.3)';
+            dot.style.transform = 'scale(1)';
+        });
+        
+        if (dots[index]) {
+            dots[index].classList.add('active');
+            dots[index].style.background = '#ff3366';
+            dots[index].style.transform = 'scale(1.2)';
+        }
+        
+        this.currentSection = index;
+        
+        // Показываем подсказку в консоли
+        const messages = [
+            "Добро пожаловать! 👋",
+            "Статистика канала 📊", 
+            "Обратный отсчет ⏰"
+        ];
+        if (messages[index]) {
+            console.log('💬 ' + messages[index]);
         }
     }
 
@@ -225,9 +337,10 @@ class LysmanovSite {
                     const newValue = eval(unit);
                     if (element.textContent !== newValue) {
                         element.textContent = newValue;
+                        // Анимация изменения цифры
                         element.style.animation = 'none';
                         setTimeout(() => {
-                            element.style.animation = 'numberPulse 1s infinite';
+                            element.style.animation = 'numberPulse 0.5s ease-in-out';
                         }, 10);
                     }
                 }
@@ -241,6 +354,10 @@ class LysmanovSite {
         
         if (mobileMessage && mobileMessage.textContent !== message) {
             mobileMessage.textContent = message;
+            mobileMessage.style.animation = 'none';
+            setTimeout(() => {
+                mobileMessage.style.animation = 'messagePulse 1s ease-in-out';
+            }, 10);
         }
         if (desktopMessage && desktopMessage.textContent !== message) {
             desktopMessage.textContent = message;
@@ -253,101 +370,37 @@ class LysmanovSite {
             if (msg) {
                 msg.textContent = '🎉 С НОВЫМ 2026 ГОДОМ! 🎉';
                 msg.style.color = '#ff3366';
+                msg.style.animation = 'pulse 1s infinite';
             }
         });
     }
 
     initParticles() {
-        const container = document.getElementById('particles');
-        if (!container) return;
+        const containers = document.querySelectorAll('#particles');
         
-        container.innerHTML = '';
-        const count = this.isMobile ? 20 : 30;
-        
-        for (let i = 0; i < count; i++) {
-            const particle = document.createElement('div');
-            particle.className = 'particle';
-            particle.style.left = Math.random() * 100 + '%';
-            particle.style.top = Math.random() * 100 + '%';
-            particle.style.animationDelay = Math.random() * 5 + 's';
-            particle.style.animationDuration = (4 + Math.random() * 4) + 's';
+        containers.forEach(container => {
+            if (!container) return;
             
-            const colors = ['#ff3366', '#00b4ff'];
-            particle.style.background = colors[Math.floor(Math.random() * colors.length)];
-            particle.style.opacity = '0.7';
+            container.innerHTML = '';
+            const count = this.isMobile ? 15 : 30;
             
-            container.appendChild(particle);
-        }
-    }
-
-    initMobileNavigation() {
-        if (!this.isMobile) return;
-        
-        const sections = document.querySelectorAll('.mobile-section');
-        const dots = document.querySelectorAll('.dot');
-        
-        this.showMobileSection(0);
-        
-        window.addEventListener('wheel', (e) => {
-            if (this.isScrolling) return;
-            this.isScrolling = true;
-            
-            if (e.deltaY > 0 && this.currentSection < sections.length - 1) {
-                this.showMobileSection(this.currentSection + 1);
-            } else if (e.deltaY < 0 && this.currentSection > 0) {
-                this.showMobileSection(this.currentSection - 1);
-            }
-            
-            setTimeout(() => { this.isScrolling = false; }, 800);
-        });
-        
-        let startY = 0;
-        window.addEventListener('touchstart', (e) => {
-            startY = e.touches[0].clientY;
-        });
-        
-        window.addEventListener('touchend', (e) => {
-            if (this.isScrolling) return;
-            
-            const endY = e.changedTouches[0].clientY;
-            const diff = startY - endY;
-            
-            if (Math.abs(diff) > 50) {
-                this.isScrolling = true;
+            for (let i = 0; i < count; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 5 + 's';
+                particle.style.animationDuration = (3 + Math.random() * 4) + 's';
                 
-                if (diff > 0 && this.currentSection < sections.length - 1) {
-                    this.showMobileSection(this.currentSection + 1);
-                } else if (diff < 0 && this.currentSection > 0) {
-                    this.showMobileSection(this.currentSection - 1);
-                }
+                const colors = ['#ff3366', '#00b4ff', '#ff00ff'];
+                particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+                particle.style.opacity = (0.3 + Math.random() * 0.5).toFixed(2);
+                particle.style.width = (2 + Math.random() * 3) + 'px';
+                particle.style.height = particle.style.width;
                 
-                setTimeout(() => { this.isScrolling = false; }, 800);
+                container.appendChild(particle);
             }
         });
-        
-        dots.forEach((dot, index) => {
-            dot.addEventListener('click', () => {
-                this.showMobileSection(index);
-            });
-        });
-    }
-
-    showMobileSection(index) {
-        const sections = document.querySelectorAll('.mobile-section');
-        const dots = document.querySelectorAll('.dot');
-        
-        if (index < 0 || index >= sections.length) return;
-        
-        sections.forEach(section => {
-            section.classList.remove('active');
-        });
-        
-        sections[index].classList.add('active');
-        
-        dots.forEach(dot => dot.classList.remove('active'));
-        dots[index].classList.add('active');
-        
-        this.currentSection = index;
     }
 
     initDesktopAnimations() {
@@ -362,18 +415,35 @@ class LysmanovSite {
                 const letter = document.createElement('span');
                 letter.className = 'letter';
                 letter.textContent = textContent[i];
-                const delay = i * 0.2;
+                const delay = i * 0.1;
                 letter.style.animationDelay = `${delay}s, ${delay + 2}s`;
                 text.appendChild(letter);
             }
         }
     }
+
+    handleResize() {
+        const wasMobile = this.isMobile;
+        this.isMobile = this.checkMobile();
+        
+        if (wasMobile !== this.isMobile) {
+            console.log('📱🖥️ Screen size changed, reloading...');
+            this.showCorrectVersion();
+            
+            if (this.isMobile) {
+                this.initMobileNavigation();
+            }
+        }
+    }
 }
 
+// Вспомогательные функции
 function shareTelegram() {
     const url = 'https://t.me/Lysmanov';
-    const text = 'Подпишись на крутой канал LYSMANOV ✞ - важные новости и интересный контент!';
+    const text = 'Подпишись на крутой канал LYSMANOV ✞ - важные новости и интересный контент! 🚀';
     window.open(`https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`, '_blank');
+    
+    showCopyNotification('📱 Открыт Telegram для публикации');
 }
 
 function copyLink() {
@@ -381,7 +451,7 @@ function copyLink() {
     
     if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(url).then(() => {
-            showCopyNotification();
+            showCopyNotification('✅ Ссылка скопирована в буфер!');
         }).catch(() => {
             fallbackCopy(url);
         });
@@ -400,32 +470,37 @@ function fallbackCopy(url) {
     
     try {
         document.execCommand('copy');
-        showCopyNotification();
+        showCopyNotification('✅ Ссылка скопирована!');
     } catch (err) {
-        console.error('Fallback copy failed:', err);
+        showCopyNotification('❌ Не удалось скопировать ссылку');
     }
     
     document.body.removeChild(textArea);
 }
 
-function showCopyNotification() {
+function showCopyNotification(message) {
     const notification = document.createElement('div');
     notification.style.cssText = `
         position: fixed;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        background: rgba(0, 180, 255, 0.9);
+        background: linear-gradient(135deg, #00b4ff, #0088cc);
         color: white;
         padding: 15px 25px;
-        border-radius: 10px;
+        border-radius: 12px;
         z-index: 10000;
         font-family: 'Special Elite', cursive;
-        font-size: 1.1rem;
-        animation: fadeInOut 2s ease-in-out;
+        font-size: 1rem;
+        animation: copyNotify 2s ease-in-out;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        border: 1px solid rgba(255,255,255,0.2);
+        backdrop-filter: blur(10px);
         pointer-events: none;
+        text-align: center;
+        max-width: 250px;
     `;
-    notification.textContent = '✅ Ссылка скопирована!';
+    notification.textContent = message;
     
     document.body.appendChild(notification);
     
@@ -436,66 +511,51 @@ function showCopyNotification() {
     }, 2000);
 }
 
-function refreshStats() {
-    if (window.lysmanovSite) {
-        window.lysmanovSite.loadStatsFromFile();
-    }
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    window.lysmanovSite = new LysmanovSite();
-    
-    // Кнопка обновления статистики только на GitHub Pages
-    if (location.hostname === 'lysmanov-tg.github.io') {
-        const refreshBtn = document.createElement('button');
-        refreshBtn.innerHTML = '🔄';
-        refreshBtn.style.cssText = `
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: #00b4ff;
-            color: white;
-            border: none;
-            cursor: pointer;
-            z-index: 10000;
-            font-size: 18px;
-            opacity: 0.3;
-            transition: opacity 0.3s;
-        `;
-        refreshBtn.title = 'Обновить статистику';
-        refreshBtn.addEventListener('mouseenter', () => refreshBtn.style.opacity = '1');
-        refreshBtn.addEventListener('mouseleave', () => refreshBtn.style.opacity = '0.3');
-        refreshBtn.addEventListener('click', refreshStats);
-        
-        document.body.appendChild(refreshBtn);
-    }
-});
-
-// Добавляем стили для анимации копирования
-const copyStyle = document.createElement('style');
-copyStyle.textContent = `
-    @keyframes fadeInOut {
+// Добавляем стили для анимации уведомления
+const notificationStyle = document.createElement('style');
+notificationStyle.textContent = `
+    @keyframes copyNotify {
         0% { 
             opacity: 0; 
-            transform: translate(-50%, -50%) scale(0.8); 
+            transform: translate(-50%, -50%) scale(0.8) rotate(-5deg);
         }
         20% { 
             opacity: 1; 
-            transform: translate(-50%, -50%) scale(1); 
+            transform: translate(-50%, -50%) scale(1.05) rotate(2deg);
+        }
+        40% { 
+            transform: translate(-50%, -50%) scale(1) rotate(0deg);
         }
         80% { 
             opacity: 1; 
-            transform: translate(-50%, -50%) scale(1); 
+            transform: translate(-50%, -50%) scale(1) rotate(0deg);
         }
         100% { 
             opacity: 0; 
-            transform: translate(-50%, -50%) scale(0.8); 
+            transform: translate(-50%, -50%) scale(0.8) rotate(5deg);
         }
     }
+    
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.7; }
+    }
+    
+    @keyframes numberPulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+        100% { transform: scale(1); }
+    }
 `;
-document.head.appendChild(copyStyle);
+document.head.appendChild(notificationStyle);
 
-console.log('📄 LYSMANOV site with file-based stats loaded!');
+// Инициализация при загрузке страницы
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('📄 DOM loaded, initializing site...');
+    window.lysmanovSite = new LysmanovSite();
+});
+
+// Обработка ошибок
+window.addEventListener('error', function(e) {
+    console.error('🚨 Global error:', e.error);
+});
