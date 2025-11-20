@@ -1,4 +1,4 @@
-// script.js - FULL WORKING VERSION
+// script.js - FULL WORKING VERSION (FIXED)
 class LysmanovSite {
     constructor() {
         this.stats = {
@@ -523,4 +523,19 @@ function showCopyNotification() {
         if (notification.parentNode) {
             notification.remove();
         }
-    }, 200
+        // Удаляем добавленные стили
+        if (style.parentNode) {
+            style.remove();
+        }
+    }, 2000);
+}
+
+// Инициализация при загрузке страницы
+document.addEventListener('DOMContentLoaded', function() {
+    window.lysmanovSite = new LysmanovSite();
+});
+
+// Обработка ошибок
+window.addEventListener('error', function(e) {
+    console.error('🚨 Global error:', e.error);
+});
