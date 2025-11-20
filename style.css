@@ -5,7 +5,9 @@
     --secondary-color: #00b4ff;
     --accent-color: #8b0000;
     --text-color: #ffffff;
-    --bg-color: #000000;
+    --bg-color: #0a0a1a;
+    --heart-color: #ff3366;
+    --glow-color: #ff00ff;
 }
 
 * {
@@ -28,39 +30,246 @@ body {
     font-family: 'Special Elite', cursive;
     color: var(--text-color);
     overflow: hidden;
+    position: relative;
 }
 
-/* Фоновые элементы */
-.channel-avatar {
+/* Новый фон с 11:11 и сердечками */
+.background-elements {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     z-index: 1;
-    opacity: 0.3;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+/* Основной градиентный фон */
+.background-gradient {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     background: 
-        url('https://ltdfoto.ru/images/2025/11/01/5193047870037687295.jpg') center/cover no-repeat;
-    filter: blur(1px) grayscale(0.1) contrast(1.1) brightness(0.85);
+        radial-gradient(circle at 20% 80%, rgba(255, 51, 102, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(0, 180, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(255, 0, 255, 0.05) 0%, transparent 50%),
+        linear-gradient(45deg, #0a0a1a 0%, #1a1a2e 50%, #16213e 100%);
 }
 
-.overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.6);
-    z-index: 1;
+/* Анимированные сердечки */
+.heart {
+    position: absolute;
+    font-size: 20px;
+    color: var(--heart-color);
+    opacity: 0;
+    animation: heartFloat 8s linear infinite;
+    text-shadow: 0 0 10px currentColor;
 }
 
+.heart::before {
+    content: '♥';
+}
+
+.heart:nth-child(1) { left: 10%; animation-delay: 0s; font-size: 24px; }
+.heart:nth-child(2) { left: 20%; animation-delay: 1s; font-size: 18px; }
+.heart:nth-child(3) { left: 30%; animation-delay: 2s; font-size: 22px; }
+.heart:nth-child(4) { left: 40%; animation-delay: 3s; font-size: 16px; }
+.heart:nth-child(5) { left: 50%; animation-delay: 4s; font-size: 20px; }
+.heart:nth-child(6) { left: 60%; animation-delay: 5s; font-size: 26px; }
+.heart:nth-child(7) { left: 70%; animation-delay: 6s; font-size: 14px; }
+.heart:nth-child(8) { left: 80%; animation-delay: 7s; font-size: 28px; }
+.heart:nth-child(9) { left: 90%; animation-delay: 8s; font-size: 19px; }
+.heart:nth-child(10) { left: 15%; animation-delay: 9s; font-size: 23px; }
+
+/* Цифры 11:11 */
+.eleven-eleven {
+    position: absolute;
+    font-size: 120px;
+    font-weight: bold;
+    color: transparent;
+    -webkit-text-stroke: 2px rgba(255, 255, 255, 0.1);
+    opacity: 0.3;
+    animation: elevenGlow 6s ease-in-out infinite;
+    font-family: 'Special Elite', cursive;
+}
+
+.eleven-eleven:nth-child(1) {
+    top: 10%;
+    left: 5%;
+    transform: rotate(-15deg);
+    animation-delay: 0s;
+}
+
+.eleven-eleven:nth-child(2) {
+    top: 20%;
+    right: 5%;
+    transform: rotate(15deg);
+    animation-delay: 1s;
+}
+
+.eleven-eleven:nth-child(3) {
+    bottom: 30%;
+    left: 10%;
+    transform: rotate(-10deg);
+    animation-delay: 2s;
+}
+
+.eleven-eleven:nth-child(4) {
+    bottom: 15%;
+    right: 15%;
+    transform: rotate(10deg);
+    animation-delay: 3s;
+}
+
+/* Отсылка к фазе сна */
+.dream-phase {
+    position: absolute;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.3);
+    font-style: italic;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    animation: phaseFloat 10s ease-in-out infinite;
+}
+
+.dream-phase:nth-child(1) {
+    top: 15%;
+    left: 3%;
+    animation-delay: 0s;
+}
+
+.dream-phase:nth-child(2) {
+    bottom: 25%;
+    right: 3%;
+    animation-delay: 2s;
+}
+
+.dream-phase::before {
+    content: "🚗💨 Автостопом по фазе сна";
+}
+
+/* Анимированные линии */
+.magic-line {
+    position: absolute;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--glow-color), transparent);
+    opacity: 0.1;
+    animation: lineFlow 4s linear infinite;
+}
+
+.magic-line:nth-child(1) { top: 25%; width: 100px; animation-delay: 0s; }
+.magic-line:nth-child(2) { top: 50%; width: 150px; animation-delay: 1s; }
+.magic-line:nth-child(3) { top: 75%; width: 200px; animation-delay: 2s; }
+.magic-line:nth-child(4) { bottom: 30%; width: 120px; animation-delay: 3s; }
+
+/* Пульсирующие круги */
+.pulse-circle {
+    position: absolute;
+    border: 1px solid rgba(255, 51, 102, 0.1);
+    border-radius: 50%;
+    animation: pulseGlow 8s ease-in-out infinite;
+}
+
+.pulse-circle:nth-child(1) {
+    width: 300px;
+    height: 300px;
+    top: -150px;
+    left: -150px;
+    animation-delay: 0s;
+}
+
+.pulse-circle:nth-child(2) {
+    width: 500px;
+    height: 500px;
+    bottom: -250px;
+    right: -250px;
+    animation-delay: 2s;
+}
+
+.pulse-circle:nth-child(3) {
+    width: 200px;
+    height: 200px;
+    top: 50%;
+    left: 80%;
+    animation-delay: 4s;
+}
+
+/* Анимации для фона */
+@keyframes heartFloat {
+    0% {
+        transform: translateY(100vh) rotate(0deg);
+        opacity: 0;
+    }
+    10% {
+        opacity: 0.7;
+    }
+    90% {
+        opacity: 0.7;
+    }
+    100% {
+        transform: translateY(-100px) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+@keyframes elevenGlow {
+    0%, 100% {
+        opacity: 0.2;
+        transform: scale(1) rotate(var(--rotation, 0deg));
+    }
+    50% {
+        opacity: 0.4;
+        transform: scale(1.05) rotate(calc(var(--rotation, 0deg) + 5deg));
+    }
+}
+
+@keyframes phaseFloat {
+    0%, 100% {
+        transform: translateY(0px);
+        opacity: 0.2;
+    }
+    50% {
+        transform: translateY(-10px);
+        opacity: 0.4;
+    }
+}
+
+@keyframes lineFlow {
+    0% {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    50% {
+        opacity: 0.3;
+    }
+    100% {
+        transform: translateX(100vw);
+        opacity: 0;
+    }
+}
+
+@keyframes pulseGlow {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(255, 51, 102, 0.1);
+        opacity: 0.1;
+    }
+    50% {
+        box-shadow: 0 0 0 20px rgba(255, 51, 102, 0);
+        opacity: 0.3;
+    }
+}
+
+/* Частицы (оставляем из старого стиля) */
 .particles {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 1;
+    z-index: 2;
     pointer-events: none;
 }
 
@@ -73,18 +282,35 @@ body {
     animation: floatParticle 8s infinite linear;
 }
 
-/* ===== МОБИЛЬНАЯ ВЕРСИЯ ===== */
+@keyframes floatParticle {
+    0% {
+        transform: translateY(100vh) rotate(0deg);
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+    }
+    90% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-100px) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+/* ===== ОСТАЛЬНЫЕ СТИЛИ ОСТАЮТСЯ БЕЗ ИЗМЕНЕНИЙ ===== */
+
 .mobile-version {
     display: none;
     position: relative;
-    z-index: 2;
+    z-index: 3;
     width: 100%;
     height: 100vh;
     overflow: hidden;
     background: transparent;
 }
 
-/* Мобильный контент */
 .mobile-content {
     position: relative;
     width: 100%;
@@ -505,7 +731,7 @@ body {
 .desktop-version {
     display: flex;
     position: relative;
-    z-index: 2;
+    z-index: 3;
     width: 100%;
     height: 100vh;
     align-items: center;
@@ -515,7 +741,7 @@ body {
 
 .container {
     position: relative;
-    z-index: 2;
+    z-index: 3;
     width: 100%;
     max-width: 1200px;
     display: flex;
@@ -535,7 +761,7 @@ body {
     align-items: center;
     transform-style: preserve-3d;
     margin-bottom: 1rem;
-    z-index: 3;
+    z-index: 4;
     background: transparent;
 }
 
@@ -557,7 +783,7 @@ body {
     color: var(--primary-color);
     letter-spacing: 2px;
     position: relative;
-    z-index: 3;
+    z-index: 4;
     line-height: 1;
     transform-style: preserve-3d;
     text-shadow: 
@@ -591,7 +817,7 @@ body {
     transform: rotateY(90deg) scale(0);
     transform-origin: center;
     position: relative;
-    z-index: 3;
+    z-index: 4;
     line-height: 1;
     display: inline-block;
     text-shadow: 
@@ -614,7 +840,7 @@ body {
         0 0 5px #0066ff,
         0 0 10px rgba(0, 100, 255, 0.5);
     filter: drop-shadow(0 0 5px rgba(0, 180, 255, 0.7));
-    z-index: 3;
+    z-index: 4;
     position: relative;
     text-align: center;
     background: transparent;
@@ -622,7 +848,7 @@ body {
 
 .telegram-elements {
     position: relative;
-    z-index: 3;
+    z-index: 4;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -644,7 +870,7 @@ body {
     animation: pulseBlue 2s infinite;
     text-decoration: none;
     transition: all 0.3s ease;
-    z-index: 3;
+    z-index: 4;
     text-align: center;
     width: 100%;
     max-width: 300px;
@@ -663,7 +889,7 @@ body {
     gap: 20px;
     color: var(--primary-color);
     font-size: 0.9rem;
-    z-index: 3;
+    z-index: 4;
     flex-wrap: wrap;
     justify-content: center;
     background: transparent;
@@ -764,7 +990,7 @@ body {
     border: 1px solid rgba(255, 51, 102, 0.3);
     backdrop-filter: blur(10px);
     animation: previewGlow 4s infinite alternate;
-    z-index: 3;
+    z-index: 4;
     width: 100%;
 }
 
@@ -891,23 +1117,6 @@ body {
 }
 
 /* Анимации */
-@keyframes floatParticle {
-    0% {
-        transform: translateY(100vh) rotate(0deg);
-        opacity: 0;
-    }
-    10% {
-        opacity: 1;
-    }
-    90% {
-        opacity: 1;
-    }
-    100% {
-        transform: translateY(-100px) rotate(360deg);
-        opacity: 0;
-    }
-}
-
 @keyframes pulseBlue {
     0%, 100% {
         box-shadow: 0 0 10px rgba(0, 180, 255, 0.5);
@@ -1243,6 +1452,14 @@ body {
         right: 10px;
         left: 10px;
         max-width: none;
+    }
+    
+    .eleven-eleven {
+        font-size: 80px;
+    }
+    
+    .dream-phase {
+        font-size: 12px;
     }
 }
 
