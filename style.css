@@ -1,4 +1,4 @@
-/* CYBER NEON STYLES - ИСПРАВЛЕННЫЕ ПРОГРЕСС-БАРЫ */
+/* CYBER NEON STYLES */
 @import url('https://fonts.googleapis.com/css2?family=Special+Elite&display=swap');
 
 :root {
@@ -76,7 +76,7 @@ body {
 
 /* ===== МОБИЛЬНАЯ ВЕРСИЯ ===== */
 .mobile-version {
-    display: none;
+    display: block;
     position: relative;
     z-index: 2;
     width: 100%;
@@ -91,7 +91,6 @@ body {
     width: 100%;
     height: 100vh;
     overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
     scroll-snap-type: y mandatory;
     background: transparent;
 }
@@ -103,20 +102,16 @@ body {
     justify-content: center;
     padding: 20px 15px;
     scroll-snap-align: start;
-    transform: scale(0.95);
-    transform-origin: top center;
     background: transparent;
-    transition: transform 0.5s ease, opacity 0.5s ease;
-}
-
-.mobile-section:not(.active) {
     opacity: 0;
-    pointer-events: none;
+    transform: translateY(20px);
+    transition: all 0.6s ease;
 }
 
 .mobile-section.active {
     opacity: 1;
-    pointer-events: all;
+    transform: translateY(0);
+    display: flex !important;
 }
 
 .mobile-container {
@@ -194,7 +189,7 @@ body {
     transform: scale(0.95);
 }
 
-/* Мобильная статистика - ИСПРАВЛЕННЫЕ ПРОГРЕСС-БАРЫ */
+/* Мобильная статистика */
 .mobile-stats {
     width: 100%;
     background: transparent;
@@ -242,54 +237,40 @@ body {
     overflow: hidden;
     position: relative;
     border: 1px solid rgba(255, 255, 255, 0.2);
-    min-height: 12px;
 }
 
-/* ИСПРАВЛЕННЫЕ ПРОГРЕСС-БАРЫ - ГАРАНТИРОВАННАЯ ВИДИМОСТЬ */
+/* ИСПРАВЛЕННЫЕ ПРОГРЕСС-БАРЫ */
 .progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color)) !important;
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
     border-radius: 6px;
     width: 0%;
     transition: width 2s ease-in-out;
     position: relative;
     overflow: hidden;
     display: block !important;
-    min-width: 5% !important; /* Всегда виден даже при 0% */
-    opacity: 1 !important;
-    visibility: visible !important;
-}
-
-/* Конкретные фиксы для мобильных прогресс-баров */
-#mobile-subs-progress,
-#mobile-posts-progress,
-#subscribers-progress, 
-#posts-progress {
-    width: 0% !important;
     min-width: 5% !important;
-    height: 100% !important;
-    background: linear-gradient(90deg, #ff3366, #00b4ff) !important;
-    display: block !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-    border-radius: 6px !important;
 }
 
-/* Принудительная установка ширины для тестирования */
+/* Конкретные прогресс-бары */
 #mobile-subs-progress {
     width: 51% !important;
+    background: linear-gradient(90deg, #ff3366, #00b4ff) !important;
 }
 
 #mobile-posts-progress {
     width: 48.4% !important;
+    background: linear-gradient(90deg, #ff3366, #00b4ff) !important;
 }
 
 #subscribers-progress {
     width: 51% !important;
+    background: linear-gradient(90deg, #ff3366, #00b4ff) !important;
 }
 
 #posts-progress {
     width: 48.4% !important;
+    background: linear-gradient(90deg, #ff3366, #00b4ff) !important;
 }
 
 .progress-fill::before {
@@ -364,7 +345,6 @@ body {
     text-shadow: 0 0 10px rgba(0, 180, 255, 0.7);
     animation: numberPulse 1s infinite;
     display: block !important;
-    visibility: visible !important;
     min-width: 40px !important;
 }
 
@@ -502,7 +482,7 @@ body {
 
 /* ===== ПК ВЕРСИЯ ===== */
 .desktop-version {
-    display: flex;
+    display: none;
     position: relative;
     z-index: 2;
     width: 100%;
@@ -840,7 +820,6 @@ body {
     text-shadow: 0 0 10px rgba(0, 180, 255, 0.7);
     animation: numberPulse 1s infinite;
     display: block !important;
-    visibility: visible !important;
 }
 
 .time-label {
@@ -1030,27 +1009,14 @@ body {
     }
 }
 
-.text-container {
-    animation: glow 2s infinite alternate;
-}
-
-@keyframes glow {
-    0% {
-        filter: drop-shadow(0 0 10px rgba(255, 51, 102, 0.7));
-    }
-    100% {
-        filter: drop-shadow(0 0 20px rgba(255, 0, 102, 0.9));
-    }
-}
-
-/* Адаптация по размерам экрана */
+/* ЭКСТРЕННЫЙ ФИКС ДЛЯ МОБИЛЬНОЙ ВЕРСИИ */
 @media (max-width: 768px) {
     .desktop-version {
-        display: none;
+        display: none !important;
     }
     
     .mobile-version {
-        display: block;
+        display: block !important;
     }
     
     html, body {
@@ -1071,7 +1037,7 @@ body {
 /* Для очень маленьких мобильных */
 @media (max-width: 360px) {
     .mobile-section {
-        transform: scale(0.9);
+        padding: 15px 10px;
     }
     
     .title-text, .title-cross {
@@ -1093,48 +1059,21 @@ body {
     }
 }
 
-/* ГАРАНТИЯ ЧТО ПРОГРЕСС-БАРЫ ВИДНЫ В МОБИЛЬНОЙ ВЕРСИИ */
+/* ГАРАНТИЯ ВИДИМОСТИ ПРОГРЕСС-БАРОВ */
 #mobile-subs-progress,
 #mobile-posts-progress,
 #subscribers-progress,
 #posts-progress {
-    width: 0% !important;
-    min-width: 5% !important;
-    height: 100% !important;
-    background: linear-gradient(90deg, #ff3366, #00b4ff) !important;
     display: block !important;
-    opacity: 1 !important;
     visibility: visible !important;
-    border-radius: 6px !important;
-    position: relative !important;
-}
-
-/* Принудительная установка ширины для тестирования */
-#mobile-subs-progress {
-    width: 51% !important;
-}
-
-#mobile-posts-progress {
-    width: 48.4% !important;
-}
-
-#subscribers-progress {
-    width: 51% !important;
-}
-
-#posts-progress {
-    width: 48.4% !important;
-}
-
-/* Фикс для контейнеров прогресс-баров */
-.progress-bar {
-    position: relative;
-    overflow: visible !important;
-}
-
-.progress-fill {
-    position: absolute !important;
-    top: 0 !important;
-    left: 0 !important;
+    opacity: 1 !important;
+    background: linear-gradient(90deg, #ff3366, #00b4ff) !important;
     height: 100% !important;
+    border-radius: 6px !important;
 }
+
+/* Принудительная ширина для тестирования */
+#mobile-subs-progress { width: 51% !important; }
+#mobile-posts-progress { width: 48.4% !important; }
+#subscribers-progress { width: 51% !important; }
+#posts-progress { width: 48.4% !important; }
